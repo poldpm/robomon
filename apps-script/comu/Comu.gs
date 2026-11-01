@@ -37,7 +37,7 @@ var BLOC_MESTRE = { des_de: 'present_mestre', fins_a: 'actualitzat_mestre' };
 
 /** Les 9 sessions. Això NO canvia: és el contingut del taller. */
 var SESSIONS = {
-  S1: { zona: 'Z1', eina: 'ozobot',  unitats: 6, nom: 'El primer camí' },
+  S1: { zona: 'Z1', eina: 'ozobot',  unitats: 6, nom: 'Primers codis' },
   S2: { zona: 'Z2', eina: 'scottie', unitats: 6, nom: 'Code Table' },
   S3: { zona: 'Z3', eina: 'ozobot',  unitats: 6, nom: 'Ozo-Trace' },
   S4: { zona: 'Z4', eina: 'dash',    unitats: 3, nom: 'Dash Cargo' },
@@ -302,13 +302,13 @@ function missioDeSessio_(sessio, totes) {
     return String(r.sessio) === sessio && (totes || String(r.estat) === 'publicada');
   }).sort(function (a, b) { return (Number(a.ordre) || 0) - (Number(b.ordre) || 0); });
   if (!meves.length) return null;
-  var m = { sessio: sessio, eina: SESSIONS[sessio].eina, titol: SESSIONS[sessio].nom, frase: '',
+  var m = { sessio: sessio, eina: SESSIONS[sessio].eina, titol: SESSIONS[sessio].nom, frase: '', xuleta: '',
             nivells: {}, controls: {}, abans: null, encallat: [], sortida: [], variants: {} };
   meves.forEach(function (r) {
     var tipus = String(r.tipus), clau = String(r.clau);
     var el = { clau: clau, text: String(r.text || ''), imatge: String(r.imatge || ''),
                opcions: analitzaOpcions_(r.opcions), correcta: String(r.correcta || '') };
-    if (tipus === 'missio') { if (clau === 'titol') m.titol = el.text; if (clau === 'frase') m.frase = el.text; }
+    if (tipus === 'missio') { if (clau === 'titol') m.titol = el.text; if (clau === 'frase') m.frase = el.text; if (clau === 'xuleta') m.xuleta = el.text; }
     else if (tipus === 'nivell') m.nivells[clau] = el;
     else if (tipus === 'control') m.controls[clau] = el;
     else if (tipus === 'abans') m.abans = el;

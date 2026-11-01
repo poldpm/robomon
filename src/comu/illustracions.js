@@ -128,3 +128,73 @@ function illaHTML(i, estat) {
   const by = Math.max(0, Math.min(100, (0.375 - py) / (0.75 - altMapa) * 100));
   return `<div class="illa-retall ${estat === 'tancada' ? 'apagada' : ''}" style="background-image:url(${IMG.mapa}); background-size:${zoom * 100}% auto; background-position:${bx.toFixed(2)}% ${by.toFixed(2)}%;"></div>`;
 }
+
+/* ============================================================
+   CODIS DE COLOR DE L'OZOBOT
+   Font: Ozobot Evo · Color Code Chart (Ozo Edu, Rev 12-23). Comprovat amb la Pocket Guide (Bit/Evo).
+   Lletres: K negre · R vermell · G verd · B blau. Es llegeixen en el sentit de la marxa (fletxa).
+   ============================================================ */
+const COLORS_CODI = { K: ['#141414', 'Negre', 'Ng'], R: ['#e0302f', 'Vermell', 'Vm'], G: ['#3a9a46', 'Verd', 'Vd'], B: ['#1f7fd6', 'Blau', 'Bl'] };
+const CODIS_OZOBOT = {
+  ozobot: [
+    { grup: 'Velocitat', codis: [
+      ['Lent', 'RKR'], ['Normal', 'GKG'], ['Ràpid', 'BKB'], ['Turbo', 'BGB'], ['Nitro (3 s)', 'BGR']] },
+    { grup: 'Moviments', codis: [
+      ['Pausa (3 s)', 'RBR'], ['Mitja volta', 'BRB'], ['Tornado', 'RGRG'], ['Ziga-zaga', 'BKGR'], ['Giravolt', 'GRGR'], ['Camina enrere', 'RGKB']] }
+  ]
+};
+/** Tira d'un codi: línia negra, quadrats de colors amb la inicial a dins, i fletxa del sentit de marxa. */
+function codiSVG(seq, ambFletxa = true) {
+  const n = seq.length, q = 14, marge = 16, w = marge * 2 + n * q, h = ambFletxa ? 30 : 20;
+  const y = ambFletxa ? 12 : 3;
+  let s = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="codi">`;
+  s += `<rect x="0" y="${y}" width="${w}" height="${q}" fill="#141414"/>`;
+  seq.split('').forEach((c, i) => {
+    const [col, , ini] = COLORS_CODI[c] || COLORS_CODI.K;
+    const x = marge + i * q;
+    s += `<rect x="${x}" y="${y}" width="${q}" height="${q}" fill="${col}"/>`;
+    s += `<text x="${x + q / 2}" y="${y + q / 2 + 2.6}" text-anchor="middle" font-size="6.4" font-weight="600" fill="#fff" font-family="Lexend, Verdana, sans-serif">${ini}</text>`;
+  });
+  if (ambFletxa) s += `<path d="M${marge} 5 H${w - marge - 4}" stroke="#4b5866" stroke-width="1.4" stroke-linecap="round"/><path d="M${w - marge - 7} 2 L${w - marge - 2} 5 L${w - marge - 7} 8" fill="none" stroke="#4b5866" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return s + '</svg>';
+}
+const nomColors = seq => seq.split('').map(c => (COLORS_CODI[c] || COLORS_CODI.K)[1]).join(' · ');
+/** La xuleta sencera (projecció, Chromebook i paper). */
+function xuletaHTML(id) {
+  const grups = CODIS_OZOBOT[id];
+  if (!grups) return '';
+  return `<div class="xuleta">${grups.map(g => `<section class="xuleta-grup"><h3>${g.grup}</h3><div class="xuleta-codis">${g.codis.map(([nom, seq]) =>
+    `<div class="xuleta-codi"><span class="xuleta-nom">${nom}</span>${codiSVG(seq)}</div>`).join('')}</div></section>`).join('')}
+    <p class="xuleta-regla">Quadrats enganxats, sense blanc entremig. Pinta'ls en el sentit de la fletxa.</p></div>`;
+}
+
+/* Esquemes de la S1 (codis) */
+function tramCodi(seq, opts = {}) {
+  // tram de línia horitzontal amb una casella de codi al mig (y = 50)
+  const q = 7, x0 = 50 - (seq.length * q) / 2;
+  let s = `<rect x="22" y="${50 - q / 2}" width="${x0 - 22 - (opts.forat ? 0 : 0)}" height="${q}" fill="#141414"/>`;
+  let x = x0;
+  seq.split('').forEach((c, i) => {
+    if (opts.forat && i === Math.floor(seq.length / 2)) x += 4;          // blanc entremig
+    s += c === '_' ? `<rect x="${x}" y="${50 - q / 2}" width="${q}" height="${q}" fill="#fff" stroke="#b9b9b9" stroke-width="0.5"/>`
+      : `<rect x="${x}" y="${50 - q / 2}" width="${q}" height="${q}" fill="${(COLORS_CODI[c] || COLORS_CODI.K)[0]}"/>`;
+    x += q;
+  });
+  s += opts.final ? '' : `<rect x="${x}" y="${50 - q / 2}" width="${78 - x}" height="${q}" fill="#141414"/>`;
+  return s;
+}
+Object.assign(IL, {
+  'ozo-casella1': esquema(tramCodi('RKR') + robot(66, 39, 0.8) +
+    `<text x="50" y="68" text-anchor="middle" font-size="7" font-weight="600" fill="#4b5866" font-family="Lexend, Verdana, sans-serif">casella 1 · Lent</text>`),
+  'codi-be': esquema(tramCodi('BKGR')),
+  'codi-forat': esquema(tramCodi('BKGR', { forat: true })),
+  'ozo-buit': esquema(tramCodi('____', { final: false }).replace(/fill="#141414"\/>$/, 'fill="#141414"/>') + robot(30, 39, 0.8) +
+    `<path d="M40 30 C 46 22, 30 18, 28 28" fill="none" stroke="#3e4a57" stroke-width="2.2" stroke-linecap="round"/><path d="M24.5 25 L28 29.5 L32 25.5" fill="none" stroke="#3e4a57" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`)
+});
+
+/** Una il·lustració per clau: IL[clau], o una tira de codi si la clau és «codi:BGB». */
+function dibuix(k) {
+  if (!k) return '';
+  if (k.indexOf('codi:') === 0) return codiSVG(k.slice(5));
+  return IL[k] || '';
+}

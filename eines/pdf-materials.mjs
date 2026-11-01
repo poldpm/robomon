@@ -1,5 +1,5 @@
 // Genera el PDF i captures de comprovació d'un material imprimible.
-// Ús: node eines/pdf-materials.mjs materials/S1-primer-cami-RECURS
+// Ús: node eines/pdf-materials.mjs materials/S1-primers-codis-RECURS
 import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
 const require = createRequire(import.meta.url);

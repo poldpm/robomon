@@ -321,6 +321,10 @@ veïna i el N1/N2 de S6 passen a ser el N3 de S5. Tu no has de tocar res més.
 
 ## 6 · SESSIÓ 1 NOVA: «El primer camí»
 
+> **Substituïda el 2 de novembre de 2026** per «Primers codis» (decisió d'en Pol): sense codis de color l'Ozobot perdia la gràcia i la consigna no s'entenia.
+> S1 actual: full amb línia impresa i 3 caselles; N1 = codi LENT a la casella 1; N2 = codi de la missió personal (Tornado, Ziga-zaga o Turbo) a la casella 2; N3 = carta de repte a la casella 3. Xuleta de codis oficial (Ozobot Evo, rev. 12-23) projectada, al Chromebook (botó «Codis») i en paper. Material: `materials/S1-primers-codis-RECURS/`.
+
+
 **Eina proposada: Ozobot Evo, només seguint una línia negra dibuixada a mà** (sense codis de color).
 No trepitja la S3 (que és codis) i la prepara: a la S3 ja sabran encendre'l, calibrar-lo i que
 el gruix de la línia importa. Hi ha 6 robots: equips de 3, però **cada nen dibuixa el seu propi camí

@@ -98,7 +98,7 @@ Tot viu a Google Apps Script i a un Google Sheet de la unitat compartida del cen
 - [ ] Una pregunta al coordinador TIC: «Els alumnes poden obrir una aplicació web d'Apps Script d'un mestre del domini (executada com el mestre)?». Si diu que cal autoritzar-la, el camí és a la secció 6.2 del pla.
 - [ ] Enllaç del Pla B2 preparat i provat en incògnit (pas 5)
 - [ ] Circular a les famílies revisada per direcció/DPD i enviada (`docs/CIRCULAR-FAMILIES.md`)
-- [ ] Material de la S1 imprès (`materials/S1-primer-cami-RECURS/imprimir.pdf`)
+- [ ] Material de la S1 imprès (`materials/S1-primers-codis-RECURS/imprimir.pdf`)
 
 ---
 
@@ -123,7 +123,7 @@ Claude et dirà quins fitxers han canviat. Només cal tornar-los a enganxar **se
 node eines/construeix.mjs          # genera apps-script/*/*.html i pla-b/ a partir de src/
 node proves/proves.mjs             # simula una sessió sencera amb 18 alumnes (≈ 2 min)
 node proves/simulador.mjs          # servidor local: http://localhost:8787/admin?usuari=mestre@escola.cat
-node eines/pdf-materials.mjs materials/S1-primer-cami-RECURS
+node eines/pdf-materials.mjs materials/S1-primers-codis-RECURS
 ```
 
 Lletra: Lexend (SIL Open Font License, `docs/LLICENCIA-LEXEND-OFL.txt`), incrustada a cada pàgina.

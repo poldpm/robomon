@@ -122,6 +122,7 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
 .capcal.sobre-mapa { position: absolute; left: 0; right: 0; top: 0; background: rgba(255, 253, 248, .72); border-bottom: 0; }
 
 /* ---------- Missió ---------- */
+
 .missio { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 300px 1fr; gap: 18px; }
 .lateral { background: var(--superficie); border-radius: var(--radi); box-shadow: var(--ombra); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
 .lateral h2 { font-size: 25px; }
@@ -158,6 +159,21 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
 .fet-gran .il { height: 46vh; aspect-ratio: 4 / 3; border-radius: 24px; overflow: hidden; box-shadow: var(--ombra); }
 .illa-retall { width: 100%; height: 100%; background-repeat: no-repeat; }
 .illa-retall.apagada { filter: grayscale(1) opacity(.6); }
+.tria.nomes-text { justify-content: center; }
+.tria.nomes-text .etiqueta { font-size: 25px; line-height: 1.25; padding: 0 8px; }
+.tria .dibuix svg.codi { width: 100%; height: auto; max-height: 100%; }
+.targeta .il svg.codi { object-fit: contain; }
+#boto-codis { margin-right: 4px; }
+.modal { position: fixed; inset: 0; z-index: 10; background: rgba(28, 39, 51, .55); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal-caixa { background: var(--superficie); border-radius: 24px; box-shadow: var(--ombra); padding: 18px 24px; width: min(1180px, 100%); max-height: 100%; display: flex; flex-direction: column; gap: 10px; }
+.modal-cap { display: flex; align-items: center; justify-content: space-between; }
+.xuleta { display: flex; flex-direction: column; gap: 10px; }
+.xuleta-grup h3 { margin: 0 0 6px; font-size: 20px; font-weight: 600; color: var(--suau); }
+.xuleta-codis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.xuleta-codi { background: #fff; border-radius: 14px; box-shadow: inset 0 0 0 1px var(--vora); padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+.xuleta-nom { font-size: 19px; font-weight: 600; white-space: nowrap; }
+.xuleta-codi svg.codi { width: 100%; height: auto; }
+.xuleta-regla { margin: 2px 0 0; font-size: 19px; color: var(--suau); }
 .estat-xarxa { position: fixed; right: 16px; bottom: 12px; z-index: 6; background: var(--tinta); color: #fff; font-size: 19px; padding: 8px 14px; border-radius: 12px; }
 .benvinguda { background: linear-gradient(var(--boira), var(--paper)); }
 </style>
@@ -169,6 +185,7 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
     <span class="nom" id="capcal-nom"></span>
     <span class="lloc" id="capcal-lloc"></span>
     <span class="espai"></span>
+    <button class="boto clar petit" id="boto-codis" hidden>Codis</button>
     <button class="boto clar petit" id="boto-mapa" hidden>Mapa</button>
   </header>
 
@@ -308,6 +325,12 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
   </main>
 </div>
 <div class="avis-illa" id="avis-illa" hidden></div>
+<div class="modal" id="modal-xuleta" hidden role="dialog" aria-label="Codis de colors">
+  <div class="modal-caixa">
+    <div class="modal-cap"><h2>Codis de colors</h2><button class="boto clar petit" id="modal-tanca">Tanca</button></div>
+    <div id="modal-xuleta-cos"></div>
+  </div>
+</div>
 <div class="estat-xarxa" id="estat-xarxa" hidden>Sense connexió: ho guardo i ho torno a enviar.</div>
 
 <script>
@@ -434,6 +457,8 @@ function mostra(id) {
   $('capcal').hidden = !ambCapcal;
   $('capcal').classList.toggle('sobre-mapa', id === 'p-mapa');
   $('boto-mapa').hidden = ['p-missio', 'p-encallat', 'p-pista'].indexOf(id) < 0;
+  const mx = S.estat && S.estat.avui && S.estat.avui.missio;
+  $('boto-codis').hidden = !(mx && mx.xuleta) || ['p-missio', 'p-encallat', 'p-pista'].indexOf(id) < 0;
   if (ambCapcal && S.estat) {
     $('capcal-avatar').innerHTML = avatarHTML(S.estat.alumne.avatar);
     $('capcal-nom').textContent = S.estat.alumne.nom;
@@ -495,6 +520,18 @@ function avisIlla(zona, estat) {
 }
 
 /* ---------- Missió ---------- */
+function triaHTML(o) {
+  const d = dibuix(o.imatge);
+  return `<button class="tria${d ? '' : ' nomes-text'}" data-v="${esc(o.clau)}">${d ? `<span class="dibuix">${d}</span>` : ''}<span class="etiqueta">${esc(o.text)}</span></button>`;
+}
+function obreXuleta() {
+  const m = S.estat.avui && S.estat.avui.missio;
+  if (!m || !m.xuleta) return;
+  $('modal-xuleta-cos').innerHTML = xuletaHTML(m.xuleta);
+  $('modal-xuleta').hidden = false;
+}
+function tancaModal() { $('modal-xuleta').hidden = true; }
+
 function pasActual() {
   const a = S.estat.avui, m = a.missio, p = a.progres;
   if (m.abans && !p.prediccio && p.nivell === 0) return 'abans';
@@ -521,6 +558,7 @@ function pintaMissio() {
   if (a.equip) xapes += `<span class="xapa">${esc(a.equip)}</span>`;
   if (a.variant) xapes += `<span class="xapa">La teva: ${esc(a.textVariant || a.variant)}</span>`;
   $('m-xapes').innerHTML = xapes;
+
   $('m-nivells').innerHTML = [1, 2, 3].map(n =>
     `<div class="nivell ${p.nivell >= n ? 'fet' : ''}"><span class="punt">${p.nivell >= n ? '✓' : ''}</span>Nivell ${n}</div>`).join('');
 
@@ -530,11 +568,11 @@ function pintaMissio() {
 
   const pas = pasActual();
   const preg = $('m-pregunta'), cos = $('m-cos'), bot = $('m-botons');
-  const il = (clau) => clau && IL[clau] ? `<div class="il">${IL[clau]}</div>` : '';
+  const il = (clau) => dibuix(clau) ? `<div class="il">${dibuix(clau)}</div>` : '';
   if (pas === 'abans') {
-    preg.textContent = 'Abans de provar-ho: ' + m.abans.text.charAt(0).toLowerCase() + m.abans.text.slice(1);
+    preg.textContent = m.abans.text;
     cos.innerHTML = `<div class="graella" style="grid-template-columns: repeat(${m.abans.opcions.length}, 1fr); height:100%;">` +
-      m.abans.opcions.map(o => `<button class="tria" data-v="${esc(o.clau)}"><span class="dibuix">${IL[o.imatge] || ''}</span><span class="etiqueta">${esc(o.text)}</span></button>`).join('') + '</div>';
+      m.abans.opcions.map(o => triaHTML(o)).join('') + '</div>';
     bot.innerHTML = '';
     cos.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => { envia('prediccio', b.dataset.v); pintaMissio(); }));
     return;
@@ -578,14 +616,14 @@ function obreEncallat() {
   mostra('p-encallat');
   const g = $('encallat-graella');
   g.style.gridTemplateColumns = `repeat(${Math.min(m.encallat.length, 4)}, 1fr)`;
-  g.innerHTML = m.encallat.map(o => `<button class="tria" data-v="${esc(o.clau)}"><span class="dibuix">${IL[o.imatge] || ''}</span><span class="etiqueta">${esc(o.text)}</span></button>`).join('');
+  g.innerHTML = m.encallat.map(o => triaHTML(o)).join('');
   g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => obrePista(b.dataset.v)));
 }
 function obrePista(clau) {
   const o = S.estat.avui.missio.encallat.find(x => x.clau === clau);
   envia('encallat', clau);
   mostra('p-pista');
-  $('pista-il').innerHTML = IL[o.imatgePista] || IL[o.imatge] || '';
+  $('pista-il').innerHTML = dibuix(o.imatgePista) || dibuix(o.imatge);
   $('pista-text').textContent = o.pista;
 }
 
@@ -602,9 +640,9 @@ function obreSortida() {
   mostra('p-sortida');
   $('sortida-compte').textContent = 'Targeta de sortida · ' + (qs.indexOf(q) + 1) + ' de ' + qs.length;
   $('sortida-pregunta').textContent = q.text;
-  const ilP = q.imatge && IL[q.imatge] ? `<div class="il">${IL[q.imatge]}</div>` : '';
+  const ilP = dibuix(q.imatge) ? `<div class="il">${dibuix(q.imatge)}</div>` : '';
   $('sortida-cos').innerHTML = ilP + `<div class="graella" style="grid-template-columns: repeat(${q.opcions.length}, 1fr); height:100%; flex:1 1 auto;">` +
-    q.opcions.map(o => `<button class="tria" data-v="${esc(o.clau)}"><span class="dibuix">${IL[o.imatge] || ''}</span><span class="etiqueta">${esc(o.text)}</span></button>`).join('') + '</div>';
+    q.opcions.map(o => triaHTML(o)).join('') + '</div>';
   $('sortida-cos').querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => {
     envia('sortida', { clau: q.clau, resp: b.dataset.v });
     obreSortida();
@@ -724,6 +762,9 @@ function obreProva() {
 /* ---------- Connexions dels botons fixos ---------- */
 $('boto-missio').onclick = obreMissio;
 $('boto-mapa').onclick = obreMapa;
+$('boto-codis').onclick = obreXuleta;
+$('modal-tanca').onclick = tancaModal;
+$('modal-xuleta').addEventListener('click', e => { if (e.target.id === 'modal-xuleta') tancaModal(); });
 $('boto-recarrega').onclick = () => location.reload();
 $('m-banner-cancela').onclick = () => { envia('cancela', ''); pintaMissio(); };
 $('encallat-enrere').onclick = () => { mostra('p-missio'); pintaMissio(); };

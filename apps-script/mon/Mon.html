@@ -127,6 +127,7 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
 .capcal.sobre-mapa { position: absolute; left: 0; right: 0; top: 0; background: rgba(255, 253, 248, .72); border-bottom: 0; }
 
 /* ---------- Missió ---------- */
+
 .missio { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 300px 1fr; gap: 18px; }
 .lateral { background: var(--superficie); border-radius: var(--radi); box-shadow: var(--ombra); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
 .lateral h2 { font-size: 25px; }
@@ -163,6 +164,21 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
 .fet-gran .il { height: 46vh; aspect-ratio: 4 / 3; border-radius: 24px; overflow: hidden; box-shadow: var(--ombra); }
 .illa-retall { width: 100%; height: 100%; background-repeat: no-repeat; }
 .illa-retall.apagada { filter: grayscale(1) opacity(.6); }
+.tria.nomes-text { justify-content: center; }
+.tria.nomes-text .etiqueta { font-size: 25px; line-height: 1.25; padding: 0 8px; }
+.tria .dibuix svg.codi { width: 100%; height: auto; max-height: 100%; }
+.targeta .il svg.codi { object-fit: contain; }
+#boto-codis { margin-right: 4px; }
+.modal { position: fixed; inset: 0; z-index: 10; background: rgba(28, 39, 51, .55); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal-caixa { background: var(--superficie); border-radius: 24px; box-shadow: var(--ombra); padding: 18px 24px; width: min(1180px, 100%); max-height: 100%; display: flex; flex-direction: column; gap: 10px; }
+.modal-cap { display: flex; align-items: center; justify-content: space-between; }
+.xuleta { display: flex; flex-direction: column; gap: 10px; }
+.xuleta-grup h3 { margin: 0 0 6px; font-size: 20px; font-weight: 600; color: var(--suau); }
+.xuleta-codis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.xuleta-codi { background: #fff; border-radius: 14px; box-shadow: inset 0 0 0 1px var(--vora); padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+.xuleta-nom { font-size: 19px; font-weight: 600; white-space: nowrap; }
+.xuleta-codi svg.codi { width: 100%; height: auto; }
+.xuleta-regla { margin: 2px 0 0; font-size: 19px; color: var(--suau); }
 .estat-xarxa { position: fixed; right: 16px; bottom: 12px; z-index: 6; background: var(--tinta); color: #fff; font-size: 19px; padding: 8px 14px; border-radius: 12px; }
 .benvinguda { background: linear-gradient(var(--boira), var(--paper)); }
 </style>
@@ -174,6 +190,7 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
     <span class="nom" id="capcal-nom"></span>
     <span class="lloc" id="capcal-lloc"></span>
     <span class="espai"></span>
+    <button class="boto clar petit" id="boto-codis" hidden>Codis</button>
     <button class="boto clar petit" id="boto-mapa" hidden>Mapa</button>
   </header>
 
@@ -313,6 +330,12 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
   </main>
 </div>
 <div class="avis-illa" id="avis-illa" hidden></div>
+<div class="modal" id="modal-xuleta" hidden role="dialog" aria-label="Codis de colors">
+  <div class="modal-caixa">
+    <div class="modal-cap"><h2>Codis de colors</h2><button class="boto clar petit" id="modal-tanca">Tanca</button></div>
+    <div id="modal-xuleta-cos"></div>
+  </div>
+</div>
 <div class="estat-xarxa" id="estat-xarxa" hidden>Sense connexió: ho guardo i ho torno a enviar.</div>
 
 <script>
@@ -478,6 +501,76 @@ function illaHTML(i, estat) {
   return `<div class="illa-retall ${estat === 'tancada' ? 'apagada' : ''}" style="background-image:url(${IMG.mapa}); background-size:${zoom * 100}% auto; background-position:${bx.toFixed(2)}% ${by.toFixed(2)}%;"></div>`;
 }
 
+/* ============================================================
+   CODIS DE COLOR DE L'OZOBOT
+   Font: Ozobot Evo · Color Code Chart (Ozo Edu, Rev 12-23). Comprovat amb la Pocket Guide (Bit/Evo).
+   Lletres: K negre · R vermell · G verd · B blau. Es llegeixen en el sentit de la marxa (fletxa).
+   ============================================================ */
+const COLORS_CODI = { K: ['#141414', 'Negre', 'Ng'], R: ['#e0302f', 'Vermell', 'Vm'], G: ['#3a9a46', 'Verd', 'Vd'], B: ['#1f7fd6', 'Blau', 'Bl'] };
+const CODIS_OZOBOT = {
+  ozobot: [
+    { grup: 'Velocitat', codis: [
+      ['Lent', 'RKR'], ['Normal', 'GKG'], ['Ràpid', 'BKB'], ['Turbo', 'BGB'], ['Nitro (3 s)', 'BGR']] },
+    { grup: 'Moviments', codis: [
+      ['Pausa (3 s)', 'RBR'], ['Mitja volta', 'BRB'], ['Tornado', 'RGRG'], ['Ziga-zaga', 'BKGR'], ['Giravolt', 'GRGR'], ['Camina enrere', 'RGKB']] }
+  ]
+};
+/** Tira d'un codi: línia negra, quadrats de colors amb la inicial a dins, i fletxa del sentit de marxa. */
+function codiSVG(seq, ambFletxa = true) {
+  const n = seq.length, q = 14, marge = 16, w = marge * 2 + n * q, h = ambFletxa ? 30 : 20;
+  const y = ambFletxa ? 12 : 3;
+  let s = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="codi">`;
+  s += `<rect x="0" y="${y}" width="${w}" height="${q}" fill="#141414"/>`;
+  seq.split('').forEach((c, i) => {
+    const [col, , ini] = COLORS_CODI[c] || COLORS_CODI.K;
+    const x = marge + i * q;
+    s += `<rect x="${x}" y="${y}" width="${q}" height="${q}" fill="${col}"/>`;
+    s += `<text x="${x + q / 2}" y="${y + q / 2 + 2.6}" text-anchor="middle" font-size="6.4" font-weight="600" fill="#fff" font-family="Lexend, Verdana, sans-serif">${ini}</text>`;
+  });
+  if (ambFletxa) s += `<path d="M${marge} 5 H${w - marge - 4}" stroke="#4b5866" stroke-width="1.4" stroke-linecap="round"/><path d="M${w - marge - 7} 2 L${w - marge - 2} 5 L${w - marge - 7} 8" fill="none" stroke="#4b5866" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return s + '</svg>';
+}
+const nomColors = seq => seq.split('').map(c => (COLORS_CODI[c] || COLORS_CODI.K)[1]).join(' · ');
+/** La xuleta sencera (projecció, Chromebook i paper). */
+function xuletaHTML(id) {
+  const grups = CODIS_OZOBOT[id];
+  if (!grups) return '';
+  return `<div class="xuleta">${grups.map(g => `<section class="xuleta-grup"><h3>${g.grup}</h3><div class="xuleta-codis">${g.codis.map(([nom, seq]) =>
+    `<div class="xuleta-codi"><span class="xuleta-nom">${nom}</span>${codiSVG(seq)}</div>`).join('')}</div></section>`).join('')}
+    <p class="xuleta-regla">Quadrats enganxats, sense blanc entremig. Pinta'ls en el sentit de la fletxa.</p></div>`;
+}
+
+/* Esquemes de la S1 (codis) */
+function tramCodi(seq, opts = {}) {
+  // tram de línia horitzontal amb una casella de codi al mig (y = 50)
+  const q = 7, x0 = 50 - (seq.length * q) / 2;
+  let s = `<rect x="22" y="${50 - q / 2}" width="${x0 - 22 - (opts.forat ? 0 : 0)}" height="${q}" fill="#141414"/>`;
+  let x = x0;
+  seq.split('').forEach((c, i) => {
+    if (opts.forat && i === Math.floor(seq.length / 2)) x += 4;          // blanc entremig
+    s += c === '_' ? `<rect x="${x}" y="${50 - q / 2}" width="${q}" height="${q}" fill="#fff" stroke="#b9b9b9" stroke-width="0.5"/>`
+      : `<rect x="${x}" y="${50 - q / 2}" width="${q}" height="${q}" fill="${(COLORS_CODI[c] || COLORS_CODI.K)[0]}"/>`;
+    x += q;
+  });
+  s += opts.final ? '' : `<rect x="${x}" y="${50 - q / 2}" width="${78 - x}" height="${q}" fill="#141414"/>`;
+  return s;
+}
+Object.assign(IL, {
+  'ozo-casella1': esquema(tramCodi('RKR') + robot(66, 39, 0.8) +
+    `<text x="50" y="68" text-anchor="middle" font-size="7" font-weight="600" fill="#4b5866" font-family="Lexend, Verdana, sans-serif">casella 1 · Lent</text>`),
+  'codi-be': esquema(tramCodi('BKGR')),
+  'codi-forat': esquema(tramCodi('BKGR', { forat: true })),
+  'ozo-buit': esquema(tramCodi('____', { final: false }).replace(/fill="#141414"\/>$/, 'fill="#141414"/>') + robot(30, 39, 0.8) +
+    `<path d="M40 30 C 46 22, 30 18, 28 28" fill="none" stroke="#3e4a57" stroke-width="2.2" stroke-linecap="round"/><path d="M24.5 25 L28 29.5 L32 25.5" fill="none" stroke="#3e4a57" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`)
+});
+
+/** Una il·lustració per clau: IL[clau], o una tira de codi si la clau és «codi:BGB». */
+function dibuix(k) {
+  if (!k) return '';
+  if (k.indexOf('codi:') === 0) return codiSVG(k.slice(5));
+  return IL[k] || '';
+}
+
 </script>
 <script>
 'use strict';
@@ -600,6 +693,8 @@ function mostra(id) {
   $('capcal').hidden = !ambCapcal;
   $('capcal').classList.toggle('sobre-mapa', id === 'p-mapa');
   $('boto-mapa').hidden = ['p-missio', 'p-encallat', 'p-pista'].indexOf(id) < 0;
+  const mx = S.estat && S.estat.avui && S.estat.avui.missio;
+  $('boto-codis').hidden = !(mx && mx.xuleta) || ['p-missio', 'p-encallat', 'p-pista'].indexOf(id) < 0;
   if (ambCapcal && S.estat) {
     $('capcal-avatar').innerHTML = avatarHTML(S.estat.alumne.avatar);
     $('capcal-nom').textContent = S.estat.alumne.nom;
@@ -661,6 +756,18 @@ function avisIlla(zona, estat) {
 }
 
 /* ---------- Missió ---------- */
+function triaHTML(o) {
+  const d = dibuix(o.imatge);
+  return `<button class="tria${d ? '' : ' nomes-text'}" data-v="${esc(o.clau)}">${d ? `<span class="dibuix">${d}</span>` : ''}<span class="etiqueta">${esc(o.text)}</span></button>`;
+}
+function obreXuleta() {
+  const m = S.estat.avui && S.estat.avui.missio;
+  if (!m || !m.xuleta) return;
+  $('modal-xuleta-cos').innerHTML = xuletaHTML(m.xuleta);
+  $('modal-xuleta').hidden = false;
+}
+function tancaModal() { $('modal-xuleta').hidden = true; }
+
 function pasActual() {
   const a = S.estat.avui, m = a.missio, p = a.progres;
   if (m.abans && !p.prediccio && p.nivell === 0) return 'abans';
@@ -687,6 +794,7 @@ function pintaMissio() {
   if (a.equip) xapes += `<span class="xapa">${esc(a.equip)}</span>`;
   if (a.variant) xapes += `<span class="xapa">La teva: ${esc(a.textVariant || a.variant)}</span>`;
   $('m-xapes').innerHTML = xapes;
+
   $('m-nivells').innerHTML = [1, 2, 3].map(n =>
     `<div class="nivell ${p.nivell >= n ? 'fet' : ''}"><span class="punt">${p.nivell >= n ? '✓' : ''}</span>Nivell ${n}</div>`).join('');
 
@@ -696,11 +804,11 @@ function pintaMissio() {
 
   const pas = pasActual();
   const preg = $('m-pregunta'), cos = $('m-cos'), bot = $('m-botons');
-  const il = (clau) => clau && IL[clau] ? `<div class="il">${IL[clau]}</div>` : '';
+  const il = (clau) => dibuix(clau) ? `<div class="il">${dibuix(clau)}</div>` : '';
   if (pas === 'abans') {
-    preg.textContent = 'Abans de provar-ho: ' + m.abans.text.charAt(0).toLowerCase() + m.abans.text.slice(1);
+    preg.textContent = m.abans.text;
     cos.innerHTML = `<div class="graella" style="grid-template-columns: repeat(${m.abans.opcions.length}, 1fr); height:100%;">` +
-      m.abans.opcions.map(o => `<button class="tria" data-v="${esc(o.clau)}"><span class="dibuix">${IL[o.imatge] || ''}</span><span class="etiqueta">${esc(o.text)}</span></button>`).join('') + '</div>';
+      m.abans.opcions.map(o => triaHTML(o)).join('') + '</div>';
     bot.innerHTML = '';
     cos.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => { envia('prediccio', b.dataset.v); pintaMissio(); }));
     return;
@@ -744,14 +852,14 @@ function obreEncallat() {
   mostra('p-encallat');
   const g = $('encallat-graella');
   g.style.gridTemplateColumns = `repeat(${Math.min(m.encallat.length, 4)}, 1fr)`;
-  g.innerHTML = m.encallat.map(o => `<button class="tria" data-v="${esc(o.clau)}"><span class="dibuix">${IL[o.imatge] || ''}</span><span class="etiqueta">${esc(o.text)}</span></button>`).join('');
+  g.innerHTML = m.encallat.map(o => triaHTML(o)).join('');
   g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => obrePista(b.dataset.v)));
 }
 function obrePista(clau) {
   const o = S.estat.avui.missio.encallat.find(x => x.clau === clau);
   envia('encallat', clau);
   mostra('p-pista');
-  $('pista-il').innerHTML = IL[o.imatgePista] || IL[o.imatge] || '';
+  $('pista-il').innerHTML = dibuix(o.imatgePista) || dibuix(o.imatge);
   $('pista-text').textContent = o.pista;
 }
 
@@ -768,9 +876,9 @@ function obreSortida() {
   mostra('p-sortida');
   $('sortida-compte').textContent = 'Targeta de sortida · ' + (qs.indexOf(q) + 1) + ' de ' + qs.length;
   $('sortida-pregunta').textContent = q.text;
-  const ilP = q.imatge && IL[q.imatge] ? `<div class="il">${IL[q.imatge]}</div>` : '';
+  const ilP = dibuix(q.imatge) ? `<div class="il">${dibuix(q.imatge)}</div>` : '';
   $('sortida-cos').innerHTML = ilP + `<div class="graella" style="grid-template-columns: repeat(${q.opcions.length}, 1fr); height:100%; flex:1 1 auto;">` +
-    q.opcions.map(o => `<button class="tria" data-v="${esc(o.clau)}"><span class="dibuix">${IL[o.imatge] || ''}</span><span class="etiqueta">${esc(o.text)}</span></button>`).join('') + '</div>';
+    q.opcions.map(o => triaHTML(o)).join('') + '</div>';
   $('sortida-cos').querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => {
     envia('sortida', { clau: q.clau, resp: b.dataset.v });
     obreSortida();
@@ -890,6 +998,9 @@ function obreProva() {
 /* ---------- Connexions dels botons fixos ---------- */
 $('boto-missio').onclick = obreMissio;
 $('boto-mapa').onclick = obreMapa;
+$('boto-codis').onclick = obreXuleta;
+$('modal-tanca').onclick = tancaModal;
+$('modal-xuleta').addEventListener('click', e => { if (e.target.id === 'modal-xuleta') tancaModal(); });
 $('boto-recarrega').onclick = () => location.reload();
 $('m-banner-cancela').onclick = () => { envia('cancela', ''); pintaMissio(); };
 $('encallat-enrere').onclick = () => { mostra('p-missio'); pintaMissio(); };

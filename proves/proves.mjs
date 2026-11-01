@@ -37,7 +37,7 @@ p.getRange(fila0, 1, NOMS.length, 8).setValues(NOMS.map((n, i) => ['', correu(i)
 mon.crida('admin', 'generaIds', [], MESTRE);
 const ids = p.getDataRange().getValues().slice(1).map(f => f[0]);
 ok(ids.filter(x => /^A0\d\d$/.test(x)).length === 18 && ids.includes('A001') && ids.includes('A018'), 'IDs A001–A018 generats i 6 alumnes de prova A901–A906');
-ok(mon.full.getSheetByName('MISSIONS').getLastRow() === 1 + 16 + 16, 'MISSIONS sembrada una sola vegada (S1 + esborranys)');
+ok(mon.full.getSheetByName('MISSIONS').getLastRow() === 1 + 17 + 16, 'MISSIONS sembrada una sola vegada (S1 + esborranys)');
 ok(mon.full.getSheetByName('CALENDARI').getLastRow() === 1 + 45, 'CALENDARI: 5 grups × 9 sessions');
 
 console.log('\n2 · Seguretat');
@@ -146,6 +146,12 @@ await revisa(anna, '07-missio-n1', REVISA_MON);
 await anna.clic('#b-si');
 await anna.waitForSelector('#b-demo');
 await revisa(anna, '08-missio-n2', REVISA_MON);
+await anna.click('#boto-codis');
+await espera(anna, '#modal-xuleta');
+await revisa(anna, '08b-xuleta-codis', REVISA_MON);
+ok((await anna.evaluate(() => document.querySelectorAll('#modal-xuleta .xuleta-codi').length)) === 11, 'La xuleta mostra els 11 codis de l\'Ozobot');
+await anna.click('#modal-tanca');
+await anna.waitForSelector('#modal-xuleta', { state: 'hidden' });
 await anna.clic('#b-demo');
 await anna.waitForSelector('#b-cancela');
 await revisa(anna, '09-missio-espera', REVISA_MON);
@@ -169,21 +175,21 @@ await revisa(biel, '12-missio-amb-ajuda', REVISA_MON);
 
 console.log('\n6 · Els altres 16 alumnes treballen alhora (via API, barrejats amb el mestre)');
 for (let i = 2; i < 18; i++) alumne(i, 'registra', { esdeveniments: [{ t: 'avatar', v: `c${i % 8}-a${i % 8}` }, { t: 'pin', v: 'sol-lluna-estrella' }, { t: 'entrada', v: '', s: 'S1' }] });
-for (let i = 2; i < 18; i++) alumne(i, 'registra', { esdeveniments: [{ t: 'prediccio', v: 'si', s: 'S1' }] });
+for (let i = 2; i < 18; i++) alumne(i, 'registra', { esdeveniments: [{ t: 'prediccio', v: 'tornado', s: 'S1' }] });
 for (let i = 2; i < 14; i++) alumne(i, 'registra', { esdeveniments: [{ t: 'n1', v: '', s: 'S1' }] });
 for (let i = 2; i < 10; i++) alumne(i, 'registra', { esdeveniments: [{ t: 'demo', v: '2', s: 'S1' }] });
 // el mestre valida mentre els alumnes continuen escrivint a la mateixa fila
 for (let i = 2; i < 10; i++) {
   admin('valida', { id: 'A0' + String(i + 1).padStart(2, '0'), sessio: 'S1', que: i % 2 ? 'n2diagnostic' : 'n2funciona' });
-  alumne(i, 'registra', { esdeveniments: [{ t: 'prediccio', v: 'perd', s: 'S1' }, { t: 'encallat', v: 'altra', s: 'S1' }] });
+  alumne(i, 'registra', { esdeveniments: [{ t: 'prediccio', v: 'turbo', s: 'S1' }, { t: 'encallat', v: 'torna', s: 'S1' }] });
 }
-alumne(14, 'registra', { esdeveniments: [{ t: 'encallat', v: 'encen', s: 'S1' }, { t: 'ajuda', v: '', s: 'S1' }] });
+alumne(14, 'registra', { esdeveniments: [{ t: 'encallat', v: 'nollegeix', s: 'S1' }, { t: 'ajuda', v: '', s: 'S1' }] });
 alumne(15, 'registra', { esdeveniments: [{ t: 'n1', v: '', s: 'S1' }, { t: 'demo', v: '2', s: 'S1' }] });
 admin('valida', { id: 'A016', sessio: 'S1', que: 'n1no' });     // el mestre veu que el N1 no era cert
 const t1 = admin('tauler', { grup: 'G2', sessio: 'S1' }).dades;
 const de = id => t1.targetes.find(x => x.id === id);
 ok([3, 5, 7, 9].every(i => de('A00' + i).nivell === 2 && de('A00' + i).viaN2 === 'funciona'), 'La validació del mestre sobreviu a les escriptures posteriors de l\'alumne (blocs separats)');
-ok(de('A003').prediccio === 'si', 'La predicció no es pot canviar un cop feta (ni després de programar)');
+ok(de('A003').prediccio === 'tornado', 'La predicció no es pot canviar un cop feta (ni després de programar)');
 ok(de('A016').nivell === 0, 'Un N1 rebutjat pel mestre torna a 0');
 ok(t1.cues.ajuda.map(x => x.id).join() === 'A002,A015', 'Cua d\'ajuda en ordre d\'arribada: ' + t1.cues.ajuda.map(x => x.nom).join(', '));
 ok(t1.cues.demo[0].id === 'A001', 'Cua de demostracions: l\'Anna la primera');
@@ -205,8 +211,8 @@ ok(admin('tauler', { grup: 'G2', sessio: 'S1' }).dades.targetes.find(x => x.id =
 
 const PR = mon.full.getSheetByName('PROGRES');
 PR.dades = PR.dades.filter((f, k) => k === 0 || f[0] !== 'A018·S1');   // un alumne nou sense fila de progrés
-const rNou = alumne(17, 'registra', { esdeveniments: [{ t: 'prediccio', v: 'si', s: 'S1' }] });
-ok(rNou.dades.avui.progres.prediccio === 'si' && PR.dades.filter(f => f[0] === 'A018·S1').length === 1,
+const rNou = alumne(17, 'registra', { esdeveniments: [{ t: 'prediccio', v: 'tornado', s: 'S1' }] });
+ok(rNou.dades.avui.progres.prediccio === 'tornado' && PR.dades.filter(f => f[0] === 'A018·S1').length === 1,
   'Un alumne afegit amb la sessió ja oberta no queda en bucle: se li crea la fila i es desa el que fa');
 
 console.log('\n7 · El mestre al tauler (PC)');
@@ -275,6 +281,8 @@ await mestre.click('.pestanya[data-p="sessions"]');
 await mestre.waitForSelector('#taula-calendari button');
 await revisa(mestre, '24-admin-sessions', { senseScroll: false, lletraMin: 14.6 });
 
+ok(admin('restauraMissio', { sessio: 'S1' }).dades.files.length === 17, 'El botó «Restaura la missió per defecte» torna a posar les 17 files de la S1');
+
 console.log('\n10 · Mòbil del mestre');
 const ctxMob = await nav.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
 const mobil = await ctxMob.newPage();
@@ -293,6 +301,7 @@ admin('canviaEstat', { grup: 'G2', sessio: 'S1', estat: 'oberta' });
 await proj.reload();
 await proj.waitForSelector('#treball', { state: 'visible' });
 await revisa(proj, '31-projeccio-treball', { lletraMin: 18 });
+ok(await proj.isVisible('#panell-xuleta .xuleta'), 'La projecció mostra la xuleta de codis de la sessió');
 const textProj = await proj.evaluate(() => document.body.innerText);
 ok(!NOMS.some(nm => textProj.includes(nm.split(' ')[0])), 'La projecció no mostra cap nom d\'alumne');
 

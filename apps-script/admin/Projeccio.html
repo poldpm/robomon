@@ -40,10 +40,26 @@ svg { display: block; width: 100%; height: 100%; }
 .far .etiq { font-size: 3.4vh; font-weight: 700; white-space: nowrap; }
 .metre { flex: 1 1 auto; height: 3vh; border-radius: 1.5vh; background: #ece3cf; position: relative; overflow: hidden; }
 .metre span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 1.5vh; background: var(--daurat); transition: width 1s ease; }
-.codi { background: #f6e7c4; border: 3px solid var(--daurat); border-radius: 3vh; padding: 1.6vh 2vw; font-size: 4vh; font-weight: 700; }
+.codi-classe { background: #f6e7c4; border: 3px solid var(--daurat); border-radius: 3vh; padding: 1.6vh 2vw; font-size: 4vh; font-weight: 700; }
 .gran { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3vh; text-align: center; }
 .gran h1 { font-size: 9vh; margin: 0; }
 .gran p { font-size: 5vh; margin: 0; }
+.cos-treball { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 2vw; }
+.cos-treball.amb-xuleta { display: grid; grid-template-columns: 1fr 2.1fr; }
+.cos-treball.amb-xuleta .nivells { grid-template-columns: 1fr; grid-auto-rows: 1fr; gap: 1.6vh; }
+.cos-treball.amb-xuleta .nivell { padding: 1.4vh 1.4vw; gap: 0.6vh; }
+.cos-treball.amb-xuleta .nivell .num { font-size: 2.6vh; }
+.cos-treball.amb-xuleta .nivell p { font-size: 2.4vh; }
+.cos-treball.amb-xuleta .nivell .il { display: none; }
+.panell-xuleta { background: #fffdf8; box-shadow: var(--ombra); border-radius: 3vh; padding: 1.6vh 1.6vw 2.4vh; min-height: 0; }
+.xuleta { display: flex; flex-direction: column; gap: 0.8vh; height: 100%; }
+.xuleta-grup h3 { margin: 0 0 0.6vh; font-size: 2.4vh; font-weight: 600; color: var(--suau); }
+.xuleta-codis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8vh 1vw; }
+.xuleta-codi { display: flex; flex-direction: column; align-items: center; gap: 0.4vh; padding: 0.3vh 0.6vw; border-radius: 1.6vh; box-shadow: inset 0 0 0 1px var(--vora); }
+.xuleta-nom { font-size: 2.6vh; font-weight: 600; }
+.xuleta-codi svg.codi { width: 100%; height: 7vh; }
+.panell-xuleta { overflow: hidden; }
+.xuleta-regla { margin: auto 0 0; font-size: 2.4vh; font-weight: 600; color: var(--tinta); }
 .peu { font-size: 2.4vh; color: var(--suau); text-align: right; }
 </style>
 </head>
@@ -56,17 +72,20 @@ svg { display: block; width: 100%; height: 100%; }
   </div>
   <div id="treball" hidden style="display:flex; flex-direction:column; gap:2.4vh; flex:1 1 auto; min-height:0;">
     <p class="frase" id="frase"></p>
+    <div class="cos-treball" id="cos-treball">
     <div class="nivells">
       <div class="nivell"><span class="num">Nivell 1</span><p id="n1"></p><div class="il" id="il1"></div></div>
       <div class="nivell"><span class="num">Nivell 2</span><p id="n2"></p><div class="il" id="il2"></div></div>
       <div class="nivell"><span class="num">Nivell 3</span><p id="n3"></p><div class="il" id="il3"></div></div>
+    </div>
+    <div class="panell-xuleta" id="panell-xuleta" hidden></div>
     </div>
   </div>
   <div class="gran" id="sortida" hidden><h1>Targeta de sortida</h1><p>Obre el Chromebook i respon les preguntes.</p></div>
   <div class="gran" id="buida" hidden><h1>RoboMón</h1><p>Encara no hi ha cap sessió oberta.</p></div>
   <div class="baix" id="baix" hidden>
     <div class="far"><span class="etiq" id="far-text"></span><div class="metre"><span id="far-metre"></span></div></div>
-    <div class="codi" id="codi" hidden></div>
+    <div class="codi-classe" id="codi" hidden></div>
   </div>
 </div>
 <script>
@@ -210,6 +229,76 @@ function illaHTML(i, estat) {
   return `<div class="illa-retall ${estat === 'tancada' ? 'apagada' : ''}" style="background-image:url(${IMG.mapa}); background-size:${zoom * 100}% auto; background-position:${bx.toFixed(2)}% ${by.toFixed(2)}%;"></div>`;
 }
 
+/* ============================================================
+   CODIS DE COLOR DE L'OZOBOT
+   Font: Ozobot Evo · Color Code Chart (Ozo Edu, Rev 12-23). Comprovat amb la Pocket Guide (Bit/Evo).
+   Lletres: K negre · R vermell · G verd · B blau. Es llegeixen en el sentit de la marxa (fletxa).
+   ============================================================ */
+const COLORS_CODI = { K: ['#141414', 'Negre', 'Ng'], R: ['#e0302f', 'Vermell', 'Vm'], G: ['#3a9a46', 'Verd', 'Vd'], B: ['#1f7fd6', 'Blau', 'Bl'] };
+const CODIS_OZOBOT = {
+  ozobot: [
+    { grup: 'Velocitat', codis: [
+      ['Lent', 'RKR'], ['Normal', 'GKG'], ['Ràpid', 'BKB'], ['Turbo', 'BGB'], ['Nitro (3 s)', 'BGR']] },
+    { grup: 'Moviments', codis: [
+      ['Pausa (3 s)', 'RBR'], ['Mitja volta', 'BRB'], ['Tornado', 'RGRG'], ['Ziga-zaga', 'BKGR'], ['Giravolt', 'GRGR'], ['Camina enrere', 'RGKB']] }
+  ]
+};
+/** Tira d'un codi: línia negra, quadrats de colors amb la inicial a dins, i fletxa del sentit de marxa. */
+function codiSVG(seq, ambFletxa = true) {
+  const n = seq.length, q = 14, marge = 16, w = marge * 2 + n * q, h = ambFletxa ? 30 : 20;
+  const y = ambFletxa ? 12 : 3;
+  let s = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="codi">`;
+  s += `<rect x="0" y="${y}" width="${w}" height="${q}" fill="#141414"/>`;
+  seq.split('').forEach((c, i) => {
+    const [col, , ini] = COLORS_CODI[c] || COLORS_CODI.K;
+    const x = marge + i * q;
+    s += `<rect x="${x}" y="${y}" width="${q}" height="${q}" fill="${col}"/>`;
+    s += `<text x="${x + q / 2}" y="${y + q / 2 + 2.6}" text-anchor="middle" font-size="6.4" font-weight="600" fill="#fff" font-family="Lexend, Verdana, sans-serif">${ini}</text>`;
+  });
+  if (ambFletxa) s += `<path d="M${marge} 5 H${w - marge - 4}" stroke="#4b5866" stroke-width="1.4" stroke-linecap="round"/><path d="M${w - marge - 7} 2 L${w - marge - 2} 5 L${w - marge - 7} 8" fill="none" stroke="#4b5866" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return s + '</svg>';
+}
+const nomColors = seq => seq.split('').map(c => (COLORS_CODI[c] || COLORS_CODI.K)[1]).join(' · ');
+/** La xuleta sencera (projecció, Chromebook i paper). */
+function xuletaHTML(id) {
+  const grups = CODIS_OZOBOT[id];
+  if (!grups) return '';
+  return `<div class="xuleta">${grups.map(g => `<section class="xuleta-grup"><h3>${g.grup}</h3><div class="xuleta-codis">${g.codis.map(([nom, seq]) =>
+    `<div class="xuleta-codi"><span class="xuleta-nom">${nom}</span>${codiSVG(seq)}</div>`).join('')}</div></section>`).join('')}
+    <p class="xuleta-regla">Quadrats enganxats, sense blanc entremig. Pinta'ls en el sentit de la fletxa.</p></div>`;
+}
+
+/* Esquemes de la S1 (codis) */
+function tramCodi(seq, opts = {}) {
+  // tram de línia horitzontal amb una casella de codi al mig (y = 50)
+  const q = 7, x0 = 50 - (seq.length * q) / 2;
+  let s = `<rect x="22" y="${50 - q / 2}" width="${x0 - 22 - (opts.forat ? 0 : 0)}" height="${q}" fill="#141414"/>`;
+  let x = x0;
+  seq.split('').forEach((c, i) => {
+    if (opts.forat && i === Math.floor(seq.length / 2)) x += 4;          // blanc entremig
+    s += c === '_' ? `<rect x="${x}" y="${50 - q / 2}" width="${q}" height="${q}" fill="#fff" stroke="#b9b9b9" stroke-width="0.5"/>`
+      : `<rect x="${x}" y="${50 - q / 2}" width="${q}" height="${q}" fill="${(COLORS_CODI[c] || COLORS_CODI.K)[0]}"/>`;
+    x += q;
+  });
+  s += opts.final ? '' : `<rect x="${x}" y="${50 - q / 2}" width="${78 - x}" height="${q}" fill="#141414"/>`;
+  return s;
+}
+Object.assign(IL, {
+  'ozo-casella1': esquema(tramCodi('RKR') + robot(66, 39, 0.8) +
+    `<text x="50" y="68" text-anchor="middle" font-size="7" font-weight="600" fill="#4b5866" font-family="Lexend, Verdana, sans-serif">casella 1 · Lent</text>`),
+  'codi-be': esquema(tramCodi('BKGR')),
+  'codi-forat': esquema(tramCodi('BKGR', { forat: true })),
+  'ozo-buit': esquema(tramCodi('____', { final: false }).replace(/fill="#141414"\/>$/, 'fill="#141414"/>') + robot(30, 39, 0.8) +
+    `<path d="M40 30 C 46 22, 30 18, 28 28" fill="none" stroke="#3e4a57" stroke-width="2.2" stroke-linecap="round"/><path d="M24.5 25 L28 29.5 L32 25.5" fill="none" stroke="#3e4a57" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`)
+});
+
+/** Una il·lustració per clau: IL[clau], o una tira de codi si la clau és «codi:BGB». */
+function dibuix(k) {
+  if (!k) return '';
+  if (k.indexOf('codi:') === 0) return codiSVG(k.slice(5));
+  return IL[k] || '';
+}
+
 </script>
 <script>
 'use strict';
@@ -233,7 +322,10 @@ function pinta(p) {
   $('n1').textContent = p.nivells.n1 || '';
   $('n2').textContent = p.nivells.n2 || '';
   $('n3').textContent = p.nivells.n3 || '';
-  ['1', '2', '3'].forEach(k => { const im = (p.imatges || {})['n' + k]; $('il' + k).innerHTML = im && IL[im] ? IL[im] : ''; });
+  $('cos-treball').classList.toggle('amb-xuleta', !!p.xuleta);
+  $('panell-xuleta').hidden = !p.xuleta;
+  $('panell-xuleta').innerHTML = p.xuleta ? xuletaHTML(p.xuleta) : '';
+  ['1', '2', '3'].forEach(k => { const im = (p.imatges || {})['n' + k]; $('il' + k).innerHTML = dibuix(im); });
   $('far-text').textContent = p.fita.assolida ? 'El far del grup és encès! ✓' : 'El far del grup: ' + p.fita.ambN2 + ' de ' + p.fita.objectiu + ' amb nivell 2';
   $('far-metre').style.width = Math.min(100, Math.round(p.fita.ambN2 / Math.max(1, p.fita.objectiu) * 100)) + '%';
   $('codi').hidden = !p.codi;

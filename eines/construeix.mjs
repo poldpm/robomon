@@ -56,6 +56,13 @@ for (const [nom, t] of Object.entries(sortides)) {
 if (errors.length) { console.error('ERRORS:\n - ' + errors.join('\n - ')); process.exit(1); }
 
 for (const [nom, t] of Object.entries(sortides)) escriu(nom, t);
+// Materials imprimibles: materials/*/index.src.html → index.html (amb la lletra incrustada)
+for (const carpeta of readdirSync(join(ARREL, 'materials'))) {
+  const src = join('materials', carpeta, 'index.src.html');
+  try { readFileSync(join(ARREL, src)); } catch (e) { continue; }
+  escriu(join('materials', carpeta, 'index.html'), munta(src, { FONTS }));
+  console.log(`✓ materials/${carpeta}/index.html`);
+}
 copyFileSync(join(ARREL, 'apps-script/comu/Comu.gs'), join(ARREL, 'apps-script/mon/Comu.gs'));
 copyFileSync(join(ARREL, 'apps-script/comu/Comu.gs'), join(ARREL, 'apps-script/admin/Comu.gs'));
 

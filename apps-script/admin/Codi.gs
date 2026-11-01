@@ -79,6 +79,7 @@ function api(accio, args) {
       case 'ajusta':        r = ajusta_(args.id, args.sessio, args.ajust, args.observacio); break;
       case 'missions':      r = missionsEditor_(args.sessio); break;
       case 'desaMissions':  r = desaMissions_(args.sessio, args.files); break;
+      case 'restauraMissio': r = restauraMissio_(args.sessio); break;
       case 'configura':     r = configura_(args.clau, args.valor); break;
       case 'reiniciaPin':   r = reiniciaPin_(args.id); break;
       case 'projeccio':     r = projeccio_(); break;
@@ -182,40 +183,66 @@ function sembraAlumnesProva_() {
   afegeixFiles_('ALUMNES', nous);
 }
 
-function sembraMissions_() {
-  if (llegeix_('MISSIONS').files.length) return;
+/** Missions per defecte. Només se sembren les sessions que no tenen cap fila a MISSIONS. */
+function missionsPerDefecte_() {
   var P = 'publicada', E = 'esborrany';
-  var files = [
-    // sessio, tipus, clau, ordre, text, imatge, opcions, correcta, estat
-    ['S1', 'missio',  'titol',     1, 'El primer camí', '', '', '', P],
-    ['S1', 'missio',  'frase',     2, 'Fes un camí que l\'Ozobot pugui fer sencer.', '', '', '', P],
-    ['S1', 'abans',   'prediccio', 3, 'Mira el teu camí. L\'Ozobot el farà sencer?', 'ozo-cami',
-      'si|Sí, sencer|pred-si;perd|Es perdrà|pred-perd;nose|No ho sé|pred-nose', '', P],
-    ['S1', 'nivell',  'n1',        4, 'Fes un camí de SORTIDA a la teva lletra. L\'Ozobot l\'ha de fer sencer.', 'ozo-cami', '', '', P],
-    ['S1', 'control', 'n1',        5, 'L\'Ozobot ha arribat a la teva lletra?', 'ozo-arriba', '', '', P],
-    ['S1', 'nivell',  'n2',        6, 'Ensenya-ho al mestre. Explica què has canviat quan ha fallat.', 'mestre', '', '', P],
-    ['S1', 'nivell',  'n3',        7, 'Agafa una carta de repte extra.', 'carta', '', '', P],
-    ['S1', 'encallat', 'encen',    8, 'No s\'encén', 'e-encen',
-      'Prem el botó del costat un moment. Si no fa llum, no té bateria: demana ajuda.', 'ozo-boto', P],
-    ['S1', 'encallat', 'perd',     9, 'Es perd a la línia', 'e-perd',
-      'Fes la línia més gruixuda. Fes les corbes suaus. Que no hi hagi forats.', 'linia-gruixuda', P],
-    ['S1', 'encallat', 'altra',   10, 'Fa una altra cosa', 'e-altra',
-      'Posa\'l al cercle negre. Mantén el botó premut fins que faci llum blanca.', 'ozo-calibra', P],
-    ['S1', 'encallat', 'nose',    11, 'No sé què he de fer', 'e-nose',
-      'Amb el retolador gruixut, fes una línia de SORTIDA a la teva lletra. Després hi poses l\'Ozobot.', 'ozo-cami', P],
-    ['S1', 'sortida', 'diag',     12, 'L\'Ozobot s\'atura aquí. Per què?', 'ozo-forat',
-      'a|La línia té un forat|op-forat;b|La línia és massa llarga|op-llarga;c|El full és massa gran|op-full', 'a', P],
-    ['S1', 'sortida', 'eina',     13, 'Quina línia segueix millor l\'Ozobot?', '',
-      'a|Gruixuda i negra|linia-gruixuda;b|Fina, de llapis|linia-fina;c|Groga|linia-groga', 'a', P],
-    ['S1', 'variant', 'A',        14, 'Arribada A', '', '', '', P],
-    ['S1', 'variant', 'B',        15, 'Arribada B', '', '', '', P],
-    ['S1', 'variant', 'C',        16, 'Arribada C', '', '', '', P]
+  var f = {};
+  // sessio, tipus, clau, ordre, text, imatge, opcions, correcta, estat
+  f.S1 = [
+    ['S1', 'missio',  'titol',     1, 'Primers codis', '', '', '', P],
+    ['S1', 'missio',  'frase',     2, 'Pinta codis de colors perquè l\'Ozobot faci el que tu vols.', '', '', '', P],
+    ['S1', 'missio',  'xuleta',    3, 'ozobot', '', '', '', P],
+    ['S1', 'abans',   'pla',       4, 'Abans de pintar: quin d\'aquests és el codi de la teva missió? Mira la xuleta («Codis»).', '',
+      'tornado|Vermell · Verd · Vermell · Verd|codi:RGRG;zigazaga|Blau · Negre · Verd · Vermell|codi:BKGR;turbo|Blau · Verd · Blau|codi:BGB', '', P],
+    ['S1', 'nivell',  'n1',        5, 'Calibra l\'Ozobot al cercle negre. Pinta el codi LENT a la casella 1 i posa l\'Ozobot a SORTIDA.', 'ozo-casella1', '', '', P],
+    ['S1', 'control', 'n1',        6, 'Després de la casella 1, l\'Ozobot va més a poc a poc?', 'ozo-casella1', '', '', P],
+    ['S1', 'nivell',  'n2',        7, 'Pinta el codi de la teva missió a la casella 2. Ensenya-ho al mestre i explica com l\'has triat.', 'mestre', '', '', P],
+    ['S1', 'nivell',  'n3',        8, 'Agafa una carta de repte i pinta la casella 3.', 'carta', '', '', P],
+    ['S1', 'encallat', 'nollegeix', 9, 'No fa cas del codi', 'codi-forat',
+      'Mira el codi: els colors en l\'ordre de la xuleta, en el sentit de la fletxa, enganxats i sense blanc entremig.', 'codi-be', P],
+    ['S1', 'encallat', 'torna',   10, 'Torna enrere', 'ozo-buit',
+      'És normal: quan la casella següent és buida, l\'Ozobot hi arriba i fa mitja volta. Pinta-la quan toqui.', 'ozo-buit', P],
+    ['S1', 'encallat', 'perd',    11, 'Es perd a la línia', 'e-perd',
+      'Torna a calibrar-lo: al cercle negre, mantén el botó premut fins que faci llum blanca.', 'ozo-calibra', P],
+    ['S1', 'encallat', 'nose',    12, 'No sé quin codi és', 'e-nose',
+      'Prem «Codis» i busca la teva missió. Copia els colors d\'esquerra a dreta, com diu la fletxa.', 'codi-be', P],
+    ['S1', 'sortida', 'diag',     13, 'L\'Ozobot passa per aquest codi i no fa res. Per què?', 'codi-forat',
+      'a|Hi ha blanc entre els colors|;b|El codi és massa curt|;c|Té massa colors|', 'a', P],
+    ['S1', 'sortida', 'eina',     14, 'Quin codi fa anar l\'Ozobot a TURBO?', '',
+      'a|' + 'Blau · Verd · Blau' + '|codi:BGB;b|Vermell · Negre · Vermell|codi:RKR;c|Verd · Negre · Verd|codi:GKG', 'a', P],
+    ['S1', 'variant', 'A',        15, 'Tornado', '', '', '', P],
+    ['S1', 'variant', 'B',        16, 'Ziga-zaga', '', '', '', P],
+    ['S1', 'variant', 'C',        17, 'Turbo', '', '', '', P]
   ];
   ORDRE_SESSIONS.slice(1).forEach(function (s) {
-    files.push([s, 'missio', 'titol', 1, SESSIONS[s].nom, '', '', '', E]);
-    files.push([s, 'missio', 'frase', 2, 'Pendent de redactar a partir del fitxer ACTIVITAT.', '', '', '', E]);
+    f[s] = [[s, 'missio', 'titol', 1, SESSIONS[s].nom, '', '', '', E],
+            [s, 'missio', 'frase', 2, 'Pendent de redactar a partir del fitxer ACTIVITAT.', '', '', '', E]];
   });
-  afegeixFiles_('MISSIONS', files);
+  return f;
+}
+
+function sembraMissions_() {
+  var d = llegeix_('MISSIONS');
+  var teFiles = {};
+  d.files.forEach(function (r) { teFiles[String(r[0])] = true; });
+  var defecte = missionsPerDefecte_();
+  var noves = [];
+  ORDRE_SESSIONS.forEach(function (s) { if (!teFiles[s]) noves = noves.concat(defecte[s]); });
+  afegeixFiles_('MISSIONS', noves);
+}
+
+/** Substitueix la missió d'una sessió per la de per defecte (botó de l'administrador). */
+function restauraMissio_(sessio) {
+  var defecte = missionsPerDefecte_()[sessio];
+  if (!defecte) throw new Error('Sessió sense missió per defecte');
+  return ambBloqueig_(function () {
+    var d = llegeix_('MISSIONS');
+    var altres = d.files.filter(function (f) { return String(f[0]) !== sessio; });
+    reescriu_(d, altres.concat(defecte));
+    oblidaCache_('missions');
+    afegeixFiles_('REGISTRE', [[new Date(), '', sessio, 'restaura-missio', '', 'mestre']]);
+    return missionsEditor_(sessio);
+  });
 }
 
 function generaIds() {
@@ -700,7 +727,7 @@ function projeccio_() {
   return {
     oberta: true, sessio: s, grup: g, estat: String(oberta.estat), eina: EINES[SESSIONS[s].eina] || 'Totes les eines',
     zona: zona ? zona.nom : '', color: zona ? zona.color : '#ddd', dibuix: zona ? zona.dibuix : '',
-    titol: m ? m.titol : SESSIONS[s].nom, frase: m ? m.frase : '',
+    titol: m ? m.titol : SESSIONS[s].nom, frase: m ? m.frase : '', xuleta: m ? m.xuleta : '',
     nivells: m ? { n1: (m.nivells.n1 || {}).text || '', n2: (m.nivells.n2 || {}).text || '', n3: (m.nivells.n3 || {}).text || '' } : {},
     imatges: m ? { n1: (m.nivells.n1 || {}).imatge || '', n2: (m.nivells.n2 || {}).imatge || '', n3: (m.nivells.n3 || {}).imatge || '' } : {},
     fita: { ambN2: fita.ambN2, objectiu: fita.objectiu, assolida: fita.assolida },

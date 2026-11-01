@@ -35,10 +35,26 @@ svg { display: block; width: 100%; height: 100%; }
 .far .etiq { font-size: 3.4vh; font-weight: 700; white-space: nowrap; }
 .metre { flex: 1 1 auto; height: 3vh; border-radius: 1.5vh; background: #ece3cf; position: relative; overflow: hidden; }
 .metre span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 1.5vh; background: var(--daurat); transition: width 1s ease; }
-.codi { background: #f6e7c4; border: 3px solid var(--daurat); border-radius: 3vh; padding: 1.6vh 2vw; font-size: 4vh; font-weight: 700; }
+.codi-classe { background: #f6e7c4; border: 3px solid var(--daurat); border-radius: 3vh; padding: 1.6vh 2vw; font-size: 4vh; font-weight: 700; }
 .gran { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3vh; text-align: center; }
 .gran h1 { font-size: 9vh; margin: 0; }
 .gran p { font-size: 5vh; margin: 0; }
+.cos-treball { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 2vw; }
+.cos-treball.amb-xuleta { display: grid; grid-template-columns: 1fr 2.1fr; }
+.cos-treball.amb-xuleta .nivells { grid-template-columns: 1fr; grid-auto-rows: 1fr; gap: 1.6vh; }
+.cos-treball.amb-xuleta .nivell { padding: 1.4vh 1.4vw; gap: 0.6vh; }
+.cos-treball.amb-xuleta .nivell .num { font-size: 2.6vh; }
+.cos-treball.amb-xuleta .nivell p { font-size: 2.4vh; }
+.cos-treball.amb-xuleta .nivell .il { display: none; }
+.panell-xuleta { background: #fffdf8; box-shadow: var(--ombra); border-radius: 3vh; padding: 1.6vh 1.6vw 2.4vh; min-height: 0; }
+.xuleta { display: flex; flex-direction: column; gap: 0.8vh; height: 100%; }
+.xuleta-grup h3 { margin: 0 0 0.6vh; font-size: 2.4vh; font-weight: 600; color: var(--suau); }
+.xuleta-codis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8vh 1vw; }
+.xuleta-codi { display: flex; flex-direction: column; align-items: center; gap: 0.4vh; padding: 0.3vh 0.6vw; border-radius: 1.6vh; box-shadow: inset 0 0 0 1px var(--vora); }
+.xuleta-nom { font-size: 2.6vh; font-weight: 600; }
+.xuleta-codi svg.codi { width: 100%; height: 7vh; }
+.panell-xuleta { overflow: hidden; }
+.xuleta-regla { margin: auto 0 0; font-size: 2.4vh; font-weight: 600; color: var(--tinta); }
 .peu { font-size: 2.4vh; color: var(--suau); text-align: right; }
 </style>
 </head>
@@ -51,17 +67,20 @@ svg { display: block; width: 100%; height: 100%; }
   </div>
   <div id="treball" hidden style="display:flex; flex-direction:column; gap:2.4vh; flex:1 1 auto; min-height:0;">
     <p class="frase" id="frase"></p>
+    <div class="cos-treball" id="cos-treball">
     <div class="nivells">
       <div class="nivell"><span class="num">Nivell 1</span><p id="n1"></p><div class="il" id="il1"></div></div>
       <div class="nivell"><span class="num">Nivell 2</span><p id="n2"></p><div class="il" id="il2"></div></div>
       <div class="nivell"><span class="num">Nivell 3</span><p id="n3"></p><div class="il" id="il3"></div></div>
+    </div>
+    <div class="panell-xuleta" id="panell-xuleta" hidden></div>
     </div>
   </div>
   <div class="gran" id="sortida" hidden><h1>Targeta de sortida</h1><p>Obre el Chromebook i respon les preguntes.</p></div>
   <div class="gran" id="buida" hidden><h1>RoboMón</h1><p>Encara no hi ha cap sessió oberta.</p></div>
   <div class="baix" id="baix" hidden>
     <div class="far"><span class="etiq" id="far-text"></span><div class="metre"><span id="far-metre"></span></div></div>
-    <div class="codi" id="codi" hidden></div>
+    <div class="codi-classe" id="codi" hidden></div>
   </div>
 </div>
 <script>
@@ -89,7 +108,10 @@ function pinta(p) {
   $('n1').textContent = p.nivells.n1 || '';
   $('n2').textContent = p.nivells.n2 || '';
   $('n3').textContent = p.nivells.n3 || '';
-  ['1', '2', '3'].forEach(k => { const im = (p.imatges || {})['n' + k]; $('il' + k).innerHTML = im && IL[im] ? IL[im] : ''; });
+  $('cos-treball').classList.toggle('amb-xuleta', !!p.xuleta);
+  $('panell-xuleta').hidden = !p.xuleta;
+  $('panell-xuleta').innerHTML = p.xuleta ? xuletaHTML(p.xuleta) : '';
+  ['1', '2', '3'].forEach(k => { const im = (p.imatges || {})['n' + k]; $('il' + k).innerHTML = dibuix(im); });
   $('far-text').textContent = p.fita.assolida ? 'El far del grup és encès! ✓' : 'El far del grup: ' + p.fita.ambN2 + ' de ' + p.fita.objectiu + ' amb nivell 2';
   $('far-metre').style.width = Math.min(100, Math.round(p.fita.ambN2 / Math.max(1, p.fita.objectiu) * 100)) + '%';
   $('codi').hidden = !p.codi;

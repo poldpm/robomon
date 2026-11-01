@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<title>S1 · Primers codis · RECURS (mestre)</title>
+<!-- RECURS: va a «El meu material». No conté cap nom d'alumne.
+     Imprimir a MIDA REAL (100 %, sense «ajusta a la pàgina»). El full del camí ha de sortir exacte. -->
+<style>
+/*@@FONTS@@*/
+@page { size: A4; margin: 0; }
+@page apaisat { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Lexend", "Atkinson Hyperlegible", Verdana, "Segoe UI", Arial, sans-serif; color: #000; background: #e9ecef; }
+b, strong, h1, h2, h3, th { font-weight: 600; }
+.full { width: 210mm; height: 297mm; padding: 14mm 15mm; margin: 8mm auto; background: #fff; position: relative; overflow: hidden; page-break-after: always; break-after: page; }
+.full.apaisat { page: apaisat; width: 297mm; height: 210mm; padding: 0; }
+@media print { body { background: #fff; } .full { margin: 0; } .no-imprimir { display: none; } }
+h1 { font-size: 21pt; margin: 0 0 4mm; }
+h2 { font-size: 14pt; margin: 5mm 0 2mm; }
+p, li, td, th { font-size: 10.5pt; line-height: 1.32; }
+.peu { position: absolute; bottom: 8mm; right: 15mm; font-size: 8.5pt; color: #444; }
+table { border-collapse: collapse; width: 100%; }
+td, th { border: 1px solid #000; padding: 1.6mm 2.6mm; vertical-align: top; text-align: left; }
+th { background: #eee; }
+.caixa { border: 1.5px solid #000; border-radius: 4mm; padding: 3mm 4mm; margin: 3mm 0; }
+.check li { list-style: none; margin-left: -6mm; }
+.check li::before { content: "☐  "; font-size: 12pt; }
+.codi-txt { font-family: inherit; font-weight: 600; letter-spacing: .5px; white-space: nowrap; }
+/* Xuleta en color */
+.xuleta-a5 { height: 133mm; border: 1px dashed #888; border-radius: 3mm; padding: 6mm 7mm; margin-bottom: 4mm; display: flex; flex-direction: column; gap: 2.5mm; }
+.xuleta-a5 h2 { margin: 0; font-size: 15pt; }
+.xg h3 { margin: 0 0 1.5mm; font-size: 11pt; color: #333; }
+.xc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm 3mm; }
+.xi { border: 0.4mm solid #bbb; border-radius: 2mm; padding: 1.5mm 2mm; display: flex; flex-direction: column; align-items: center; gap: 1mm; }
+.xi span { font-size: 10.5pt; font-weight: 600; }
+.xi svg { width: 100%; height: 11mm; }
+.regla { font-size: 9.5pt; margin: auto 0 0; }
+/* Cartes */
+.cartes { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 86mm); }
+.carta { border: 1px dashed #000; padding: 8mm; display: flex; flex-direction: column; gap: 4mm; overflow: hidden; }
+.carta .t { font-size: 12pt; font-weight: 600; border: 1.5px solid #000; border-radius: 3mm; padding: 1mm 3mm; align-self: flex-start; }
+.carta p { font-size: 17pt; line-height: 1.3; margin: 0; }
+.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
+/* Pòsters */
+.poster { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 12mm; }
+.poster h1 { font-size: 52pt; line-height: 1.15; margin: 0; }
+.poster p { font-size: 24pt; margin: 0; }
+.boto-imprimir { position: fixed; right: 16px; top: 16px; font: 600 18px sans-serif; padding: 12px 18px; border-radius: 10px; border: 2px solid #000; background: #fff; cursor: pointer; }
+</style>
+</head>
+<body>
+<button class="boto-imprimir no-imprimir" onclick="window.print()">Imprimeix (mida real, 100 %)</button>
+
+<!-- 1 · GUIÓ -->
+<section class="full">
+  <h1>S1 · Primers codis · Guió del mestre</h1>
+  <p><b>Eina:</b> Ozobot Evo amb <b>codis de color</b> pintats amb retolador. <b>Equips:</b> 6 robots, equips de 3 que fa l'app.
+  <b>Cada nen té el seu full del camí</b> i la seva missió personal (Tornado, Ziga-zaga o Turbo), que li surt al Chromebook.</p>
+  <h2>Migdia (30 min)</h2>
+  <ul class="check">
+    <li>6 Ozobot carregats. Calibra'ls un cop al cercle negre del full</li>
+    <li>Retoladors de l'Ozobot per taula: negre, vermell, verd i blau (punta ampla)</li>
+    <li>Fulls del camí (pàgina 5) a <b>mida real</b>: un per alumne + 4 de reserva. Es poden fotocopiar en B/N</li>
+    <li>Xuletes de codis (pàgina 6) <b>en color</b>: 3 fulls = 6 xuletes, una per taula</li>
+    <li>Cartes de repte (pàgina 7) retallades, en un sobre</li>
+    <li><b>Prova un full</b>: posa l'Ozobot a SORTIDA. A la casella 1 buida ha de fer mitja volta. Pinta-hi LENT i comprova que alenteix</li>
+    <li>Tauler: <b>Grup → S1 → Obre la sessió</b>. Projecció ↗ a la Promethean: hi surt la xuleta</li>
+  </ul>
+  <h2>Minut a minut</h2>
+  <table>
+    <tr><th style="width:24mm">Hora</th><th>Què passa</th><th style="width:44mm">Pantalla</th></tr>
+    <tr><td>14:55–15:03</td><td>Desplegament amb ells: cada capsa té el seu lloc.</td><td>Projecció</td></tr>
+    <tr><td>15:03–15:12</td><td><b>Entrar a RoboMón</b>: company de viatge (1 clic) i clau de 3 dibuixos (4 clics).</td><td>Chromebook</td></tr>
+    <tr><td>15:12–15:20</td><td><b>Demostració</b> a la taula del mestre, amb la xuleta projectada: 1) un codi són quadrats de colors enganxats dins la línia; 2) es pinten en el sentit de la fletxa; 3) pinto LENT a la casella 1 i ho veiem. <b>Frase:</b> «Pinta codis de colors perquè l'Ozobot faci el que tu vols.»</td><td>Projecció (xuleta)</td></tr>
+    <tr><td>15:20–16:12</td><td><b>Treball.</b> N1: LENT a la casella 1. Pla (l'app pregunta quin codi és el de la seva missió). N2: codi de la missió a la casella 2 → «Ja ho puc ensenyar». N3: carta de repte → casella 3.</td><td>Robot (Chromebook ~4 min)</td></tr>
+    <tr><td>16:12–16:22</td><td>Al tauler: <b>Targeta de sortida</b>. Responen 2 preguntes.</td><td>Chromebook</td></tr>
+    <tr><td>16:22–16:28</td><td>Marge. <b>Tanca la sessió</b>.</td><td>—</td></tr>
+    <tr><td>16:28–16:40</td><td>Recollida: Ozobots apagats, retoladors tapats, fulls a la safata.</td><td>—</td></tr>
+  </table>
+  <div class="peu">S1 · Primers codis · RECURS · 1</div>
+</section>
+
+<!-- 2 · TARGETA DE DEMOSTRACIÓ -->
+<section class="full">
+  <h1>Targeta de demostració</h1>
+  <p>Quan un nen és a «Volen ensenyar-ho»: mira el robot <b>sobre el seu full</b> i fes-li <b>les dues preguntes, sempre les mateixes</b>. 30–45 segons. Un clic al mòbil.</p>
+  <div class="caixa">
+    <h2 style="margin-top:0">Nivell 2 · Les dues preguntes</h2>
+    <p style="font-size:15pt; margin: 2mm 0;"><b>1.</b> «Ensenya-me'l. Fa el que diu la teva missió?»</p>
+    <p style="font-size:15pt; margin: 2mm 0;"><b>2.</b> «Com has sabut quin codi havies de pintar? I si ha fallat, què has canviat?»</p>
+  </div>
+  <table>
+    <tr><th style="width:58mm">Botó al mòbil</th><th>Quan el prems</th><th style="width:30mm">Nota</th></tr>
+    <tr><td><b>N2 · Funciona i ho explica</b></td><td>A la casella 2 fa la seva missió (tornado, ziga-zaga o turbo) <b>i</b> diu com l'ha trobat (la xuleta, l'ordre dels colors, la fletxa).</td><td>8<br>(8,5 si abans havia dit «no me n'he sortit»)</td></tr>
+    <tr><td><b>N2 · No funciona, però sap per què</b></td><td>No ho fa, però <b>assenyala la causa</b>: blanc entre quadrats, colors girats, quadrats massa petits, codi fora de la línia.</td><td>7,5</td></tr>
+    <tr><td><b>Encara no</b></td><td>Ni funciona ni sap per què. Una pista i tornarà a la cua. <b>No treu punts.</b></td><td>—</td></tr>
+    <tr><td><b>N1 no és cert</b></td><td>Havia marcat que l'Ozobot alentia a la casella 1 i no és així.</td><td>torna a 0</td></tr>
+  </table>
+  <div class="caixa">
+    <h2 style="margin-top:0">Nivell 3</h2>
+    <p>Ha agafat una carta de repte i ha pintat la casella 3. <b>N3 · Fet i ho explica</b> (10) si diu quin codi ha triat i per què. <b>N3 · Fet</b> (9) si només funciona.</p>
+  </div>
+  <h2>Regles que cal dir en veu alta (una vegada)</h2>
+  <ul>
+    <li><b>Cadascú el seu full i la seva missió.</b> El codi del company no et serveix.</li>
+    <li><b>Qui ajuda parla, no toca.</b> Mans al darrere.</li>
+    <li><b>Dir «no me n'he sortit» està bé:</b> et dona una pista i, si cal, vinc jo.</li>
+  </ul>
+  <div class="peu">S1 · Primers codis · RECURS · 2</div>
+</section>
+
+<!-- 3 · SOLUCIONARI -->
+<section class="full">
+  <h1>Solucionari i notes didàctiques</h1>
+  <p style="font-size:9.5pt">Codis: <b>Ozobot Evo · Color Code Chart</b> (Ozo Edu, rev. 12-23), comprovats amb la Pocket Guide. Ng = negre, Vm = vermell, Vd = verd, Bl = blau. Es llegeixen en el sentit de la marxa.</p>
+  <h2>Pla (l'app el pregunta abans de pintar) i nivell 2</h2>
+  <table>
+    <tr><th>Missió</th><th>Codi a la casella 2</th><th>Ull!</th></tr>
+    <tr><td>A · Tornado</td><td class="codi-txt">Vm · Vd · Vm · Vd</td><td>Al revés (Vd·Vm·Vd·Vm) és el <b>Giravolt</b>: fa una altra cosa.</td></tr>
+    <tr><td>B · Ziga-zaga</td><td class="codi-txt">Bl · Ng · Vd · Vm</td><td>Al revés (Vm·Vd·Ng·Bl) és <b>Camina enrere</b>.</td></tr>
+    <tr><td>C · Turbo</td><td class="codi-txt">Bl · Vd · Bl</td><td>3 colors: el 4t quadrat de la casella, de negre.</td></tr>
+  </table>
+  <h2>Targeta de sortida (es corregeix sola)</h2>
+  <table>
+    <tr><th style="width:80mm">Pregunta</th><th>Correcta</th></tr>
+    <tr><td>«L'Ozobot passa per aquest codi i no fa res. Per què?» (codi amb un blanc al mig)</td><td><b>Hi ha blanc entre els colors.</b> Pregunta de diagnòstic: suma +1 a qui no arriba a N1.</td></tr>
+    <tr><td>«Quin codi fa anar l'Ozobot a TURBO?»</td><td><b>Bl · Vd · Bl</b></td></tr>
+  </table>
+  <h2>Cartes de repte (nivell 3, casella 3)</h2>
+  <table>
+    <tr><th>Carta</th><th>Codi</th></tr>
+    <tr><td>S'atura 3 segons i continua</td><td class="codi-txt">Vm · Bl · Vm (Pausa)</td></tr>
+    <tr><td>Fa mitja volta</td><td class="codi-txt">Bl · Vm · Bl (Mitja volta)</td></tr>
+    <tr><td>Tota velocitat 3 segons</td><td class="codi-txt">Bl · Vd · Vm (Nitro)</td></tr>
+    <tr><td>Camina enrere</td><td class="codi-txt">Vm · Vd · Ng · Bl</td></tr>
+    <tr><td>Fa un giravolt</td><td class="codi-txt">Vd · Vm · Vd · Vm</td></tr>
+    <tr><td>Torna a la velocitat normal</td><td class="codi-txt">Vd · Ng · Vd (Normal)</td></tr>
+  </table>
+  <h2>Errors típics i pista que dona l'app</h2>
+  <table>
+    <tr><th style="width:44mm">El nen tria…</th><th>Pista</th><th style="width:52mm">Què sol passar</th></tr>
+    <tr><td>No fa cas del codi</td><td>Colors en l'ordre de la xuleta, en el sentit de la fletxa, enganxats i sense blanc.</td><td>Blanc entre quadrats, quadrats &lt; 4,5 mm, codi girat.</td></tr>
+    <tr><td>Torna enrere</td><td>Normal: la casella següent és buida i hi fa mitja volta.</td><td>Ha d'esperar el seu nivell per pintar-la.</td></tr>
+    <tr><td>Es perd a la línia</td><td>Calibrar al cercle negre fins a llum blanca.</td><td>Sense calibrar, llum del sol a sobre.</td></tr>
+    <tr><td>No sé quin codi és</td><td>Botó «Codis» i copiar d'esquerra a dreta.</td><td>Necessita la xuleta, no més text.</td></tr>
+  </table>
+  <div class="peu">S1 · Primers codis · RECURS · 3</div>
+</section>
+
+<!-- 4 · IMPREVISTOS, NORMES I ESCALA -->
+<section class="full">
+  <h1>Imprevistos, normes de l'Ozobot i escala</h1>
+  <h2>Normes oficials per dibuixar codis (guia Ozobot Evo)</h2>
+  <ul>
+    <li>Línia de <b>5 mm</b> (entre 4,5 i 6 mm). La punta ampla del retolador de l'Ozobot fa la mida justa.</li>
+    <li>Quadrats de <b>5 × 5 mm</b>, de la mateixa alçada que la línia, <b>enganxats</b>, sense blanc entremig.</li>
+    <li>Línia negra abans i després de cada codi. Codis a <b>5 cm</b> com a mínim l'un de l'altre, i a 2,5 cm de corbes i cruïlles. Mai a les corbes.</li>
+    <li>Ziga-zaga i Camina enrere necessiten <b>6,4 cm</b> de línia lliure després del codi. El full del camí ja ho respecta.</li>
+    <li>Paper blanc normal, no satinat. <b>Calibrar</b> al començar i si canvia la llum.</li>
+  </ul>
+  <h2>Si alguna cosa falla</h2>
+  <table>
+    <tr><td style="width:58mm"><b>Cap Ozobot llegeix cap codi</b></td><td>Calibra'ls. Retoladors secs → colors pàl·lids que no llegeix: canvia'ls.</td></tr>
+    <tr><td><b>A la casella buida no torna</b></td><td>Si salta el forat i continua, que el nen la pinti de negre fins que li toqui: el camí continua igual.</td></tr>
+    <tr><td><b>A un nen no li surt el món</b></td><td>Pla B (codi de la pissarra + dibuixos). Si tampoc: Pla C, tu marques els nivells al tauler.</td></tr>
+  </table>
+  <h2>Escala de nota de la sessió</h2>
+  <table>
+    <tr><th>Situació</th><th style="width:22mm">Nota</th></tr>
+    <tr><td>Present, sense cap registre</td><td>2</td></tr>
+    <tr><td>No arriba a N1, però diu on s'encalla (+1 si encerta el diagnòstic de la sortida)</td><td>3 · 4</td></tr>
+    <tr><td>N1 (+1 si ha fet el pla abans de pintar)</td><td>5 · 6</td></tr>
+    <tr><td>N2 · no funciona però sap per què · funciona i ho explica · ha fallat, ho ha diagnosticat i arreglat</td><td>7,5 · 8 · 8,5</td></tr>
+    <tr><td>N3 · fet · fet i explicat</td><td>9 · 10</td></tr>
+  </table>
+  <h2>Represa de la S2 (una frase)</h2>
+  <p class="caixa" style="font-size:13pt;">«La setmana passada vau donar ordres a l'Ozobot amb colors. Avui les ordres les donareu amb cartes.»</p>
+  <div class="peu">S1 · Primers codis · RECURS · 4</div>
+</section>
+
+<!-- 5 · FULL DEL CAMÍ (A4 apaïsat, mida real) -->
+<section class="full apaisat" id="full-cami"></section>
+
+<!-- 6 · XULETES EN COLOR (2 per full) -->
+<section class="full" id="full-xuletes"></section>
+
+<!-- 7 · CARTES DE REPTE -->
+<section class="full" style="padding: 14mm 15mm;"><div class="cartes" id="cartes"></div></section>
+
+<!-- 8–9 · PÒSTERS -->
+<section class="full poster">
+  <h1>Qui ajuda<br>parla,<br>no toca.</h1>
+  <p>Mans al darrere. Explica-ho amb paraules.</p>
+</section>
+<section class="full poster">
+  <h1>«No me n'he<br>sortit»<br>està bé.</h1>
+  <p>Et dona una pista. I si cal, ve el mestre.</p>
+</section>
+
+<script>
+/* ---------- Codis oficials (Ozobot Evo, Rev 12-23) ---------- */
+const COL = { K: '#141414', R: '#e0302f', G: '#3a9a46', B: '#1f7fd6' };
+const INI = { K: 'Ng', R: 'Vm', G: 'Vd', B: 'Bl' };
+const GRUPS = [
+  ['Velocitat', [['Lent', 'RKR'], ['Normal', 'GKG'], ['Ràpid', 'BKB'], ['Turbo', 'BGB'], ['Nitro (3 s)', 'BGR']]],
+  ['Moviments', [['Pausa (3 s)', 'RBR'], ['Mitja volta', 'BRB'], ['Tornado', 'RGRG'], ['Ziga-zaga', 'BKGR'], ['Giravolt', 'GRGR'], ['Camina enrere', 'RGKB']]]
+];
+function codiSVG(seq) {
+  const q = 14, m = 16, w = m * 2 + seq.length * q;
+  let s = `<svg viewBox="0 0 ${w} 30" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="12" width="${w}" height="${q}" fill="#141414"/>`;
+  [...seq].forEach((c, i) => { const x = m + i * q; s += `<rect x="${x}" y="12" width="${q}" height="${q}" fill="${COL[c]}"/><text x="${x + q / 2}" y="${12 + q / 2 + 2.6}" text-anchor="middle" font-size="6.4" font-weight="600" fill="#fff" font-family="Lexend, Verdana, sans-serif">${INI[c]}</text>`; });
+  return s + `<path d="M${m} 5 H${w - m - 4}" stroke="#333" stroke-width="1.4"/><path d="M${w - m - 7} 2 L${w - m - 2} 5 L${w - m - 7} 8" fill="none" stroke="#333" stroke-width="1.4"/></svg>`;
+}
+const xuleta = () => `<div class="xuleta-a5"><h2>Codis de l'Ozobot</h2>` + GRUPS.map(([g, cs]) =>
+  `<div class="xg"><h3>${g}</h3><div class="xc">${cs.map(([n, s]) => `<div class="xi"><span>${n}</span>${codiSVG(s)}</div>`).join('')}</div></div>`).join('') +
+  `<p class="regla"><b>Quadrats enganxats, sense blanc entremig. Pinta'ls en el sentit de la fletxa.</b> Si el codi té 3 colors, el 4t quadrat de la casella va de negre.</p></div>`;
+document.getElementById('full-xuletes').innerHTML = xuleta() + xuleta() + '<div class="peu">S1 · Primers codis · RECURS · 6 · imprimir EN COLOR</div>';
+
+/* ---------- Full del camí: A4 apaïsat, unitats = mm reals ---------- */
+(function () {
+  const L = 5;                       // gruix de línia
+  const y1 = 62, y2 = 117, y3 = 172; // files (55 mm entre línies paral·leles)
+  const xa = 52, xb = 250;           // extrems de les rectes
+  const r = (y2 - y1) / 2;           // radi de les corbes
+  const caselles = [ { n: 1, x: 82, y: y1 }, { n: 2, x: 157, y: y1 }, { n: 3, x: 112, y: y3 } ];   // inici de cada casella (4 × 5 mm)
+  let s = `<svg viewBox="0 0 297 210" width="297mm" height="210mm" xmlns="http://www.w3.org/2000/svg" font-family="Lexend, Verdana, sans-serif">`;
+  s += `<text x="14" y="16" font-size="5">Nom: ______________________________</text>`;
+  s += `<text x="283" y="16" font-size="4.2" text-anchor="end" font-weight="600">RoboMón · S1 · Primers codis</text>`;
+  // cercle de calibratge
+  s += `<circle cx="25" cy="33" r="11" fill="#000"/><text x="25" y="50" font-size="3.6" text-anchor="middle">Calibra aquí</text>`;
+  // recorregut (amb forats a les caselles)
+  const tram = (xi, xf, y) => `<path d="M${xi} ${y} H${xf}" stroke="#000" stroke-width="${L}" fill="none"/>`;
+  const forats = { [y1]: [], [y3]: [] };
+  caselles.forEach(c => forats[c.y].push(c.x));
+  const fila = (y, xi, xf) => { let x = xi, t = ''; forats[y] && forats[y].sort((a, b) => a - b).forEach(fx => { t += tram(x, fx, y); x = fx + 20; }); return t + tram(x, xf, y); };
+  s += fila(y1, xa, xb);
+  s += `<path d="M${xb} ${y1} A ${r} ${r} 0 0 1 ${xb} ${y2}" stroke="#000" stroke-width="${L}" fill="none"/>`;
+  s += tram(xb, xa, y2);
+  s += `<path d="M${xa} ${y2} A ${r} ${r} 0 0 0 ${xa} ${y3}" stroke="#000" stroke-width="${L}" fill="none"/>`;
+  s += fila(y3, xa, 262);
+  // caselles: 4 quadrats de 5 mm amb vora gris molt clara, número i fletxa
+  caselles.forEach(c => {
+    for (let k = 0; k < 4; k++) s += `<rect x="${c.x + k * 5 + 0.15}" y="${c.y - 2.35}" width="4.7" height="4.7" fill="none" stroke="#c4c4c4" stroke-width="0.2"/>`;
+    s += `<text x="${c.x + 10}" y="${c.y - 9}" font-size="4.6" font-weight="600" text-anchor="middle">${c.n}</text>`;
+    s += `<path d="M${c.x + 2} ${c.y - 6} H${c.x + 17}" stroke="#444" stroke-width="0.5"/><path d="M${c.x + 15} ${c.y - 7.4} L${c.x + 18} ${c.y - 6} L${c.x + 15} ${c.y - 4.6}" fill="none" stroke="#444" stroke-width="0.5"/>`;
+  });
+  s += `<text x="${xa}" y="${y1 - 8}" font-size="4.4" font-weight="600">SORTIDA →</text>`;
+  s += `<text x="262" y="${y3 + 11}" font-size="4.4" font-weight="600" text-anchor="end">ARRIBADA · agafa l'Ozobot</text>`;
+  // instruccions
+  s += `<g font-size="3.7"><text x="14" y="194">1 · Calibra l'Ozobot al cercle negre.   2 · Pinta el codi a la casella: colors enganxats, en el sentit de la fletxa.   3 · Posa'l a SORTIDA.</text>`;
+  s += `<text x="14" y="200">Si una casella és buida, l'Ozobot hi arriba i fa mitja volta: és normal. Si el codi té 3 colors, el 4t quadrat va de negre.</text></g>`;
+  s += `<text x="283" y="205" font-size="2.8" text-anchor="end" fill="#666">Imprimir a mida real (100 %). Línia 5 mm · caselles 4 × 5 mm</text>`;
+  document.getElementById('full-cami').innerHTML = s + '</svg>';
+})();
+
+/* ---------- Cartes de repte (nivell 3) ---------- */
+const CARTES = [
+  ['Pausa', 'Fes que l\'Ozobot s\'aturi 3 segons i després continuï.'],
+  ['Mitja volta', 'Fes que l\'Ozobot faci mitja volta a la casella 3.'],
+  ['Nitro', 'Fes que l\'Ozobot vagi a tota velocitat durant 3 segons.'],
+  ['Enrere', 'Fes que l\'Ozobot camini enrere.'],
+  ['Giravolt', 'Fes que l\'Ozobot faci un giravolt.'],
+  ['Normal', 'L\'Ozobot va lent des de la casella 1. Torna\'l a la velocitat normal.']
+];
+document.getElementById('cartes').innerHTML = CARTES.map(([t, p]) =>
+  `<div class="carta"><span class="t">Repte extra · ${t}</span><p>${p}</p><p class="nota">Busca el codi a la xuleta. Pinta'l a la casella 3.</p></div>`).join('');
+document.querySelectorAll('.full').forEach((f, i) => { if (!f.querySelector('.peu') && !f.classList.contains('apaisat')) f.insertAdjacentHTML('beforeend', `<div class="peu">S1 · Primers codis · RECURS · ${i + 1}</div>`); });
+</script>
+</body>
+</html>

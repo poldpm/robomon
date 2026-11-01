@@ -183,6 +183,7 @@ td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
       <select id="sel-missio" aria-label="Sessió de la missió"></select>
       <button class="boto clar" id="b-afegeix">Afegeix una fila</button>
       <button class="boto verd" id="b-desa-missio">Desa</button>
+      <button class="boto clar" id="b-restaura-missio">Restaura la missió per defecte</button>
     </div>
     <div class="taula-ample"><table class="ed-missio" id="taula-missio"></table></div>
   </section>
@@ -425,6 +426,15 @@ $('b-desa-missio').onclick = () => {
   llegeixMissio();
   crida('desaMissions', { sessio: A.missio.sessio, files: A.missio.files }).then(m => { A.missio = m; pintaMissio(); avis('Missió desada. Els alumnes la veuran en 1 minut.'); return crida('inici'); })
     .then(i => { A.inici = i; pintaSelectors(); });
+};
+
+$('b-restaura-missio').onclick = () => {
+  const ses = A.missio.sessio;
+  $('dialeg-cos').innerHTML = `<h2>Restaurar la missió ${ses}?</h2><p class="info">Es substitueixen totes les files de ${ses} per la versió per defecte. Els canvis que hi hagis fet es perden.</p>
+    <div class="grup-botons"><button class="boto clar" id="no-rest">No</button><button class="boto fosc" id="si-rest">Sí, restaura-la</button></div>`;
+  $('dialeg').hidden = false;
+  $('no-rest').onclick = tancaModal;
+  $('si-rest').onclick = () => { tancaModal(); crida('restauraMissio', { sessio: ses }).then(m => { A.missio = m; pintaMissio(); avis('Missió restaurada'); return crida('inici'); }).then(i => { A.inici = i; pintaSelectors(); }); };
 };
 
 /* ---------- SESSIONS ---------- */
