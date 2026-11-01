@@ -195,9 +195,10 @@ function missionsPerDefecte_() {
     ['S1', 'missio',  'titol',     1, 'Primers codis', '', '', '', P],
     ['S1', 'missio',  'frase',     2, 'Pinta codis de colors perquè l\'Ozobot faci el que tu vols.', '', '', '', P],
     ['S1', 'missio',  'xuleta',    3, 'ozobot', '', '', '', P],
-    ['S1', 'abans',   'pla',       4, 'Abans de pintar: quin d\'aquests és el codi de la teva missió? Mira la xuleta («Codis»).', '',
+    ['S1', 'abans',   'pla-n2',    4, 'Abans de pintar la casella 2: quin d\'aquests és el codi de la teva missió? Mira la xuleta («Codis»).', '',
       'tornado|Vermell · Verd · Vermell · Verd|codi:RGRG;zigazaga|Blau · Negre · Verd · Vermell|codi:BKGR;turbo|Blau · Verd · Blau|codi:BGB', '', P],
-    ['S1', 'nivell',  'n1',        5, 'Calibra l\'Ozobot al cercle negre. Pinta el codi LENT a la casella 1 i posa l\'Ozobot a SORTIDA.', 'ozo-casella1', '', '', P],
+    ['S1', 'control', 'c0',        5, 'Calibra l\'Ozobot: al cercle negre, mantén el botó fins que faci llum blanca i deixa\'l anar. Al final fa llum verda?', 'ozo-calibra', '', '', P],
+    ['S1', 'nivell',  'n1',        5, 'Pinta el codi LENT a la casella 1. Posa l\'Ozobot a SORTIDA.', 'ozo-casella1', '', '', P],
     ['S1', 'control', 'n1',        6, 'Després de la casella 1, l\'Ozobot va més a poc a poc?', 'ozo-casella1', '', '', P],
     ['S1', 'nivell',  'n2',        7, 'Pinta el codi de la teva missió a la casella 2. Ensenya-ho al mestre i explica com l\'has triat.', 'mestre', '', '', P],
     ['S1', 'nivell',  'n3',        8, 'Agafa una carta de repte i pinta la casella 3.', 'carta', '', '', P],
@@ -206,7 +207,7 @@ function missionsPerDefecte_() {
     ['S1', 'encallat', 'torna',   10, 'Torna enrere', 'ozo-buit',
       'És normal: quan la casella següent és buida, l\'Ozobot hi arriba i fa mitja volta. Pinta-la quan toqui.', 'ozo-buit', P],
     ['S1', 'encallat', 'perd',    11, 'Es perd a la línia', 'e-perd',
-      'Torna a calibrar-lo: al cercle negre, mantén el botó premut fins que faci llum blanca.', 'ozo-calibra', P],
+      'Torna a calibrar-lo: al cercle negre, mantén el botó fins que faci llum blanca. Ha d\'acabar fent llum verda. Si fa llum vermella, torna-hi.', 'ozo-calibra', P],
     ['S1', 'encallat', 'nose',    12, 'No sé quin codi és', 'e-nose',
       'Prem «Codis» i busca la teva missió. Copia els colors d\'esquerra a dreta, com diu la fletxa.', 'codi-be', P],
     ['S1', 'sortida', 'diag',     13, 'L\'Ozobot passa per aquest codi i no fa res. Per què?', 'codi-forat',
@@ -296,7 +297,8 @@ function inici_() {
   });
   return { grups: GRUPS, sessions: SESSIONS, ordre: ORDRE_SESSIONS, eines: EINES, calendari: calendari, oberta: oberta,
            missions: missions, alumnes: alumnes, mon: mon_(cfg),
-           config: { noms_generics: cfg.noms_generics, mostra_codi: cfg.mostra_codi, fita_pct: cfg.fita_pct, url_mon: String(cfg.url_mon || ''), id_script_mon: String(cfg.id_script_mon || '') } };
+           config: { noms_generics: cfg.noms_generics, mostra_codi: cfg.mostra_codi, fita_pct: cfg.fita_pct, url_mon: String(cfg.url_mon || ''), id_script_mon: String(cfg.id_script_mon || ''),
+                     projeccio_mode: String(cfg.projeccio_mode || ''), exemple_correu: String(cfg.exemple_correu || '') } };
 }
 
 function dataText_(v) {
@@ -691,7 +693,7 @@ function desaMissions_(sessio, files) {
 }
 
 function configura_(clau, valor) {
-  var permeses = ['noms_generics', 'mostra_codi', 'fita_pct', 'url_mon', 'id_script_mon'];
+  var permeses = ['noms_generics', 'mostra_codi', 'fita_pct', 'url_mon', 'id_script_mon', 'projeccio_mode', 'exemple_correu'];
   if (permeses.indexOf(clau) < 0) throw new Error('Paràmetre no editable');
   ambBloqueig_(function () {
     var d = llegeix_('CONFIG');
@@ -719,6 +721,7 @@ function reiniciaPin_(id) {
 /** Dades per a la Promethean. NOMÉS AGREGATS: cap nom, per construcció. */
 function projeccio_() {
   var cfg = config_();
+  if (String(cfg.projeccio_mode || '') === 'entrar') return { mode: 'entrar', exempleCorreu: String(cfg.exemple_correu || ''), hora: araMs_() };
   var oberta = null;
   objectes_('CALENDARI').forEach(function (c) { if (String(c.estat) === 'oberta' || String(c.estat) === 'sortida') oberta = c; });
   if (!oberta) return { oberta: false, hora: araMs_() };

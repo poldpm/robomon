@@ -138,7 +138,8 @@ function illaHTML(i, estat) {
    Font: Ozobot Evo · Color Code Chart (Ozo Edu, Rev 12-23). Comprovat amb la Pocket Guide (Bit/Evo).
    Lletres: K negre · R vermell · G verd · B blau. Es llegeixen en el sentit de la marxa (fletxa).
    ============================================================ */
-const COLORS_CODI = { K: ['#141414', 'Negre', 'Ng'], R: ['#e0302f', 'Vermell', 'Vm'], G: ['#3a9a46', 'Verd', 'Vd'], B: ['#1f7fd6', 'Blau', 'Bl'] };
+/* Colors oficials de la guia Ozobot Evo: blau #1183C6, vermell #EC2027, verd #49B749 */
+const COLORS_CODI = { K: ['#141414', 'Negre', 'Ng'], R: ['#ec2027', 'Vermell', 'Vm'], G: ['#49b749', 'Verd', 'Vd'], B: ['#1183c6', 'Blau', 'Bl'] };
 const CODIS_OZOBOT = {
   ozobot: [
     { grup: 'Velocitat', codis: [

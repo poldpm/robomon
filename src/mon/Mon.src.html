@@ -543,10 +543,12 @@ function tancaModal() { $('modal-xuleta').hidden = true; }
 
 function pasActual() {
   const a = S.estat.avui, m = a.missio, p = a.progres;
-  if (m.abans && !p.prediccio && p.nivell === 0) return 'abans';
+  const plaN2 = m.abans && String(m.abans.clau).indexOf('pla-n2') === 0;
+  if (m.abans && !p.prediccio && !plaN2 && p.nivell === 0) return 'abans';
   if (m.controls.c0 && !p.c0 && p.nivell === 0) return 'c0';
   if (p.nivell === 0) return 'n1';
   if (p.espera && p.espera.indexOf('demo') === 0) return 'espera';
+  if (plaN2 && !p.prediccio && p.nivell === 1) return 'abans';
   if (p.nivell === 1) return 'n2';
   if (p.nivell === 2) return 'n3';
   return 'tot';

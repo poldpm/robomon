@@ -147,6 +147,7 @@ td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
           <button class="boto gran clar" id="b-reobre" hidden>Torna a obrir</button>
           <button class="boto gran fosc" id="b-tanca">Tanca la sessió</button>
           <button class="boto gran clar" id="b-projeccio">Projecció ↗</button>
+          <button class="boto gran clar" id="b-entrar">Projecta: com entrar</button>
         </div>
       </div>
       <div class="aula">
@@ -216,6 +217,10 @@ td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
     <div class="fila" style="margin-top:12px;">
       <label style="flex:1 1 400px;">URL del món: <input type="url" id="c-url" style="width:100%; min-height:48px;" placeholder="script.google.com/a/macros/…/exec"></label>
       <button class="boto" id="b-desa-url">Desa l'URL</button>
+    </div>
+    <div class="fila" style="margin-top:12px;">
+      <label style="flex:1 1 400px;">Exemple de correu dels alumnes (surt a «Com entrar»): <input id="c-correu" style="width:100%; min-height:48px;" placeholder="p. ex. nom.cognom@…"></label>
+      <button class="boto" id="b-desa-correu">Desa</button>
     </div>
     <h2 style="font-size:22px; margin:20px 0 8px;">Reiniciar el PIN d'un alumne</h2>
     <div class="fila"><select id="sel-pin" style="min-height:48px;"></select><button class="boto clar" id="b-pin">Reinicia el PIN</button></div>
@@ -296,6 +301,7 @@ function pintaAula() {
   $('r-fita-metre').style.width = Math.min(100, Math.round(f.ambN2 / Math.max(1, f.objectiu) * 100)) + '%';
   $('r-presents').textContent = f.presents + ' / ' + t.targetes.length;
   $('r-codi').textContent = t.codi || '—';
+  pintaBotoEntrar();
   $('b-sortida').hidden = t.estat !== 'oberta';
   $('b-reobre').hidden = t.estat !== 'sortida';
   $('t-ajuda').textContent = 'Ajuda (' + t.cues.ajuda.length + ')';
@@ -368,6 +374,9 @@ function canviaEstat(estat) {
   return crida('canviaEstat', { grup: A.grup, sessio: A.sessio, estat: estat }).then(i => { A.inici = i; pintaSelectors(); carregaAula(); });
 }
 $('b-equips').onclick = () => crida('refaEquips', { grup: A.grup, sessio: A.sessio }).then(t => { A.tauler = t; pintaAula(); avis('Equips nous'); });
+function pintaBotoEntrar() { $('b-entrar').textContent = A.inici.config.projeccio_mode === 'entrar' ? 'Projecta: la missió' : 'Projecta: com entrar'; }
+$('b-entrar').onclick = () => crida('configura', { clau: 'projeccio_mode', valor: A.inici.config.projeccio_mode === 'entrar' ? '' : 'entrar' })
+  .then(i => { A.inici = i; pintaBotoEntrar(); avis(i.config.projeccio_mode === 'entrar' ? 'La projecció mostra com entrar' : 'La projecció torna a la missió'); });
 $('b-projeccio').onclick = () => window.open(URL_ADMIN + '?vista=projeccio', 'projeccio');
 
 /* ---------- NOTES ---------- */
@@ -473,6 +482,7 @@ function pintaSessions() {
   $('c-fita').value = I.config.fita_pct;
   $('c-url').value = I.config.url_mon;
   $('c-idmon').value = I.config.id_script_mon || '';
+  $('c-correu').value = I.config.exemple_correu || '';
   crida('estatVersio').then(v => {
     const curt = x => x && x !== 'main' ? x.slice(0, 7) : (x || '—');
     $('versio-text').textContent = v.installada && v.installada === v.github ? `Tens la darrera versió (${curt(v.installada)}).`
@@ -487,6 +497,7 @@ $('c-generics').onchange = e => desaConfig('noms_generics', e.target.checked ? '
 $('c-codi').onchange = e => desaConfig('mostra_codi', e.target.checked ? 'sí' : 'no');
 $('c-fita').onchange = e => desaConfig('fita_pct', Number(e.target.value) || 80);
 $('b-desa-url').onclick = () => desaConfig('url_mon', $('c-url').value.trim());
+$('b-desa-correu').onclick = () => desaConfig('exemple_correu', $('c-correu').value.trim());
 $('b-desa-idmon').onclick = () => desaConfig('id_script_mon', $('c-idmon').value.trim());
 $('b-actualitza').onclick = () => {
   const b = $('b-actualitza'); b.disabled = true; b.textContent = 'Actualitzant… (1 minut)';

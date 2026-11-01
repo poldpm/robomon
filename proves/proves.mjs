@@ -37,7 +37,7 @@ p.getRange(fila0, 1, NOMS.length, 8).setValues(NOMS.map((n, i) => ['', correu(i)
 mon.crida('admin', 'generaIds', [], MESTRE);
 const ids = p.getDataRange().getValues().slice(1).map(f => f[0]);
 ok(ids.filter(x => /^A0\d\d$/.test(x)).length === 18 && ids.includes('A001') && ids.includes('A018'), 'IDs A001–A018 generats i 6 alumnes de prova A901–A906');
-ok(mon.full.getSheetByName('MISSIONS').getLastRow() === 1 + 17 + 16, 'MISSIONS sembrada una sola vegada (S1 + esborranys)');
+ok(mon.full.getSheetByName('MISSIONS').getLastRow() === 1 + 18 + 16, 'MISSIONS sembrada una sola vegada (S1 + esborranys)');
 ok(mon.full.getSheetByName('CALENDARI').getLastRow() === 1 + 45, 'CALENDARI: 5 grups × 9 sessions');
 
 console.log('\n2 · Seguretat');
@@ -145,11 +145,17 @@ await espera(anna, '#p-mapa');
 ok(await anna.evaluate(() => { const c = getComputedStyle(document.getElementById('boto-missio')).backgroundColor; return c === 'rgb(217, 164, 65)'; }), 'El botó «Missió d\'avui» és daurat (destaca sobre el mar)');
 await anna.clic('#boto-missio');
 await espera(anna, '#p-missio');
-await revisa(anna, '06-missio-prediccio', REVISA_MON);
-await anna.clic('#m-cos .tria >> nth=0');
 await anna.waitForSelector('#b-si');
+await revisa(anna, '06-missio-calibra', REVISA_MON);
+ok(/Calibra/.test(await anna.textContent('#m-pregunta')), 'La missió comença calibrant l\'Ozobot (control 0)');
+await anna.clic('#b-si');
+await anna.waitForSelector('text=casella 1, l');
 await revisa(anna, '07-missio-n1', REVISA_MON);
 await anna.clic('#b-si');
+await anna.waitForSelector('#m-cos .tria');
+await revisa(anna, '07b-missio-pla', REVISA_MON);
+ok(/casella 2/.test(await anna.textContent('#m-pregunta')), 'El pla es demana just abans de pintar la casella 2');
+await anna.clic('#m-cos .tria >> nth=0');
 await anna.waitForSelector('#b-demo');
 await revisa(anna, '08-missio-n2', REVISA_MON);
 await anna.click('#boto-codis');
@@ -167,8 +173,9 @@ alumne(1, 'registra', { esdeveniments: [{ t: 'avatar', v: 'c2-a3' }, { t: 'pin',
 const biel = await obreAlumne(1);
 await espera(biel, '#p-mapa');
 await biel.clic('#boto-missio');
-await biel.clic('#m-cos .tria >> nth=1');
-await biel.waitForSelector('#b-no');
+await biel.waitForSelector('#b-si');
+await biel.clic('#b-si');
+await biel.waitForSelector('text=casella 1, l');
 await biel.clic('#b-no');
 await espera(biel, '#p-encallat');
 await revisa(biel, '10-encallat', REVISA_MON);
@@ -181,8 +188,9 @@ await revisa(biel, '12-missio-amb-ajuda', REVISA_MON);
 
 console.log('\n6 · Els altres 16 alumnes treballen alhora (via API, barrejats amb el mestre)');
 for (let i = 2; i < 18; i++) alumne(i, 'registra', { esdeveniments: [{ t: 'avatar', v: `c${i % 8}-a${i % 8}` }, { t: 'pin', v: 'sol-lluna-estrella' }, { t: 'entrada', v: '', s: 'S1' }] });
-for (let i = 2; i < 18; i++) alumne(i, 'registra', { esdeveniments: [{ t: 'prediccio', v: 'tornado', s: 'S1' }] });
 for (let i = 2; i < 14; i++) alumne(i, 'registra', { esdeveniments: [{ t: 'n1', v: '', s: 'S1' }] });
+for (let i = 2; i < 18; i++) alumne(i, 'registra', { esdeveniments: [{ t: 'prediccio', v: 'tornado', s: 'S1' }] });
+ok(alumne(16, 'estat').dades.avui.progres.prediccio === '', 'El pla del N2 no es pot fer abans de tenir el N1');
 for (let i = 2; i < 10; i++) alumne(i, 'registra', { esdeveniments: [{ t: 'demo', v: '2', s: 'S1' }] });
 // el mestre valida mentre els alumnes continuen escrivint a la mateixa fila
 for (let i = 2; i < 10; i++) {
@@ -217,7 +225,7 @@ ok(admin('tauler', { grup: 'G2', sessio: 'S1' }).dades.targetes.find(x => x.id =
 
 const PR = mon.full.getSheetByName('PROGRES');
 PR.dades = PR.dades.filter((f, k) => k === 0 || f[0] !== 'A018·S1');   // un alumne nou sense fila de progrés
-const rNou = alumne(17, 'registra', { esdeveniments: [{ t: 'prediccio', v: 'tornado', s: 'S1' }] });
+const rNou = alumne(17, 'registra', { esdeveniments: [{ t: 'n1', v: '', s: 'S1' }, { t: 'prediccio', v: 'tornado', s: 'S1' }] });
 ok(rNou.dades.avui.progres.prediccio === 'tornado' && PR.dades.filter(f => f[0] === 'A018·S1').length === 1,
   'Un alumne afegit amb la sessió ja oberta no queda en bucle: se li crea la fila i es desa el que fa');
 
@@ -287,7 +295,7 @@ await mestre.click('.pestanya[data-p="sessions"]');
 await mestre.waitForSelector('#taula-calendari button');
 await revisa(mestre, '24-admin-sessions', { senseScroll: false, lletraMin: 14.6 });
 
-ok(admin('restauraMissio', { sessio: 'S1' }).dades.files.length === 17, 'El botó «Restaura la missió per defecte» torna a posar les 17 files de la S1');
+ok(admin('restauraMissio', { sessio: 'S1' }).dades.files.length === 18, 'El botó «Restaura la missió per defecte» torna a posar les 18 files de la S1');
 
 console.log('\n10 · Mòbil del mestre');
 const ctxMob = await nav.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
@@ -310,6 +318,14 @@ await revisa(proj, '31-projeccio-treball', { lletraMin: 18 });
 ok(await proj.isVisible('#panell-xuleta .xuleta'), 'La projecció mostra la xuleta de codis de la sessió');
 const textProj = await proj.evaluate(() => document.body.innerText);
 ok(!NOMS.some(nm => textProj.includes(nm.split(' ')[0])), 'La projecció no mostra cap nom d\'alumne');
+
+admin('configura', { clau: 'exemple_correu', valor: 'nom.cognom@escola.cat' });
+admin('configura', { clau: 'projeccio_mode', valor: 'entrar' });
+await proj.reload();
+await proj.waitForSelector('#entrar', { state: 'visible' });
+await revisa(proj, '32-projeccio-com-entrar', { lletraMin: 18 });
+ok((await proj.textContent('#entrar')).includes('Alt Gr') && (await proj.textContent('#exemple-correu')) === 'nom.cognom@escola.cat', 'La projecció «Com entrar» explica l\'@ (Alt Gr + 2) i mostra l\'exemple de correu');
+admin('configura', { clau: 'projeccio_mode', valor: '' });
 
 console.log('\n12 · Pla B2 (GitHub Pages + codi + nom + dibuixos)');
 const codiNou = admin('inici').dades.calendari.find(c => c.grup === 'G2' && c.sessio === 'S1').codi;

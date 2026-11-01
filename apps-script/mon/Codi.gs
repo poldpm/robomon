@@ -378,8 +378,11 @@ function registra_(id, esdeveniments) {
             case 'entrada': if (!p.present_alumne) p.present_alumne = ara; break;
             case 'c0': if (obertaPerTreballar) p.c0 = ara; else desa = false; break;
             case 'prediccio':
-              // Només ABANS del primer control. Després ja no té sentit i no es desa.
-              if (obertaPerTreballar && !p.prediccio && !(Number(p.n1) > 0) && !(Number(p.nivell_mestre) > 0)) p.prediccio = String(v).slice(0, 20);
+              // Predicció: només ABANS del primer control. Pla «pla-n2»: entre el N1 i la demostració del N2.
+              var esPlaN2 = missio && missio.abans && String(missio.abans.clau).indexOf('pla-n2') === 0;
+              var teN1 = Number(p.n1) > Number(p.n1_rebutjat_des_de || 0) || Number(p.nivell_mestre) >= 1;
+              var permes = esPlaN2 ? (teN1 && !(Number(p.nivell_mestre) >= 2)) : (!(Number(p.n1) > 0) && !(Number(p.nivell_mestre) > 0));
+              if (obertaPerTreballar && !p.prediccio && permes) p.prediccio = String(v).slice(0, 20);
               else desa = false;
               break;
             case 'n1': if (obertaPerTreballar) p.n1 = ara; else desa = false; break;

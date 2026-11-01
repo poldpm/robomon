@@ -36,6 +36,16 @@ Una missió és un conjunt de files de la pestanya `MISSIONS` (columnes: `sessio
 9. La pregunta `diag` de la sortida ha de ser un **diagnòstic** (una situació de fallada i per què passa). Les opcions incorrectes han de ser plausibles, no absurdes.
 10. Les respostes correctes **mai** van a l'HTML: només al full (columna `correcta`).
 
+## Lliçons de la S1 (en Pol, 1/11/2026) — aplica-les sempre
+
+- La consigna diu **què fan les mans i què han de veure**; s'ha d'entendre sense el material al davant.
+- La missió fa servir **el que fa especial l'eina** (codis, cartes i repetició, distància i pinça, sensor i motor, esdeveniments i variables).
+- Cada sessió té **xuleta** (`missio · xuleta`): projectada, botó «Codis» al Chromebook i paper a la taula. Contingut de **fonts oficials** o dels materials d'en Pol, mai de memòria.
+- `control c0` per al primer pas amb el robot (calibrar, encendre, connectar, muntar).
+- Si el pla és per al nivell 2, `abans` amb clau **`pla-n2`** (surt just abans del N2).
+- Si la sessió demana escriure o entrar a un servei, una **projecció d'ajuda** («Com entrar»).
+- Repàs complet i pendents per sessió: `docs/REPAS-MISSIONS.md`.
+
 ## Il·lustracions
 
 - **Escenes** (robot, persones, objectes): imatges generades amb IA en una **graella sobre fons crema llis (#F3EEE4)**, totes amb el mateix estil que les de la S1. Es retallen a `src/imatges/<clau>.webp` (≈320 px d'amplada) i s'afegeixen a l'objecte `IL` de `src/comu/illustracions.js` amb `img('<clau>')`.
