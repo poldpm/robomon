@@ -1,6 +1,8 @@
 # PLA · Nova aplicació del Taller de 3r
 
-> Pla per validar. No hi ha codi. Tot el que diu «a validar» és una decisió teva (secció 9).
+> **Validat per en Pol l'1 de novembre de 2026**: totes les recomanacions de la secció 9 acceptades. Mòbil + PC per validar. Repo públic `poldpm/taller-3r`. Sense compte d'alumne de prova. Inici: dimecres 11 de novembre (grup 2). Il·lustracions: SVG fetes per Claude.
+>
+> Escala afegida en construir: **present sense cap registre = 2**.
 > Encara no he vist cap fitxer existent: a la carpeta de treball no hi ha res. Per a les fases 5 i 7 em cal que me'ls passis (llista a la secció 8).
 
 ---
@@ -284,7 +286,7 @@ sessió i la fita de grup. Així no hi ha risc de projectar el tauler per error.
 | **4.3** | Preguntes ja respostes | L'app **mai** demana: nom, grup, equip, robot, sessió, variant, ni res ja contestat. Ho té tot a `EQUIPS` i `PROGRES` abans que el nen obri el Chromebook |
 | **4.4** | Massa passos | Màxim 10 clics per sessió (secció 4). Cap pantalla sense acció. La pantalla es queda quieta mentre el nen treballa |
 | **4.5** | Massa suposicions | Cap pantalla diu «ara que ja has…». Cada control és una pregunta amb sortida. A les sessions de SPIKE hi ha un **control 0**: «Tens el robot muntat i encès?» abans de res |
-| **4.6** | **Faltava «no me n'he sortit»** | És a **cada** control, amb la mateixa mida que el «Sí», mai en gris ni petit. Porta a pista + ajuda. **Puntua**: dir on t'has encallat dona 3 punts directes; un «Sí» fals no en dona cap fins que el demostres. **Mentir no paga; dir la veritat, sí** |
+| **4.6** | **Faltava «no me n'he sortit»** | És a **cada** control, amb la mateixa mida que el «Sí», mai en gris ni petit. Porta a pista + ajuda. **Puntua**: dir on t'has encallat dona 3 punts (4 si a la sortida diagnostica bé). El «Sí» del N1 és declarat pel nen: al tauler surt com a punt buit fins que el veus, i a la demostració el pots marcar «N1 no és cert» → torna a 2 punts. **Mentir (2) puntua menys que dir la veritat (3–4)** |
 | **4.7** | Comprovacions inviables | Tot control ha de ser **visible amb els ulls en 10 segons amb el material de la taula** («ha arribat a la casella?», «el motor gira?»). Res de «comprova que funciona en tots els casos». A la fase 5 provo cada control **amb el robot de veritat** amb tu, sense alumnes |
 | **4.8** | Projecte acumulatiu oblidat | Cada sessió tanca sola: N1/N2/N3 del dia, i prou. El que s'acumula és **el mapa i el carnet**, que es miren, no es recorden. Cada sessió es reprèn amb **una frase** projectada |
 | **4.9** | **Passatgers** | Quatre peces: (1) **variant personal**: l'equip comparteix robot, però cada nen té la seva casella, la seva distància o el seu nivell; la resposta del veí no li serveix. (2) **Demostració individual a tu** per a N2 i N3: és el moment que no havia existit mai en vuit setmanes. (3) **Targeta de sortida individual**, corregida al servidor. (4) Regla de l'ajudant: **qui ajuda parla, no toca** (mans al darrere). L'app no té cap control d'equip: només de nen |
@@ -371,6 +373,7 @@ Alternativa (decisió 2): Scottie Go!, si vols que el primer dia ensenyi la ruti
 | Situació | Nota |
 |---|---|
 | Absent | *(buit: no compta, no és un 0)* |
+| Present, sense cap registre (o N1 rebutjat) | 2 |
 | Ha treballat, no arriba a N1, i diu honestament on s'ha encallat | 3 |
 | + diagnòstic correcte a la targeta de sortida | 4 |
 | **N1** | 5 |

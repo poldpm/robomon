@@ -109,7 +109,7 @@ function sembraConfig_() {
   try { correu = Session.getEffectiveUser().getEmail(); } catch (e) { correu = ''; }
   var defecte = [
     ['correu_mestre', correu, 'El teu correu. Només aquest compte veu el mode prova del món.'],
-    ['pesos', JSON.stringify(PESOS_DEFECTE), 'Puntuació de cada nivell (vegeu docs/NOTES.md). Hereu de PESOS de la v3.'],
+    ['pesos', JSON.stringify(PESOS_DEFECTE), 'Puntuació de cada nivell (docs/PLA-TALLER-3r.md, secció 7.3). Hereu de PESOS de la v3.'],
     ['fita_pct', 80, 'Fita de grup: percentatge de presents que han d\'arribar a N2.'],
     ['noms_generics', 'no', '«sí» = el mapa diu Zona 1, Zona 2… (prova que la ficció no aguanta res).'],
     ['mostra_codi', 'no', '«sí» = la projecció mostra el codi de classe (Pla B).'],
