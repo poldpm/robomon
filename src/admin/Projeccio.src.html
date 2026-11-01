@@ -4,7 +4,7 @@
 <base target="_top">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Taller 3r · Projecció</title>
+<title>RoboMón · Projecció</title>
 <style>
 /*@@FONTS@@*/
 :root { --tinta: #1c2733; --suau: #4b5866; --fons: #f5efe4; --vora: #e3d9c6; --verd: #2c7650; --daurat: #d9a441;
@@ -46,7 +46,7 @@ svg { display: block; width: 100%; height: 100%; }
 <div class="pant" id="pant">
   <div class="dalt">
     <div class="illa" id="illa"></div>
-    <div><h1 id="titol">Taller 3r</h1><div class="sub" id="sub"></div></div>
+    <div><h1 id="titol">RoboMón</h1><div class="sub" id="sub"></div></div>
     <div class="rellotge" id="rellotge"></div>
   </div>
   <div id="treball" hidden style="display:flex; flex-direction:column; gap:2.4vh; flex:1 1 auto; min-height:0;">
@@ -58,7 +58,7 @@ svg { display: block; width: 100%; height: 100%; }
     </div>
   </div>
   <div class="gran" id="sortida" hidden><h1>Targeta de sortida</h1><p>Obre el Chromebook i respon les preguntes.</p></div>
-  <div class="gran" id="buida" hidden><h1>Taller 3r</h1><p>Encara no hi ha cap sessió oberta.</p></div>
+  <div class="gran" id="buida" hidden><h1>RoboMón</h1><p>Encara no hi ha cap sessió oberta.</p></div>
   <div class="baix" id="baix" hidden>
     <div class="far"><span class="etiq" id="far-text"></span><div class="metre"><span id="far-metre"></span></div></div>
     <div class="codi" id="codi" hidden></div>
@@ -80,7 +80,7 @@ function pinta(p) {
   $('sortida').hidden = !p.oberta || p.estat !== 'sortida';
   $('buida').hidden = !!p.oberta;
   $('baix').hidden = !p.oberta;
-  if (!p.oberta) { $('titol').textContent = 'Taller 3r'; $('sub').textContent = ''; $('illa').innerHTML = ''; return; }
+  if (!p.oberta) { $('titol').textContent = 'RoboMón'; $('sub').textContent = ''; $('illa').innerHTML = ''; return; }
   $('titol').textContent = p.zona + ' · ' + p.titol;
   $('sub').textContent = p.eina;
   const i = Number(String(p.sessio).slice(1)) - 1;

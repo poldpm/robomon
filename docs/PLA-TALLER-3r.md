@@ -1,6 +1,6 @@
 # PLA · Nova aplicació del Taller de 3r
 
-> **Validat per en Pol l'1 de novembre de 2026**: totes les recomanacions de la secció 9 acceptades. Mòbil + PC per validar. Repo públic `poldpm/taller-3r`. Sense compte d'alumne de prova. Inici: dimecres 11 de novembre (grup 2). Il·lustracions: SVG fetes per Claude.
+> **Validat per en Pol l'1 de novembre de 2026**: totes les recomanacions de la secció 9 acceptades. Mòbil + PC per validar. Repo públic `poldpm/robomon`. Sense compte d'alumne de prova. Inici: dimecres 11 de novembre (grup 2). Il·lustracions: SVG fetes per Claude.
 >
 > Escala afegida en construir: **present sense cap registre = 2**.
 > Encara no he vist cap fitxer existent: a la carpeta de treball no hi ha res. Per a les fases 5 i 7 em cal que me'ls passis (llista a la secció 8).
@@ -21,7 +21,7 @@
            │ google.script.run               │ google.script.run
            ▼                                 ▼
       ┌─────────────────────────────────────────────┐
-      │ Google Sheet «TALLER-3r-DADES»              │
+      │ Google Sheet «ROBOMON-DADES»              │
       │ Unitat compartida del centre                │
       │ Només el mestre hi té accés                 │
       └─────────────────────────────────────────────┘
@@ -54,7 +54,7 @@ Si l'administrador i el món comparteixen projecte, un nen amb curiositat i F12 
 | 4 | Admin | El teu tauler consulta el grup cada **10 s** (1 sola lectura) i hi veus el canvi | ≤10 s |
 | 5 | Tu | Valides el nivell 2 amb un clic → `PROGRES` es posa al dia → `nota_auto` es recalcula | <2 s |
 | 6 | Món | El Chromebook del nen consulta el seu estat cada **30 s** i encén la llum | ≤30 s |
-| 7 | Tu | Al final del trimestre: menú **Taller 3r → Prepara l'informe** → pestanya `INFORME` | 1 clic |
+| 7 | Tu | Al final del trimestre: menú **RoboMón → Prepara l'informe** → pestanya `INFORME` | 1 clic |
 
 **Si falla la xarxa:** el client guarda els esdeveniments pendents en una «bústia de sortida» a
 `localStorage` i els reenvia sols. `localStorage` només fa de bústia, **mai** de magatzem de notes:
@@ -105,12 +105,12 @@ només surt a l'informe.
 
 - `REGISTRE` és **només afegir** (mai s'esborra ni s'edita): és la traça si cal revisar una nota.
 - `PROGRES` és l'estat actual, i es pot **reconstruir sencer** des de `REGISTRE`
-  (menú **Taller 3r → Recalcula notes**, hereu del teu `recalcularNotes()`).
+  (menú **RoboMón → Recalcula notes**, hereu del teu `recalcularNotes()`).
 - Les 36 files de `CALENDARI` i les files de `PROGRES` d'un grup es creen quan **obres la sessió**:
   així cap escriptura d'alumne ha de buscar ni inserir files, només sobreescriure la seva.
 - **Les pestanyes v3 (`RESPOSTES`, `DETALL`, `PLANS`, `DEPURACIO`) es jubilen.** La seva lògica
   de puntuació passa a la funció `calculaNota()` (secció 7.3).
-- Final de curs: menú **Taller 3r → Esborra les dades del curs** (buida tot menys `MISSIONS`,
+- Final de curs: menú **RoboMón → Esborra les dades del curs** (buida tot menys `MISSIONS`,
   `MON` i `CONFIG`, que són teus i es reaprofiten l'any vinent).
 
 ---
@@ -216,7 +216,7 @@ Temps de pantalla per nen: **8–10 minuts**. Per sota dels 15.
 
 | # | Pantalla | Què hi veu | Clic |
 |---|---|---|---|
-| 0 | — | Obre el marcador «El meu món» | **1** |
+| 0 | — | Obre el marcador «RoboMón» | **1** |
 | 1 | **El meu món** | Mapa, avatar, la zona d'avui oberta i brillant, botó gran «Missió d'avui» | **2** |
 | 2 | **Missió** | Una frase. «Ets al **robot 2**. La teva variant: **B**». Dibuix del N1. *(Només a les sessions amb predicció: una pregunta de 3 opcions amb dibuix, ABANS de tocar el robot)* | (**3**) |
 | — | *El nen treballa amb el robot. La pantalla queda quieta.* | | |
@@ -430,7 +430,7 @@ Alternativa (decisió 2): Scottie Go!, si vols que el primer dia ensenyi la ruti
 | 9 | Equips | **Automàtics en obrir la sessió, nous cada setmana** | Trenca els passatgers fixos; tu els pots canviar amb un clic |
 | 10 | Pla B | **B1 sempre + B2 provat** (comentant el B2 amb el DPD) | El B1 costa poc; el B2 és el que salva el dia si l'script està bloquejat |
 | 11 | Il·lustracions de les preguntes | **Dibuixos SVG fets per mi, dins l'HTML** | Autocontingut, sense xarxa. Si prefereixes fotos teves dels robots, et dic quines calen (unes 20) |
-| 12 | Repositori | **Un repo nou privat**, p. ex. `poldpm/taller-3r` | Ara la carpeta de treball no és cap repo: no puc fer `pull` ni `push` fins que en tinguem un |
+| 12 | Repositori | **Un repo nou privat**, p. ex. `poldpm/robomon` | Ara la carpeta de treball no és cap repo: no puc fer `pull` ni `push` fins que en tinguem un |
 | 13 | Compte d'alumne de prova | **Demanar-lo al coordinador TIC aquesta setmana** | La fase 1 no es pot fer sense |
 | 14 | Data | **Quin dimecres comença el grup 2?** | Marca quan ha d'estar llesta la S1 i quines fases han d'anar abans |
 

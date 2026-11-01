@@ -1,4 +1,4 @@
-# Taller de 3r · El món
+# RoboMón
 
 Aplicació del taller de tecnologia, programació i robòtica de 3r (Vedruna Escorial Vic).
 
@@ -29,12 +29,12 @@ Tot viu a Google Apps Script i a un Google Sheet de la unitat compartida del cen
 
 ### 1 · El full de dades
 
-1. A la **unitat compartida del centre** (no al teu Drive personal): Nou → Fulls de càlcul de Google. Nom: `TALLER-3r-DADES`.
+1. A la **unitat compartida del centre** (no al teu Drive personal): Nou → Fulls de càlcul de Google. Nom: `ROBOMON-DADES`.
 2. Comparteix-lo **només amb tu**.
 
 ### 2 · El projecte de l'administrador (vinculat al full)
 
-1. Al full: **Extensions → Apps Script**. Posa-li nom: `Taller 3r · Administrador`.
+1. Al full: **Extensions → Apps Script**. Posa-li nom: `RoboMón · Administrador`.
 2. Engranatge (Configuració del projecte) → marca **«Mostra el fitxer de manifest appsscript.json a l'editor»**.
 3. Crea aquests fitxers i enganxa-hi el contingut **sencer** de la carpeta `apps-script/admin/`:
 
@@ -46,10 +46,10 @@ Tot viu a Google Apps Script i a un Google Sheet de la unitat compartida del cen
    | `Projeccio` | HTML | `apps-script/admin/Projeccio.html` |
    | `appsscript.json` | (ja existeix) | `apps-script/admin/appsscript.json` |
 
-4. Desa. Torna al full i **recarrega'l**. Surt el menú **Taller 3r**.
-5. **Taller 3r → Instal·la o repara el full**. La primera vegada et demanarà permisos: accepta'ls (són teus, no dels alumnes).
+4. Desa. Torna al full i **recarrega'l**. Surt el menú **RoboMón**.
+5. **RoboMón → Instal·la o repara el full**. La primera vegada et demanarà permisos: accepta'ls (són teus, no dels alumnes).
 6. Pestanya `ALUMNES`: enganxa-hi la llista. Només cal omplir 4 columnes: `correu` · `grup` (G1, G2, G3 o G4) · `nom_curt` (nom + inicial: «Anna R.») · `nom_complet` (només surt a l'informe).
-7. **Taller 3r → Genera els ID d'alumnes que falten** (A001, A002…). La clau de tot és aquest ID, mai el nom.
+7. **RoboMón → Genera els ID d'alumnes que falten** (A001, A002…). La clau de tot és aquest ID, mai el nom.
 8. Pestanya `CALENDARI`: si vols, posa-hi les dates. No és obligatori: la data s'omple sola quan obres la sessió.
 9. **Desplega:** botó blau *Desplega → Desplegament nou → Aplicació web*.
    - Executa com: **Jo**
@@ -58,7 +58,7 @@ Tot viu a Google Apps Script i a un Google Sheet de la unitat compartida del cen
 
 ### 3 · El projecte del món (el dels alumnes)
 
-1. A la mateixa unitat compartida: Nou → Més → **Google Apps Script**. Nom: `Taller 3r · El món`.
+1. A la mateixa unitat compartida: Nou → Més → **Google Apps Script**. Nom: `RoboMón · El món`.
 2. Mostra el manifest (com al pas 2.2) i crea:
 
    | A l'editor | Tipus | Contingut de |
@@ -72,7 +72,7 @@ Tot viu a Google Apps Script i a un Google Sheet de la unitat compartida del cen
 4. **Desplega → Desplegament nou → Aplicació web**:
    - Executa com: **Jo**
    - Qui hi té accés: **Qualsevol persona de [el domini de l'escola]**
-5. Copia l'URL `/exec`. Posa-la a l'administrador (Sessions → URL del món) i fes-la arribar als alumnes com a **marcador «El meu món»** (o al Classroom).
+5. Copia l'URL `/exec`. Posa-la a l'administrador (Sessions → URL del món) i fes-la arribar als alumnes com a **marcador «RoboMón»** (o al Classroom).
 
 ### 4 · Comprova-ho tu sol (sense alumnes)
 
@@ -88,7 +88,7 @@ Tot viu a Google Apps Script i a un Google Sheet de la unitat compartida del cen
 1. Al projecte del món: **Desplega → Gestiona els desplegaments → Desplegament nou → Aplicació web** amb **Qui hi té accés: Qualsevol persona** (anònim). Si aquesta opció no hi és, el domini no ho permet: llavors el Pla C (tu marques els nivells des del tauler) és el pla de reserva.
 2. Copia aquesta nova URL `/exec`.
 3. L'enllaç del Pla B2 per als alumnes és:
-   `https://poldpm.github.io/taller-3r/pla-b/?api=` + la URL del pas 2
+   `https://poldpm.github.io/robomon/pla-b/?api=` + la URL del pas 2
 4. Prova-ho en una **finestra d'incògnit**: et demanarà el codi de 4 xifres que surt al tauler.
 5. ⚠️ Abans de fer-lo servir amb alumnes, comenta'l amb el **DPD**: és un punt d'entrada anònim (protegit per codi + PIN).
 

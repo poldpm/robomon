@@ -1,7 +1,7 @@
 /**
  * ============================================================
  *  CODI.gs — ADMINISTRADOR (només el mestre)
- *  Projecte VINCULAT al full «TALLER-3r-DADES» (Extensions → Apps Script).
+ *  Projecte VINCULAT al full «ROBOMON-DADES» (Extensions → Apps Script).
  *  Desplegament: Aplicació web · Executa com: JO · Accés: NOMÉS JO
  * ============================================================
  */
@@ -9,7 +9,7 @@
 var GRUPS = ['G1', 'G2', 'G3', 'G4', 'GP'];   // GP = grup de proves (alumnes A901–A906)
 
 function onOpen() {
-  SpreadsheetApp.getUi().createMenu('Taller 3r')
+  SpreadsheetApp.getUi().createMenu('RoboMón')
     .addItem('Instal·la o repara el full', 'installa')
     .addItem('Genera els ID d\'alumnes que falten', 'generaIds')
     .addItem('Recalcula les notes', 'recalculaNotes')
@@ -25,7 +25,7 @@ function doGet(e) {
   var t = HtmlService.createTemplateFromFile(vista === 'projeccio' ? 'Projeccio' : 'Admin');
   t.urlAdmin = JSON.stringify(ScriptApp.getService().getUrl()).replace(/</g, '\\u003c');
   return t.evaluate()
-    .setTitle(vista === 'projeccio' ? 'Taller 3r · Projecció' : 'Taller 3r · Administrador')
+    .setTitle(vista === 'projeccio' ? 'RoboMón · Projecció' : 'RoboMón · Administrador')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 

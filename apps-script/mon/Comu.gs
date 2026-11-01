@@ -88,7 +88,7 @@ function full_() {
 
 function pestanya_(nom) {
   var p = full_().getSheetByName(nom);
-  if (!p) throw new Error('Falta la pestanya ' + nom + '. Fes «Taller 3r → Instal·la o repara el full».');
+  if (!p) throw new Error('Falta la pestanya ' + nom + '. Fes «RoboMón → Instal·la o repara el full».');
   return p;
 }
 

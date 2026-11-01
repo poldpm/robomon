@@ -1,4 +1,4 @@
-# Taller de 3r · instruccions per a Claude
+# RoboMón (Taller de 3r) · instruccions per a Claude
 
 - **Sempre en català**: interfície, textos, noms visibles, missatges de commit i conversa.
 - **`git pull` en començar; `commit` + `push` en acabar cada canvi acabat**, sense esperar que en Pol ho demani.

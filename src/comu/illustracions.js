@@ -1,5 +1,5 @@
 /* ============================================================
-   IL·LUSTRACIONS — Taller 3r · L'Arxipèlag
+   IL·LUSTRACIONS — RoboMón · L'Arxipèlag
    · Imatges (IMG) generades amb IA, retallades i incrustades en WebP pel construeix.mjs.
    · Esquemes vectorials (línies, forats…) amb el mateix llenguatge: full blanc, marc fi, robot blanc.
    · SVG: cap patró ni referència a id (es poden clonar sense trencar-se).

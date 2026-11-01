@@ -24,7 +24,7 @@ function doGet(e) {
   }
   t.inicial = JSON.stringify(inicial).replace(/</g, '\\u003c');
   return t.evaluate()
-    .setTitle('El meu món')
+    .setTitle('RoboMón')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
