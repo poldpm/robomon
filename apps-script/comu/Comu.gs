@@ -127,14 +127,14 @@ function escriuBloc_(dades, numFila, bloc, obj) {
 
 /**
  * Afegeix files al final.
- * REGISTRE i ERRORS hi escriuen els DOS projectes amb panys diferents: fem servir appendRow, que és atòmic.
+ * REGISTRE, ERRORS i PROGRES hi escriuen els DOS projectes amb panys diferents: fem servir appendRow, que és atòmic.
  * La resta de pestanyes només les fa créixer l'administrador: una sola crida.
  */
 function afegeixFiles_(nom, files) {
   if (!files.length) return;
   var p = pestanya_(nom);
-  if (nom === 'REGISTRE' || nom === 'ERRORS') {
-    files.forEach(function (f) { p.appendRow(f.map(textSegur_)); });
+  if (nom === 'REGISTRE' || nom === 'ERRORS' || nom === 'PROGRES') {
+    files.forEach(function (f) { p.appendRow(f.map(function (v) { return textSegur_(v); })); });
     return;
   }
   p.getRange(p.getLastRow() + 1, 1, files.length, files[0].length).setValues(files);

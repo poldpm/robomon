@@ -194,6 +194,7 @@ const fReg = () => mon.full.getSheetByName('REGISTRE').getDataRange().getValues(
 const abansReg = fReg().length;
 alumne(4, 'registra', { esdeveniments: [{ t: 'pista', v: '=IMPORTDATA("https://dolent")', s: 'S1' }, { t: 'prediccio', v: '=1+1', s: 'S1' }, { t: 'encallat', v: '+SUM(1)', s: 'S1' }] });
 ok(!fReg().some(f => f.some(c => /^[=+\-@]/.test(String(c)))), 'Cap valor que arriba del navegador es pot convertir en fórmula');
+ok(fReg().slice(1).every(f => /^A\d{3}$/.test(String(f[1])) || f[1] === '') && fReg().slice(1).some(f => f[1] === 'A005'), 'El registre conserva sencers els identificadors dels alumnes');
 alumne(5, 'registra', { esdeveniments: Array.from({ length: 60 }, () => ({ t: 'ajuda', v: '', s: 'S1' })) });
 ok(fReg().length - abansReg <= 20, 'Com a molt 20 esdeveniments per enviament (' + (fReg().length - abansReg) + ')');
 ok(mon.projectes.admin.estatEfectiu_({ nivell_mestre: 2 }).present === true, 'Un alumne validat pel mestre compta com a present encara que no hagi entrat');
@@ -201,6 +202,12 @@ admin('valida', { id: 'A013', sessio: 'S1', que: 'desfes' });
 ok(admin('tauler', { grup: 'G2', sessio: 'S1' }).dades.targetes.find(x => x.id === 'A013').nivell === 0, '«Desfés un nivell» també treu un N1 declarat per l\'alumne');
 alumne(12, 'registra', { esdeveniments: [{ t: 'n1', v: '', s: 'S1' }] });
 ok(admin('tauler', { grup: 'G2', sessio: 'S1' }).dades.targetes.find(x => x.id === 'A013').nivell === 1, '…i el pot tornar a declarar després');
+
+const PR = mon.full.getSheetByName('PROGRES');
+PR.dades = PR.dades.filter((f, k) => k === 0 || f[0] !== 'A018·S1');   // un alumne nou sense fila de progrés
+const rNou = alumne(17, 'registra', { esdeveniments: [{ t: 'prediccio', v: 'si', s: 'S1' }] });
+ok(rNou.dades.avui.progres.prediccio === 'si' && PR.dades.filter(f => f[0] === 'A018·S1').length === 1,
+  'Un alumne afegit amb la sessió ja oberta no queda en bucle: se li crea la fila i es desa el que fa');
 
 console.log('\n7 · El mestre al tauler (PC)');
 const ctxM = await nav.newContext({ viewport: { width: 1366, height: 768 } });

@@ -336,8 +336,18 @@ function registra_(id, esdeveniments) {
       var s = String(oberta.sessio);
       var d = llegeix_('PROGRES');
       var clau = clauProgres_(id, s);
-      var i = -1;
-      d.files.some(function (f, k) { if (String(f[d.idx.clau]) === clau) { i = k; return true; } return false; });
+      var busca = function () {
+        var k = -1;
+        d.files.some(function (f, j) { if (String(f[d.idx.clau]) === clau) { k = j; return true; } return false; });
+        return k;
+      };
+      var i = busca();
+      if (i < 0) {
+        // L'alumne no tenia fila (s'ha afegit a la llista amb la sessió ja oberta): es crea ara, amb appendRow.
+        afegeixFiles_('PROGRES', [filaDe_('PROGRES', { clau: clau, id_alumne: id, grup: grup, sessio: s })]);
+        d = llegeix_('PROGRES');
+        i = busca();
+      }
       if (i >= 0) {
         var p = objecte_(d, d.files[i], i);
         var missio = missioDeSessio_(s, false);
