@@ -795,7 +795,7 @@ function apiScript_(metode, cami, cos) {
   var codi = r.getResponseCode(), text = r.getContentText();
   if (codi >= 300) {
     if (/has not been used|is disabled|not enabled|SERVICE_DISABLED|User has not enabled/i.test(text))
-      throw new Error('Cal activar l\'API d\'Apps Script: https://script.google.com/home/usersettings → «API de Google Apps Script» → Activada. Després torna-ho a provar.');
+      throw new Error('Cal activar l\'API d\'Apps Script: https://script.google.com/home/usersettings → «API de Google Apps Script» → Activada (amb el compte de l\'escola). Després torna-ho a provar. Resposta de Google: ' + text.slice(0, 400));
     throw new Error('Apps Script API ' + codi + ': ' + text.slice(0, 300));
   }
   return text ? JSON.parse(text) : {};
