@@ -7,102 +7,159 @@
 <title>El meu món</title>
 <style>
 /*@@FONTS@@*/
+/* ============================================================
+   L'Arxipèlag · sistema visual
+   Sorra i boira (fons) · mar fosc (acció) · daurat (progrés) · tinta (text)
+   Màxim pes 700. Lletra Lexend (pensada per a lectors que comencen).
+   ============================================================ */
 :root {
-  --tinta: #1d2433; --suau: #4a5160; --fons: #f3f7fb; --blanc: #ffffff;
-  --mar: #d8eefa; --blau: #1f5fbf; --verd: #1e7a3c; --pissarra: #3d4a63; --groc: #fff4d6;
-  --vora: #c9d3df; --radi: 22px;
-  --lletra: "Andika", "Atkinson Hyperlegible", Verdana, "Segoe UI", Arial, sans-serif;
+  --paper: #f5efe4; --superficie: #fffdf8; --tinta: #1c2733; --suau: #4b5866; --vora: #e3d9c6;
+  --mar: #1f6f78; --mar-fosc: #17565d; --verd: #2c7650; --pissarra: #3c4856; --daurat: #d9a441; --daurat-clar: #f6e7c4;
+  --mar-fons: rgb(53, 102, 115); --boira: rgb(224, 216, 188);
+  --ombra: 0 1px 2px rgba(28, 39, 51, .06), 0 10px 28px -12px rgba(28, 39, 51, .28);
+  --ombra-boto: 0 2px 0 rgba(0, 0, 0, .18), 0 10px 20px -12px rgba(0, 0, 0, .45);
+  --radi: 20px;
+  --lletra: "Lexend", "Atkinson Hyperlegible", Verdana, "Segoe UI", Arial, sans-serif;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; }
-body { font-family: var(--lletra); font-size: 22px; font-weight: 400; color: var(--tinta); background: var(--fons); }
-b, strong, h1, h2, h3, button { font-weight: 700; }   /* màxim Bold 700. Mai 800/900 */
+body { font-family: var(--lletra); font-size: 21px; font-weight: 400; color: var(--tinta); background: var(--paper);
+  -webkit-font-smoothing: antialiased; letter-spacing: -0.005em; }
+b, strong { font-weight: 600; }
+h1, h2, h3, button { font-weight: 600; }
 [hidden] { display: none !important; }
 svg { display: block; width: 100%; height: 100%; }
+img { display: block; }
 
-.app { height: 100vh; display: flex; flex-direction: column; }
-.capcal { flex: 0 0 auto; height: 72px; display: flex; align-items: center; gap: 14px; padding: 0 20px; background: var(--blanc); border-bottom: 2px solid var(--vora); }
-.capcal .mini-avatar { width: 54px; height: 54px; }
-.capcal .nom { font-size: 26px; font-weight: 700; }
-.capcal .lloc { font-size: 22px; color: var(--suau); margin-left: 6px; }
+.app { height: 100vh; display: flex; flex-direction: column; position: relative; }
+.capcal { position: relative; z-index: 3; flex: 0 0 auto; height: 76px; display: flex; align-items: center; gap: 14px; padding: 0 22px;
+  background: rgba(255, 253, 248, .86); backdrop-filter: blur(10px); border-bottom: 1px solid var(--vora); }
+.capcal .mini-avatar { width: 52px; height: 52px; border-radius: 50%; box-shadow: 0 0 0 3px #fff, 0 4px 10px rgba(0,0,0,.18); }
+.capcal .mini-avatar img { width: 100%; height: 100%; }
+.capcal .nom { font-size: 24px; font-weight: 600; }
+.capcal .lloc { font-size: 19px; color: var(--suau); padding: 6px 14px; border-radius: 999px; background: var(--daurat-clar); }
+.capcal .lloc:empty { display: none; }
 .capcal .espai { flex: 1; }
-.contingut { flex: 1 1 auto; min-height: 0; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
-.pantalla { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 14px; }
+.contingut { flex: 1 1 auto; min-height: 0; padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; }
+.pantalla { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 16px; }
 
-h1 { font-size: 34px; margin: 0; line-height: 1.15; }
-h2 { font-size: 28px; margin: 0; line-height: 1.2; }
-.pregunta { font-size: 30px; font-weight: 700; line-height: 1.2; margin: 0; }
-.text { font-size: 24px; line-height: 1.3; margin: 0; }
+h1 { font-size: 32px; margin: 0; line-height: 1.15; letter-spacing: -0.015em; }
+h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
+.pregunta { font-size: 28px; font-weight: 600; line-height: 1.25; margin: 0; letter-spacing: -0.01em; }
+.text { font-size: 22px; line-height: 1.4; margin: 0; }
 .suau { color: var(--suau); }
 
 /* ---------- Botons: 2 × 2 cm com a mínim ---------- */
-.boto { font-family: inherit; font-size: 24px; font-weight: 700; min-height: 84px; min-width: 200px; padding: 12px 26px;
-  border-radius: var(--radi); border: 3px solid transparent; cursor: pointer; display: inline-flex; align-items: center;
-  justify-content: center; gap: 12px; text-align: center; line-height: 1.15; color: var(--blanc); background: var(--blau); }
-.boto:focus-visible { outline: 5px solid #f2b632; outline-offset: 3px; }
-.boto:active { transform: translateY(2px); }
+.boto { font-family: inherit; font-size: 23px; font-weight: 600; min-height: 84px; min-width: 200px; padding: 12px 28px;
+  border-radius: 16px; border: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  text-align: center; line-height: 1.15; color: #fff; background: var(--mar); box-shadow: var(--ombra-boto); transition: transform .08s, box-shadow .08s; }
+.boto:hover { background: var(--mar-fosc); }
+.boto:focus-visible { outline: 4px solid var(--daurat); outline-offset: 3px; }
+.boto:active { transform: translateY(2px); box-shadow: 0 0 0 rgba(0,0,0,0); }
 .boto.si { background: var(--verd); }
 .boto.no { background: var(--pissarra); }
-.boto.clar { background: var(--blanc); color: var(--tinta); border-color: var(--tinta); }
-.boto.petit { min-height: 76px; min-width: 120px; font-size: 22px; padding: 8px 18px; }
-.boto[disabled] { background: #c9ced6; color: #3b4252; cursor: default; }
+.boto.clar { background: var(--superficie); color: var(--tinta); box-shadow: inset 0 0 0 2px var(--vora), 0 4px 10px -8px rgba(0,0,0,.4); }
+.boto.clar:hover { box-shadow: inset 0 0 0 2px var(--mar), 0 4px 10px -8px rgba(0,0,0,.4); }
+.boto.petit { min-height: 76px; min-width: 120px; font-size: 21px; padding: 8px 20px; }
+.boto[disabled] { background: #d9d3c6; color: #3f4650; box-shadow: none; cursor: default; }
 .botons { display: flex; gap: 18px; flex-wrap: wrap; }
 .botons .boto { flex: 1 1 0; }
 
-/* Graella de tries (avatar, PIN, opcions, noms) */
+/* Graella de tries (companys, PIN, opcions, noms) */
 .graella { display: grid; gap: 14px; flex: 1 1 auto; min-height: 0; }
-.tria { font-family: inherit; background: var(--blanc); border: 3px solid var(--vora); border-radius: var(--radi); cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px; min-height: 84px; min-width: 84px; color: var(--tinta); }
-.tria:focus-visible { outline: 5px solid #f2b632; outline-offset: 2px; }
-.tria .dibuix { flex: 1 1 auto; min-height: 0; width: 100%; display: flex; justify-content: center; }
-.tria .dibuix svg { width: auto; max-width: 100%; height: 100%; }
-.tria .etiqueta { font-size: 22px; font-weight: 700; }
-.tria.triat { border-color: var(--blau); background: #e6efff; }
-.tria[disabled] { opacity: .45; cursor: default; }
+.tria { font-family: inherit; background: var(--superficie); border: 2px solid transparent; border-radius: var(--radi); cursor: pointer;
+  box-shadow: var(--ombra); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px; min-height: 84px; min-width: 84px; color: var(--tinta); transition: border-color .12s, transform .08s; }
+.tria:hover { border-color: var(--mar); }
+.tria:active { transform: translateY(1px); }
+.tria:focus-visible { outline: 4px solid var(--daurat); outline-offset: 2px; }
+.tria .dibuix { flex: 1 1 auto; min-height: 0; width: 100%; display: flex; justify-content: center; align-items: center; }
+.tria .dibuix svg, .tria .dibuix img { width: auto; max-width: 100%; height: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; }
+.tria .etiqueta { font-size: 21px; font-weight: 600; text-align: center; }
+.tria.triat { border-color: var(--mar); background: #eef5f4; }
+.tria[disabled] { opacity: .35; cursor: default; box-shadow: none; }
 
-/* ---------- Mapa ---------- */
-.mapa { flex: 1 1 auto; min-height: 0; display: flex; justify-content: center; }
-.mapa svg { width: 100%; height: 100%; }
-.illa { cursor: pointer; }
-.illa path { transition: fill 1s ease; }
-.peu-mapa { flex: 0 0 auto; display: flex; gap: 18px; align-items: stretch; }
-.carnet { flex: 1 1 auto; display: flex; gap: 10px; background: var(--blanc); border: 2px solid var(--vora); border-radius: var(--radi); padding: 8px 14px; align-items: center; }
-.carnet .titol { font-size: 20px; font-weight: 700; margin-right: 6px; }
-.segell { display: flex; flex-direction: column; align-items: center; width: 104px; }
-.segell .cercle { width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--vora); background: #eef1f5; padding: 6px; filter: grayscale(1); opacity: .5; }
-.segell.te .cercle { border-color: var(--verd); background: #e7f5ea; filter: none; opacity: 1; }
-.segell span { font-size: 20px; font-weight: 700; white-space: nowrap; }
-.peu-mapa .boto { min-width: 300px; font-size: 28px; }
-.avis-illa { position: fixed; left: 50%; top: 90px; transform: translateX(-50%); background: var(--tinta); color: var(--blanc); padding: 14px 26px; border-radius: 16px; font-size: 24px; font-weight: 700; }
+/* ---------- Mapa (il·lustració a tota l'amplada) ---------- */
+#p-mapa { position: absolute; inset: 0; z-index: 1; gap: 0; background: linear-gradient(var(--boira) 0 40%, var(--mar-fons) 60% 100%); }
+.mapa { position: relative; width: 100%; flex: 0 0 auto; margin-top: 58px; }
+.mapa-img { position: relative; width: 100%; aspect-ratio: 2752 / 1014; }
+.mapa-img .fons-mapa { position: absolute; inset: 0; width: 100%; height: 100%; }
+.boira { position: absolute; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(242, 236, 220, .42) 0 40%, rgba(242, 236, 220, 0) 68%);
+  backdrop-filter: grayscale(.9) blur(1.2px); -webkit-mask-image: radial-gradient(circle, #000 45%, transparent 70%); mask-image: radial-gradient(circle, #000 45%, transparent 70%); }
+.anell { position: absolute; aspect-ratio: 1.6; transform: translate(-50%, -42%); border-radius: 50%; pointer-events: none;
+  box-shadow: 0 0 0 3px rgba(255, 226, 160, .95), 0 0 34px 10px rgba(255, 214, 140, .55); }
+.etiqueta-illa { position: absolute; transform: translateX(-50%); z-index: 2; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 7px 14px 8px; border-radius: 14px;
+  background: rgba(255, 253, 248, .9); backdrop-filter: blur(6px); box-shadow: 0 6px 16px -8px rgba(0,0,0,.45); color: var(--tinta); white-space: nowrap; }
+.etiqueta-illa .nom-illa { font-size: 19px; font-weight: 600; line-height: 1.1; }
+.etiqueta-illa.tancada { background: rgba(245, 239, 228, .82); }
+.etiqueta-illa.tancada .nom-illa { color: var(--suau); }
+.aviat { display: inline-flex; align-items: center; gap: 5px; font-size: 19px; color: var(--suau); }
+.aviat .cadenat { width: 14px; height: 14px; }
+.llums { display: inline-flex; gap: 6px; padding-top: 1px; }
+.llums i { width: 12px; height: 12px; border-radius: 50%; background: #d6ccb7; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+.llums i.on { background: var(--daurat); box-shadow: 0 0 8px 1px rgba(217, 164, 65, .8); }
+.ets-aqui { position: absolute; z-index: 3; width: 58px; height: 58px; transform: translate(-50%, -50%); border-radius: 50%;
+  box-shadow: 0 0 0 4px #fff, 0 8px 18px -4px rgba(0,0,0,.45); pointer-events: none; }
+.ets-aqui img { width: 100%; height: 100%; }
+.llum-far { position: absolute; width: 14%; aspect-ratio: 1; transform: translate(-50%, -62%); border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 226, 150, .85) 0 8%, rgba(255, 214, 120, .35) 30%, rgba(255, 214, 120, 0) 65%); }
+.peu-mapa { position: absolute; left: 20px; right: 20px; bottom: 16px; z-index: 3; display: flex; gap: 16px; align-items: stretch; }
+.carnet { flex: 1 1 auto; display: flex; gap: 6px; align-items: center; padding: 8px 16px; border-radius: var(--radi);
+  background: rgba(255, 253, 248, .94); backdrop-filter: blur(8px); box-shadow: var(--ombra); }
+.carnet .titol { font-size: 19px; font-weight: 600; margin-right: 10px; color: var(--suau); line-height: 1.2; }
+.segell { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 108px; }
+.segell .cercle { width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 6px;
+  background: #ece6da; filter: grayscale(1) opacity(.45); }
+.segell .cercle img { width: 100%; height: 100%; object-fit: contain; }
+.segell.te .cercle { background: var(--daurat-clar); box-shadow: 0 0 0 2px var(--daurat); filter: none; }
+.segell span { font-size: 19px; font-weight: 600; white-space: nowrap; color: var(--suau); }
+.segell.te span { color: var(--tinta); }
+.peu-mapa .boto { min-width: 300px; font-size: 26px; border-radius: var(--radi); }
+.avis-illa { position: fixed; left: 50%; top: 92px; z-index: 5; transform: translateX(-50%); background: rgba(28, 39, 51, .92); color: #fff;
+  padding: 14px 26px; border-radius: 16px; font-size: 22px; font-weight: 600; box-shadow: var(--ombra); }
+.capcal.sobre-mapa { position: absolute; left: 0; right: 0; top: 0; background: rgba(255, 253, 248, .72); border-bottom: 0; }
 
 /* ---------- Missió ---------- */
 .missio { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 300px 1fr; gap: 18px; }
-.lateral { background: var(--blanc); border: 2px solid var(--vora); border-radius: var(--radi); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-.xapa { display: inline-block; background: var(--groc); border: 2px solid var(--tinta); border-radius: 14px; padding: 6px 12px; font-size: 22px; font-weight: 700; }
-.nivells { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
-.nivell { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; color: var(--suau); }
-.nivell .punt { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--vora); background: var(--blanc); transition: background 1s ease, border-color 1s ease; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; }
+.lateral { background: var(--superficie); border-radius: var(--radi); box-shadow: var(--ombra); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.lateral h2 { font-size: 25px; }
+.lateral .text { color: var(--suau); font-size: 20px; }
+.xapa { display: inline-flex; align-items: center; gap: 8px; background: var(--daurat-clar); border-radius: 12px; padding: 7px 12px; font-size: 19px; font-weight: 600; }
+.nivells { display: flex; flex-direction: column; gap: 0; margin-top: auto; }
+.nivell { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 600; color: var(--suau); position: relative; padding: 7px 0; }
+.nivell + .nivell::before { content: ""; position: absolute; left: 17px; top: -9px; height: 18px; width: 2px; background: var(--vora); }
+.nivell .punt { width: 36px; height: 36px; border-radius: 50%; background: #ece6da; display: flex; align-items: center; justify-content: center;
+  color: var(--tinta); font-size: 20px; transition: background 1s ease, box-shadow 1s ease; }
 .nivell.fet { color: var(--tinta); }
-.nivell.fet .punt { background: var(--verd); border-color: var(--verd); }
-.targeta { background: var(--blanc); border: 2px solid var(--vora); border-radius: var(--radi); padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; min-height: 0; }
-.targeta .cos { flex: 1 1 auto; min-height: 0; display: flex; gap: 22px; align-items: center; }
-.targeta .il { flex: 0 0 auto; height: 100%; max-height: 230px; aspect-ratio: 1; }
-.targeta .il svg { height: 100%; }
-.banner { background: var(--groc); border: 3px solid #f2b632; border-radius: var(--radi); padding: 10px 16px; display: flex; align-items: center; gap: 16px; font-size: 24px; font-weight: 700; }
+.nivell.fet .punt { background: var(--daurat); box-shadow: 0 0 12px 1px rgba(217, 164, 65, .65); }
+.targeta { background: var(--superficie); border-radius: var(--radi); box-shadow: var(--ombra); padding: 22px 26px; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+.targeta .cos { flex: 1 1 auto; min-height: 0; display: flex; gap: 26px; align-items: center; }
+.targeta .il { flex: 0 0 auto; height: 100%; max-height: 240px; aspect-ratio: 1; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 18px -10px rgba(0,0,0,.4); }
+.targeta .il svg, .targeta .il img { width: 100%; height: 100%; object-fit: cover; }
+.banner { background: var(--daurat-clar); border-radius: var(--radi); padding: 10px 12px 10px 20px; display: flex; align-items: center; gap: 16px;
+  font-size: 22px; font-weight: 600; box-shadow: inset 0 0 0 2px var(--daurat); }
 .banner .boto { margin-left: auto; }
 
-/* ---------- Teclat del codi ---------- */
+/* ---------- Teclat del codi i PIN ---------- */
 .codi-caselles { display: flex; gap: 14px; justify-content: center; }
-.codi-caselles span { width: 84px; height: 84px; border: 3px solid var(--tinta); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 44px; font-weight: 700; background: var(--blanc); }
+.codi-caselles span { width: 84px; height: 84px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 42px; font-weight: 600;
+  background: var(--superficie); box-shadow: var(--ombra), inset 0 0 0 2px var(--vora); }
 .teclat { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; max-width: 760px; width: 100%; margin: 0 auto; }
-.teclat .boto { min-width: 0; font-size: 34px; }
+.teclat .boto { min-width: 0; font-size: 32px; }
 .pin-caselles { display: flex; gap: 14px; justify-content: center; }
-.pin-caselles .forat { width: 92px; height: 92px; border: 3px dashed var(--suau); border-radius: 16px; background: var(--blanc); padding: 6px; }
-.missatge { font-size: 26px; font-weight: 700; text-align: center; min-height: 34px; margin: 0; }
+.pin-caselles .forat { width: 92px; height: 92px; border-radius: 18px; background: var(--superficie); padding: 10px;
+  box-shadow: inset 0 0 0 2px var(--vora); display: flex; align-items: center; justify-content: center; }
+.pin-caselles .forat img { width: 100%; height: 100%; object-fit: contain; }
+.missatge { font-size: 23px; font-weight: 600; text-align: center; min-height: 32px; margin: 0; }
 .centre { text-align: center; }
-.fet-gran { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
-.fet-gran .il { height: 46vh; aspect-ratio: 200/140; }
-.estat-xarxa { position: fixed; right: 16px; bottom: 12px; background: var(--tinta); color: #fff; font-size: 18px; padding: 8px 14px; border-radius: 12px; }
+.fet-gran { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+.fet-gran .il { height: 46vh; aspect-ratio: 4 / 3; border-radius: 24px; overflow: hidden; box-shadow: var(--ombra); }
+.illa-retall { width: 100%; height: 100%; background-repeat: no-repeat; }
+.illa-retall.apagada { filter: grayscale(1) opacity(.6); }
+.estat-xarxa { position: fixed; right: 16px; bottom: 12px; z-index: 6; background: var(--tinta); color: #fff; font-size: 19px; padding: 8px 14px; border-radius: 12px; }
+.benvinguda { background: linear-gradient(var(--boira), var(--paper)); }
 </style>
 </head>
 <body>
@@ -375,12 +432,13 @@ function mostra(id) {
   S.pantalla = id;
   const ambCapcal = ['p-mapa', 'p-missio', 'p-encallat', 'p-pista', 'p-sortida', 'p-fet'].indexOf(id) >= 0;
   $('capcal').hidden = !ambCapcal;
+  $('capcal').classList.toggle('sobre-mapa', id === 'p-mapa');
   $('boto-mapa').hidden = ['p-missio', 'p-encallat', 'p-pista'].indexOf(id) < 0;
   if (ambCapcal && S.estat) {
-    $('capcal-avatar').innerHTML = avatarSVG(S.estat.alumne.avatar);
+    $('capcal-avatar').innerHTML = avatarHTML(S.estat.alumne.avatar);
     $('capcal-nom').textContent = S.estat.alumne.nom;
     const z = zonaAvui();
-    $('capcal-lloc').textContent = z && id !== 'p-mapa' ? '· ' + z.nom : '';
+    $('capcal-lloc').textContent = z && id !== 'p-mapa' ? z.nom : '';
   }
 }
 
@@ -418,8 +476,7 @@ function obreMapa() { mostra('p-mapa'); pintaMapa(); }
 function pintaMapa() {
   const e = S.estat;
   const oberta = ['Z9', 'Z8', 'Z7', 'Z6', 'Z5', 'Z4', 'Z3', 'Z2', 'Z1'].find(z => e.zones[z] && e.zones[z] !== 'tancada') || 'Z1';
-  $('mapa').innerHTML = mapaSVG(e.mon, e.zones, { avatar: e.alumne.avatar, zonaBarca: e.avui ? e.avui.zona : oberta, farEnces: e.fitaAssolida, destaca: e.avui ? e.avui.zona : '' });
-  $('mapa').querySelectorAll('.illa').forEach(g => g.addEventListener('click', () => avisIlla(g.dataset.zona, g.dataset.estat)));
+  $('mapa').innerHTML = mapaHTML(e.mon, e.zones, { avatar: e.alumne.avatar, zonaAvatar: e.avui ? e.avui.zona : oberta, farEnces: e.fitaAssolida, destaca: e.avui ? e.avui.zona : '' });
   $('carnet').innerHTML = '<span class="titol">Les meves eines</span>' + ['scottie', 'ozobot', 'dash', 'spike', 'scratch'].map(k =>
     `<div class="segell ${e.carnet[k] ? 'te' : ''}"><div class="cercle">${SEGELLS[k][1]}</div><span>${SEGELLS[k][0]}</span></div>`).join('');
   const b = $('boto-missio');
@@ -557,7 +614,7 @@ function obreFet() {
   mostra('p-fet');
   const e = S.estat, z = zonaAvui();
   const i = z ? e.mon.indexOf(z) : 0;
-  $('fet-il').innerHTML = z ? illaSVG(z, e.zones[z.zona] || 'oberta', i) : '';
+  $('fet-il').innerHTML = z ? illaHTML(i, e.zones[z.zona] || 'oberta') : '';
   $('fet-titol').textContent = 'Sessió acabada!';
   $('fet-text').textContent = 'Ja pots tancar el Chromebook.';
   clearTimeout(obreFet.t);
@@ -567,19 +624,11 @@ function obreFet() {
 /* ---------- Avatar ---------- */
 function obreAvatar() {
   mostra('p-avatar');
-  S.avatarCos = null;
-  $('avatar-titol').textContent = 'Tria el teu personatge';
+  $('avatar-titol').textContent = 'Tria el teu company de viatge';
   const g = $('avatar-graella');
-  g.innerHTML = COLORS_AVATAR.map((c, i) => `<button class="tria" data-i="${i}"><span class="dibuix">${avatarSVG('c' + i + '-a0')}</span><span class="etiqueta">${c[0]}</span></button>`).join('');
-  g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => obreComplement(+b.dataset.i)));
-}
-function obreComplement(cos) {
-  S.avatarCos = cos;
-  $('avatar-titol').textContent = 'Què porta?';
-  const g = $('avatar-graella');
-  g.innerHTML = COMPLEMENTS.map((c, i) => `<button class="tria" data-i="${i}"><span class="dibuix">${avatarSVG('c' + cos + '-a' + i)}</span><span class="etiqueta">${c[0]}</span></button>`).join('');
+  g.innerHTML = COMPANYS.map((nom, i) => `<button class="tria" data-i="${i}"><span class="dibuix">${avatarHTML('c' + i + '-a0')}</span><span class="etiqueta">${nom}</span></button>`).join('');
   g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => {
-    envia('avatar', 'c' + cos + '-a' + b.dataset.i);
+    envia('avatar', 'c' + b.dataset.i + '-a0');
     if (!S.estat.alumne.tePin) obrePin('crea'); else decideix();
   }));
 }

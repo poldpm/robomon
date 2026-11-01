@@ -38,7 +38,10 @@ Una missió és un conjunt de files de la pestanya `MISSIONS` (columnes: `sessio
 
 ## Il·lustracions
 
-Viuen a `src/comu/illustracions.js` (objecte `IL`). SVG fet a mà, viewBox `0 0 100 100`, traç `TINTA`, res de `<pattern>` ni `url(#id)`. Totes les opcions porten text a sota (una icona sola no s'entén). Afegeix-ne de noves amb una clau curta en català (`dash-mesura`, `spike-port`…).
+- **Escenes** (robot, persones, objectes): imatges generades amb IA en una **graella sobre fons crema llis (#F3EEE4)**, totes amb el mateix estil que les de la S1. Es retallen a `src/imatges/<clau>.webp` (≈320 px d'amplada) i s'afegeixen a l'objecte `IL` de `src/comu/illustracions.js` amb `img('<clau>')`.
+- **Esquemes** (línies, distàncies, connexions): SVG amb la funció `esquema()` (full blanc, marc fi, robot blanc). Res de `<pattern>` ni `url(#id)`.
+- Res d'estil infantil: ni ninots amb ulls de botó ni contorns gruixuts de dibuix animat.
+- Totes les opcions porten text a sota (una icona sola no s'entén).
 
 ## Abans de dir que està fet
 

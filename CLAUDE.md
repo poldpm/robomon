@@ -4,7 +4,9 @@
 - **`git pull` en començar; `commit` + `push` en acabar cada canvi acabat**, sense esperar que en Pol ho demani.
 - **QA abans de dir que una cosa està feta**: `node eines/construeix.mjs && node proves/proves.mjs` (han de passar totes) i mirar les captures de `proves/captures/`.
 - Lliura **fitxers sencers**: en Pol els enganxa a l'editor d'Apps Script. Digues sempre quins fitxers d'`apps-script/` han canviat.
-- Disseny: **màxim Bold 700** (mai 800/900/Black), cap Impact, lletra Andika incrustada, contrast ≥ 4,5:1, botons ≥ 2×2 cm, **cap scroll** a les pantalles dels alumnes, cap arrossegar, cap so, cap animació constant.
+- Disseny: **màxim Bold 700** (mai 800/900/Black), cap Impact, lletra Lexend incrustada (400/600/700), contrast ≥ 4,5:1, botons ≥ 2×2 cm, **cap scroll** a les pantalles dels alumnes, cap arrossegar, cap so, cap animació constant.
+- Estil visual: l'Arxipèlag il·lustrat (mapa pictòric, sorra/boira, mar fosc, daurat per al progrés). Res de ninots infantils ni contorns gruixuts: en Pol ho va rebutjar.
+- Imatges noves: generar-les amb IA en graelles (fons crema llis), retallar-les a `src/imatges/*.webp` i referenciar-les a `illustracions.js`. Els esquemes de línies, en SVG amb el mateix llenguatge (full blanc, marc fi, robot blanc).
 - SVG: res de `<pattern>` ni `url(#id)`. `[hidden]{display:none!important}` i una sola `tancaModal()`.
 - Seguretat: al projecte del món, **només `api`, `doGet` i `doPost` poden ser funcions sense `_` final**. Les respostes correctes mai arriben al navegador de l'alumne. Mai dades d'un alumne a un altre. Mai noms a la projecció.
 - PROGRES té dos blocs: el món només escriu el bloc de l'alumne; l'administrador només el del mestre.
