@@ -202,7 +202,7 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
 
     <!-- ERROR -->
     <section class="pantalla" id="p-error" hidden>
-      <div class="fet-gran"><h1>No s'ha pogut obrir el món.</h1><p class="text">Torna-ho a provar. Si no va, avisa el mestre.</p>
+      <div class="fet-gran"><h1>No s'ha pogut obrir el món.</h1><p class="text">Torna-ho a provar. Si no va, avisa el mestre.</p><p class="text suau" id="error-detall" style="font-size:19px;"></p>
       <button class="boto" id="boto-recarrega">Torna-ho a provar</button></div>
     </section>
 
@@ -764,8 +764,13 @@ function obreProva() {
   g.innerHTML = (INICIAL.proves || []).map(a => `<button class="tria" data-id="${esc(a.id)}"><span class="etiqueta">${esc(a.nom)}</span></button>`).join('');
   g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => {
     S.simula = b.dataset.id;
-    crida('estat', {}).then(r => { if (r && r.ok) { S.estat = r.dades; decideix(); } else mostra('p-error'); }).catch(() => mostra('p-error'));
+    crida('estat', {}).then(r => { if (r && r.ok) { S.estat = r.dades; decideix(); } else mostraError(r && (r.detall || r.motiu)); }).catch(e => mostraError(String(e && e.message || e)));
   }));
+}
+
+function mostraError(detall) {
+  $('error-detall').textContent = detall ? 'Detall (només el veu el mestre): ' + detall : '';
+  mostra('p-error');
 }
 
 /* ---------- Connexions dels botons fixos ---------- */
@@ -787,7 +792,7 @@ $('prova-plab').onclick = () => { S.simula = null; mostra('p-codi'); preparaCodi
 /* ---------- Inici ---------- */
 (function inici() {
   try { S.testimoni = sessionStorage.getItem('taller3r_testimoni'); } catch (e) { S.testimoni = null; }
-  if (INICIAL.error) return mostra('p-error');
+  if (INICIAL.error) return mostraError(INICIAL.detall);
   if (INICIAL.pla === 'A' && INICIAL.estat) { S.estat = INICIAL.estat; decideix(); }
   else if (INICIAL.pla === 'prova') obreProva();
   else if (S.testimoni) {

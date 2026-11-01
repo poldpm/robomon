@@ -20,7 +20,7 @@ function doGet(e) {
     inicial = estatInicial_();
   } catch (err) {
     registraError_('doGet', err);
-    inicial = { error: true };
+    inicial = { error: true, detall: detallPerAlMestre_(err) };
   }
   t.inicial = JSON.stringify(inicial).replace(/</g, '\\u003c');
   return t.evaluate()
@@ -54,7 +54,7 @@ function api(accio, args, testimoni) {
     if (accio === 'registra') return { ok: true, dades: registra_(qui.id, args.esdeveniments || []) };
   } catch (err) {
     registraError_('api:' + accio, err);
-    return { ok: false, motiu: 'error' };
+    return { ok: false, motiu: 'error', detall: detallPerAlMestre_(err) };
   }
   return { ok: false, motiu: 'accio' };
 }
@@ -62,6 +62,16 @@ function api(accio, args, testimoni) {
 // ------------------------------------------------------------
 //  Identitat (Pla A: correu · Pla B: testimoni de PIN · Mode prova: només el mestre)
 // ------------------------------------------------------------
+
+/** El text tècnic d'un error només es mostra al compte del mestre (mai als alumnes). */
+function detallPerAlMestre_(err) {
+  try {
+    var mestre = String(config_().correu_mestre || '').toLowerCase().trim();
+    if (mestre && correuActiu_() === mestre) return String(err && err.message || err).slice(0, 300);
+  } catch (e) { /* si ni tan sols es pot llegir la configuració */ }
+  try { if (correuActiu_() && correuActiu_() === String(Session.getEffectiveUser().getEmail() || '').toLowerCase()) return String(err && err.message || err).slice(0, 300); } catch (e) { /* res */ }
+  return '';
+}
 
 function correuActiu_() {
   try { return String(Session.getActiveUser().getEmail() || '').toLowerCase().trim(); } catch (e) { return ''; }
