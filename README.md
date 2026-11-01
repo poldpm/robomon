@@ -125,6 +125,14 @@ Posa els fitxers nous als dos projectes (administrador i món), en fa una versi�
 1. Activa l'API d'Apps Script al teu compte: https://script.google.com/home/usersettings → «API de Google Apps Script» → **Activada**.
 2. Copia l'**ID de l'script** del projecte del món (Configuració del projecte → IDs) i desa'l al tauler: Sessions → «ID del projecte del món».
 3. L'última vegada a mà: enganxa `Codi.gs` i `appsscript.json` de `apps-script/admin/` a l'administrador, desplega una versió nova i accepta els permisos nous que demana (gestionar projectes i desplegaments d'Apps Script, i connectar-se a GitHub).
+4. **Projecte de Google Cloud propi** (el projecte «amagat» que Google posa per defecte no deixa activar l'API):
+   - https://console.cloud.google.com/projectcreate → nom `RoboMon` → Crear.
+   - APIs y servicios → Biblioteca → **Apps Script API** → Habilitar.
+   - APIs y servicios → Pantalla de consentimiento de OAuth → **Interno** → nom `RoboMón` → desar.
+   - Copia el **número** del projecte → editor de l'administrador → Configuració del projecte → Proyecto de Google Cloud Platform → Cambiar proyecto → enganxa'l.
+5. Executa `actualitzaDesDeGitHub` des de l'editor (o el menú del full) i accepta els permisos.
+
+Fet l'1 de novembre de 2026: funciona (versió 41d00a8 instal·lada).
 
 ## Per a Claude (desenvolupament)
 
