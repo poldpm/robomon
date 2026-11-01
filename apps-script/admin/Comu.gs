@@ -125,11 +125,27 @@ function escriuBloc_(dades, numFila, bloc, obj) {
   dades.pestanya.getRange(numFila, c1 + 1, 1, fila.length).setValues([fila]);
 }
 
-/** Afegeix files al final amb UNA sola crida. */
+/**
+ * Afegeix files al final.
+ * REGISTRE i ERRORS hi escriuen els DOS projectes amb panys diferents: fem servir appendRow, que és atòmic.
+ * La resta de pestanyes només les fa créixer l'administrador: una sola crida.
+ */
 function afegeixFiles_(nom, files) {
   if (!files.length) return;
   var p = pestanya_(nom);
+  if (nom === 'REGISTRE' || nom === 'ERRORS') {
+    files.forEach(function (f) { p.appendRow(f.map(textSegur_)); });
+    return;
+  }
   p.getRange(p.getLastRow() + 1, 1, files.length, files[0].length).setValues(files);
+}
+
+/** Un text que arriba del navegador mai pot ser una fórmula ni ser llarg. */
+function textSegur_(v, max) {
+  if (v === null || v === undefined) return '';
+  if (typeof v !== 'string') return v;
+  var t = v.slice(0, max || 200);
+  return /^[=+\-@]/.test(t) ? "'" + t : t;
 }
 
 function filaDe_(nom, obj) {
@@ -188,7 +204,7 @@ function ambBloqueig_(funcio) {
 
 function registraError_(on, err) {
   try {
-    afegeixFiles_('ERRORS', [[new Date(), on, String(err && err.message || err), String(err && err.stack || '').slice(0, 500)]]);
+    afegeixFiles_('ERRORS', [[new Date(), String(on).slice(0, 60), String(err && err.message || err), String(err && err.stack || '').slice(0, 500)]]);
   } catch (e) { /* si no es pot registrar, no fem res més */ }
 }
 
@@ -217,8 +233,9 @@ function analitzaOpcions_(text) {
 function estatEfectiu_(p) {
   p = p || {};
   var presentMestre = String(p.present_mestre || '');
-  var present = presentMestre === 'no' ? false : (presentMestre === 'sí' || !!p.present_alumne);
   var nivellMestre = Number(p.nivell_mestre) || 0;
+  // Si el mestre li ha validat un nivell, hi era (encara que no hagi pogut entrar al món)
+  var present = presentMestre === 'no' ? false : (presentMestre === 'sí' || !!p.present_alumne || nivellMestre > 0);
   var n1Declarat = (Number(p.n1) || 0) > (Number(p.n1_rebutjat_des_de) || 0);
   var nivell = Math.max(nivellMestre, n1Declarat ? 1 : 0);
   var esperaActiva = p.espera && (Number(p.espera_des_de) || 0) > (Number(p.atesa_des_de) || 0);

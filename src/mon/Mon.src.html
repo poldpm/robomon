@@ -136,7 +136,7 @@ h2 { font-size: 28px; margin: 0; line-height: 1.2; }
     <!-- PLA B: CODI -->
     <section class="pantalla" id="p-codi" hidden>
       <h1 class="centre">Escriu el codi de la pissarra</h1>
-      <div class="codi-caselles"><span id="codi-0"></span><span id="codi-1"></span><span id="codi-2"></span></div>
+      <div class="codi-caselles"><span id="codi-0"></span><span id="codi-1"></span><span id="codi-2"></span><span id="codi-3"></span></div>
       <p class="missatge" id="codi-missatge"></p>
       <div class="teclat" id="teclat"></div>
     </section>
@@ -589,7 +589,7 @@ function obrePin(mode) {
   S.pinMode = mode; S.pin = [];
   mostra('p-pin');
   $('pin-titol').textContent = mode === 'crea' ? 'Tria 3 dibuixos. Seran la teva clau secreta.'
-    : (S.alumneB && !S.alumneB.tePin ? 'Hola, ' + S.alumneB.nom + '! Tria 3 dibuixos i recorda\'ls.' : 'Hola, ' + (S.alumneB ? S.alumneB.nom : '') + '! Posa els teus 3 dibuixos.');
+    : 'Hola, ' + (S.alumneB ? S.alumneB.nom : '') + '! Posa els teus 3 dibuixos.';
   $('pin-missatge').textContent = '';
   $('pin-enrere').hidden = mode === 'crea';
   const g = $('pin-graella');
@@ -638,12 +638,12 @@ function preparaCodi() {
     `<button class="boto clar" data-d="x" style="grid-column: span 2; font-size:24px;">Esborra</button>`;
   t.querySelectorAll('button').forEach(b => b.addEventListener('click', () => teclaCodi(b.dataset.d)));
 }
-function pintaCodi() { for (let i = 0; i < 3; i++) $('codi-' + i).textContent = S.codi[i] || ''; }
+function pintaCodi() { for (let i = 0; i < 4; i++) $('codi-' + i).textContent = S.codi[i] || ''; }
 function teclaCodi(d) {
   if (d === 'x') { S.codi = S.codi.slice(0, -1); pintaCodi(); return; }
-  if (S.codi.length >= 3) return;
+  if (S.codi.length >= 4) return;
   S.codi += d; pintaCodi();
-  if (S.codi.length < 3) return;
+  if (S.codi.length < 4) return;
   $('codi-missatge').textContent = 'Comprovant…';
   crida('llistaNoms', { codi: S.codi }).then(r => {
     const d = r && r.ok && r.dades;

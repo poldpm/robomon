@@ -89,7 +89,7 @@ Tot viu a Google Apps Script i a un Google Sheet de la unitat compartida del cen
 2. Copia aquesta nova URL `/exec`.
 3. L'enllaç del Pla B2 per als alumnes és:
    `https://poldpm.github.io/taller-3r/pla-b/?api=` + la URL del pas 2
-4. Prova-ho en una **finestra d'incògnit**: et demanarà el codi de 3 xifres que surt al tauler.
+4. Prova-ho en una **finestra d'incògnit**: et demanarà el codi de 4 xifres que surt al tauler.
 5. ⚠️ Abans de fer-lo servir amb alumnes, comenta'l amb el **DPD**: és un punt d'entrada anònim (protegit per codi + PIN).
 
 ### 6 · Abans del dimecres 11 de novembre

@@ -30,6 +30,7 @@ class Pestanya {
   }
   getDataRange() { return new Rang(this, 1, 1, Math.max(this.getLastRow(), 1), Math.max(this.getLastColumn(), 1)); }
   setFrozenRows() { return this; }
+  appendRow(f) { this.getRange(this.getLastRow() + 1, 1, 1, f.length).setValues([f]); return this; }
 }
 class Rang {
   constructor(p, r, c, nr, nc) { Object.assign(this, { p, r, c, nr, nc }); }

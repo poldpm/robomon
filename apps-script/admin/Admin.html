@@ -214,7 +214,7 @@ td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
 </script>
 <script>
 'use strict';
-const URL_ADMIN = '<?= urlAdmin ?>';
+const URL_ADMIN = <?!= urlAdmin ?>;
 const A = { inici: null, grup: 'G1', sessio: 'S1', vista: 'aula', tauler: null, notes: null, missio: null, ocupat: false };
 const $ = id => document.getElementById(id);
 const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

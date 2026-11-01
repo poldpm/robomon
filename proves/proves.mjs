@@ -52,7 +52,7 @@ console.log('\n3 · El mestre obre la sessió S1 per al grup 2');
 const ini = admin('obreSessio', { grup: 'G2', sessio: 'S1' });
 ok(ini.ok && ini.dades.oberta.sessio === 'S1', 'Sessió oberta');
 const codi = ini.dades.calendari.find(c => c.grup === 'G2' && c.sessio === 'S1').codi;
-ok(/^\d{3}$/.test(codi), 'Codi de classe de 3 xifres: ' + codi);
+ok(/^\d{4}$/.test(codi), 'Codi de classe de 4 xifres: ' + codi);
 const equips = mon.full.getSheetByName('EQUIPS').getDataRange().getValues().slice(1).filter(f => f[3] === 'S1');
 ok(equips.length === 18 && new Set(equips.map(f => f[4])).size === 6, '18 alumnes repartits en 6 robots (6 Ozobot)');
 const est = alumne(0, 'estat').dades;
@@ -186,6 +186,19 @@ ok(t1.cues.ajuda.map(x => x.id).join() === 'A002,A015', 'Cua d\'ajuda en ordre d
 ok(t1.cues.demo[0].id === 'A001', 'Cua de demostracions: l\'Anna la primera');
 ok(t1.fita.presents === 18, 'Fita: 18 presents');
 
+console.log('\n6b · Proteccions (revisió de seguretat)');
+const fReg = () => mon.full.getSheetByName('REGISTRE').getDataRange().getValues();
+const abansReg = fReg().length;
+alumne(4, 'registra', { esdeveniments: [{ t: 'pista', v: '=IMPORTDATA("https://dolent")', s: 'S1' }, { t: 'prediccio', v: '=1+1', s: 'S1' }, { t: 'encallat', v: '+SUM(1)', s: 'S1' }] });
+ok(!fReg().some(f => f.some(c => /^[=+\-@]/.test(String(c)))), 'Cap valor que arriba del navegador es pot convertir en fórmula');
+alumne(5, 'registra', { esdeveniments: Array.from({ length: 60 }, () => ({ t: 'ajuda', v: '', s: 'S1' })) });
+ok(fReg().length - abansReg <= 20, 'Com a molt 20 esdeveniments per enviament (' + (fReg().length - abansReg) + ')');
+ok(mon.projectes.admin.estatEfectiu_({ nivell_mestre: 2 }).present === true, 'Un alumne validat pel mestre compta com a present encara que no hagi entrat');
+admin('valida', { id: 'A013', sessio: 'S1', que: 'desfes' });
+ok(admin('tauler', { grup: 'G2', sessio: 'S1' }).dades.targetes.find(x => x.id === 'A013').nivell === 0, '«Desfés un nivell» també treu un N1 declarat per l\'alumne');
+alumne(12, 'registra', { esdeveniments: [{ t: 'n1', v: '', s: 'S1' }] });
+ok(admin('tauler', { grup: 'G2', sessio: 'S1' }).dades.targetes.find(x => x.id === 'A013').nivell === 1, '…i el pot tornar a declarar després');
+
 console.log('\n7 · El mestre al tauler (PC)');
 const ctxM = await nav.newContext({ viewport: { width: 1366, height: 768 } });
 const mestre = await ctxM.newPage();
@@ -194,6 +207,7 @@ await mestre.goto(`${BASE}/admin?usuari=${encodeURIComponent(MESTRE)}`);
 await espera(mestre, '#aula-oberta');
 await mestre.waitForSelector('.targeta');
 await revisa(mestre, '20-admin-aula', { senseScroll: false, lletraMin: 14.6 });
+ok(await mestre.evaluate(() => URL_ADMIN) === '/admin', 'L\'enllaç de la projecció és l\'URL de l\'administrador');
 await mestre.click('.cua button[data-id="A001"]');
 await espera(mestre, '#dialeg');
 await revisa(mestre, '21-admin-validacio', { senseScroll: false, lletraMin: 14.6 });
@@ -280,7 +294,7 @@ pb.on('pageerror', e => { fallades++; console.log('  ✗ Error JS (Pla B): ' + e
 await pb.goto(`${BASE}/pla-b/?api=/exec-b2`);
 await espera(pb, '#p-codi');
 await revisa(pb, '40-plab-codi', REVISA_MON);
-for (const d of '000') await pb.click(`#teclat button[data-d="${d}"]`);
+for (const d of '0000') await pb.click(`#teclat button[data-d="${d}"]`);
 await pb.waitForSelector('text=Aquest codi no és');
 ok(true, 'Codi incorrecte → missatge clar');
 for (const d of codiNou) await pb.click(`#teclat button[data-d="${d}"]`);
@@ -319,6 +333,20 @@ await revisa(petit, '60-petit-mapa', REVISA_MON);
 await petit.clic('#boto-missio');
 await espera(petit, '#p-missio');
 await revisa(petit, '61-petit-missio', REVISA_MON);
+
+console.log('\n15 · Pla B: límits i revocació');
+const codiAra = admin('inici').dades.calendari.find(c => c.grup === 'G2' && c.sessio === 'S1').codi;
+const pinB = (id, pin) => mon.crida('mon', 'api', ['entraPin', { codi: codiAra, id: id, pin: pin }, null], '');
+const tok = pinB('A001', 'sol-peix-casa');
+ok(tok.ok, 'L\'Anna entra amb el seu PIN');
+ok(mon.crida('mon', 'api', ['estat', {}, tok.dades.testimoni], '').ok, 'El testimoni funciona');
+admin('reiniciaPin', { id: 'A001' });
+ok(mon.crida('mon', 'api', ['estat', {}, tok.dades.testimoni], '').motiu === 'identitat', 'Reiniciar el PIN invalida el testimoni');
+ok(pinB('A001', 'flor-poma-arbre').ok, 'Després de reiniciar-lo, l\'Anna en tria un de nou');
+for (let k = 0; k < 5; k++) pinB('A005', 'nuvol-flor-poma');
+ok(pinB('A005', 'sol-lluna-estrella').motiu === 'massa-intents', 'Després de 5 PIN equivocats, ni el bo entra (1 hora)');
+ok(pinB('A999', 'sol-lluna-estrella').motiu === 'pin' && pinB('A005x', 'sol-lluna-estrella').motiu === 'pin', 'Alumne inexistent i PIN equivocat donen la mateixa resposta');
+ok(mon.crida('mon', 'api', ['llistaNoms', { codi: codiAra }, null], '').dades.noms.every(x => !('tePin' in x)), 'La llista de noms no diu qui té PIN');
 
 await nav.close();
 srv.close();

@@ -69,8 +69,13 @@ function correuActiu_() {
 
 function identitat_(testimoni, simula) {
   if (testimoni) {
-    var id = CacheService.getScriptCache().get('t_' + testimoni);
-    if (id) return { id: id, via: 'pin' };
+    var valor = CacheService.getScriptCache().get('t_' + String(testimoni).slice(0, 60));
+    if (valor) {
+      // El testimoni porta un tros del PIN: si el mestre el reinicia o dona de baixa l'alumne, deixa de valer.
+      var parts = String(valor).split('|');
+      var a = alumnePerId_(parts[0]);
+      if (a && String(a.actiu) !== 'no' && String(a.pin || '').slice(0, 12) === parts[1]) return { id: parts[0], via: 'pin' };
+    }
   }
   var correu = correuActiu_();
   if (!correu) return null;
@@ -128,22 +133,42 @@ function sessioOberta_() {
   return oberta;
 }
 
-function llistaNoms_(codi) {
-  var cache = CacheService.getScriptCache();
-  var intents = Number(cache.get('codi_intents') || 0);
-  if (intents > 40) return { bloquejat: true };
+var LIMIT_CODIS = 100;   // codis equivocats per codi de classe i 10 minuts (el codi té 4 xifres: 9.000 possibles)
+
+/**
+ * Comprova el codi de classe. Els intents equivocats es compten per CODI ACTUAL:
+ * si algú prova codis a l'engròs, el mestre obre de nou la sessió i el codi (i el comptador) canvien.
+ * Retorna la sessió oberta si el codi és bo; si no, null.
+ */
+function comprovaCodi_(codi) {
   var s = sessioOberta_();
-  if (!s || !codi || String(s.codi_classe) !== String(codi)) {
-    cache.put('codi_intents', String(intents + 1), 600);
-    return { correcte: false };
-  }
+  if (!s) return null;                                   // sense sessió oberta no comptem res
+  var clau = 'codi_intents_' + String(s.codi_classe);
+  var ok = !!codi && String(s.codi_classe) === String(codi);
+  return ambBloqueig_(function () {
+    var cache = CacheService.getScriptCache();
+    var intents = Number(cache.get(clau) || 0);
+    if (intents >= LIMIT_CODIS) return { bloquejat: true };
+    if (!ok) { cache.put(clau, String(intents + 1), 600); return null; }
+    return { sessio: s };
+  });
+}
+
+function llistaNoms_(codi) {
+  var r = comprovaCodi_(codi);
+  if (r && r.bloquejat) return { bloquejat: true };
+  if (!r) return { correcte: false };
+  var s = r.sessio;
   var noms = objectes_('ALUMNES').filter(function (a) {
-    return String(a.grup) === String(s.grup) && String(a.actiu) !== 'no';
+    return String(a.grup) === String(s.grup) && String(a.actiu) !== 'no' && String(a.id_alumne);
   }).map(function (a) {
-    return { id: String(a.id_alumne), nom: String(a.nom_curt), tePin: !!String(a.pin) };
+    return { id: String(a.id_alumne), nom: String(a.nom_curt) };
   }).sort(function (x, y) { return x.nom.localeCompare(y.nom, 'ca'); });
   return { correcte: true, noms: noms };
 }
+
+/** Té un PIN de debò? («reiniciat» = el mestre l'ha esborrat i se'n pot triar un de nou) */
+function tePin_(a) { return /^h/.test(String(a.pin || '')); }
 
 function hashPin_(id, pin) {
   var sal = String(config_().sal || 'taller3r');
@@ -156,36 +181,42 @@ function pinValid_(pin) {
   return p.length === 3 && p.every(function (x) { return DIBUIXOS_PIN.indexOf(x) >= 0; });
 }
 
+/**
+ * Entrada pel Pla B. Un sol tipus de resposta per a alumne inexistent o PIN equivocat (no es pot endevinar qui hi ha).
+ * Un PIN NOU només es pot triar a la sessió S1 o si el mestre l'ha reiniciat (pin = «reiniciat»).
+ */
 function entraPin_(args) {
-  var id = String(args.id || ''), pin = String(args.pin || '');
+  var id = String(args.id || '').slice(0, 10), pin = String(args.pin || '');
+  var r = comprovaCodi_(args.codi);
+  if (r && r.bloquejat) return { ok: false, motiu: 'massa-intents' };
+  if (!r) return { ok: false, motiu: 'codi' };
+  var s = r.sessio;
   if (!pinValid_(pin)) return { ok: false, motiu: 'pin' };
-  var cache = CacheService.getScriptCache();
-  var clauIntents = 'pin_intents_' + id;
-  var intents = Number(cache.get(clauIntents) || 0);
-  if (intents >= 5) return { ok: false, motiu: 'massa-intents' };
-
-  var s = sessioOberta_();
-  if (!s || String(s.codi_classe) !== String(args.codi)) return { ok: false, motiu: 'codi' };
 
   return ambBloqueig_(function () {
+    var cache = CacheService.getScriptCache();
+    var clauIntents = 'pin_intents_' + id;
+    var intents = Number(cache.get(clauIntents) || 0);           // llegit i comptat DINS del pany
+    if (intents >= 5) return { ok: false, motiu: 'massa-intents' };
+    var falla = function () { cache.put(clauIntents, String(intents + 1), 3600); return { ok: false, motiu: 'pin' }; };
+
     var d = llegeix_('ALUMNES');
     var i = -1;
     d.files.some(function (f, k) { if (String(f[d.idx.id_alumne]) === id) { i = k; return true; } return false; });
-    if (i < 0) return { ok: false, motiu: 'alumne' };
+    if (i < 0) return falla();
     var fila = d.files[i];
-    if (String(fila[d.idx.grup]) !== String(s.grup)) return { ok: false, motiu: 'alumne' };
+    if (String(fila[d.idx.grup]) !== String(s.grup) || String(fila[d.idx.actiu]) === 'no') return falla();
     var desat = String(fila[d.idx.pin] || '');
     var hash = hashPin_(id, pin);
-    if (!desat) {
-      // Primera vegada (Pla B el dia 1): el PIN que tria queda desat.
-      d.pestanya.getRange(i + 2, d.idx.pin + 1).setValue(hash);
+    if (!/^h/.test(desat)) {
+      if (String(s.sessio) !== 'S1' && desat !== 'reiniciat') return falla();
+      d.pestanya.getRange(i + 2, d.idx.pin + 1).setValue(hash);   // primer PIN
     } else if (desat !== hash) {
-      cache.put(clauIntents, String(intents + 1), 3600);
-      return { ok: false, motiu: 'pin', queden: 4 - intents };
+      return falla();
     }
     cache.remove(clauIntents);
     var testimoni = Utilities.getUuid();
-    cache.put('t_' + testimoni, id, 6 * 3600);
+    cache.put('t_' + testimoni, id + '|' + hash.slice(0, 12), 6 * 3600);
     afegeixFiles_('REGISTRE', [[new Date(), id, String(s.sessio), 'entrada-pin', '', 'alumne']]);
     return { ok: true, dades: { testimoni: testimoni, estat: estatAlumne_(id) } };
   });
@@ -255,7 +286,7 @@ function estatAlumne_(id) {
   }
 
   return {
-    alumne: { id: id, nom: String(alumne.nom_curt), avatar: String(alumne.avatar || ''), tePin: !!String(alumne.pin) },
+    alumne: { id: id, nom: String(alumne.nom_curt), avatar: String(alumne.avatar || ''), tePin: tePin_(alumne) },
     mon: mon_(cfg),
     zones: zones,
     carnet: carnet,
@@ -275,6 +306,8 @@ function estatAlumne_(id) {
  *  sortida(v={clau,resp}) · avatar(v) · pin(v)
  */
 function registra_(id, esdeveniments) {
+  if (!Array.isArray(esdeveniments)) esdeveniments = [];
+  esdeveniments = esdeveniments.slice(0, 20).filter(function (ev) { return ev && typeof ev.t === 'string'; });
   if (!esdeveniments.length) return estatAlumne_(id);
   return ambBloqueig_(function () {
     var alumne = alumnePerId_(id);
@@ -292,7 +325,7 @@ function registra_(id, esdeveniments) {
         actualitzaAlumne_(id, 'avatar', String(ev.v));
         registre.push([new Date(), id, oberta ? String(oberta.sessio) : '', 'avatar', String(ev.v), 'alumne']);
       }
-      if (ev.t === 'pin' && pinValid_(ev.v) && !String(alumne.pin)) {
+      if (ev.t === 'pin' && pinValid_(ev.v) && !tePin_(alumne)) {
         actualitzaAlumne_(id, 'pin', hashPin_(id, String(ev.v)));
         registre.push([new Date(), id, oberta ? String(oberta.sessio) : '', 'pin-creat', '', 'alumne']);
       }
@@ -309,9 +342,17 @@ function registra_(id, esdeveniments) {
         var p = objecte_(d, d.files[i], i);
         var missio = missioDeSessio_(s, false);
         var obertaPerTreballar = String(oberta.estat) === 'oberta';
+        var clausAbans = missio && missio.abans ? missio.abans.opcions.map(function (o) { return o.clau; }) : [];
+        var clausEncallat = missio ? missio.encallat.map(function (o) { return o.clau; }) : [];
         esdeveniments.forEach(function (ev) {
           if (ev.s && String(ev.s) !== s) return;   // esdeveniment d'una altra sessió (bústia antiga): s'ignora
           var v = ev.v === undefined || ev.v === null ? '' : ev.v;
+          // Només s'accepten valors coneguts: res del navegador arriba tal qual al full
+          if (ev.t === 'prediccio' && clausAbans.indexOf(String(v)) < 0) return;
+          if ((ev.t === 'encallat' || ev.t === 'pista') && clausEncallat.indexOf(String(v)) < 0) return;
+          if (ev.t === 'demo' && String(v) !== '2' && String(v) !== '3') return;
+          if (ev.t === 'sortida' && (!v || typeof v !== 'object')) return;
+          if (['entrada', 'c0', 'n1', 'ajuda', 'cancela'].indexOf(ev.t) >= 0) v = '';
           var desa = true;
           switch (ev.t) {
             case 'entrada': if (!p.present_alumne) p.present_alumne = ara; break;
@@ -332,8 +373,9 @@ function registra_(id, esdeveniments) {
                 var resp = analitzaJson_(p.sortida, {});
                 var q = null;
                 missio.sortida.some(function (x) { if (x.clau === String(v.clau)) { q = x; return true; } return false; });
-                if (q && !resp[q.clau]) {
-                  resp[q.clau] = String(v.resp).slice(0, 10);
+                var clausOpcio = q ? q.opcions.map(function (o) { return o.clau; }) : [];
+                if (q && !resp[q.clau] && clausOpcio.indexOf(String(v.resp)) >= 0) {
+                  resp[q.clau] = String(v.resp);
                   p.sortida = JSON.stringify(resp);
                   var encerts = missio.sortida.filter(function (x) { return x.correcta && resp[x.clau] === x.correcta; })
                     .map(function (x) { return x.clau; });
@@ -345,7 +387,7 @@ function registra_(id, esdeveniments) {
           }
           if (!p.present_alumne && desa) p.present_alumne = ara;
           if (desa && ev.t !== 'avatar' && ev.t !== 'pin') {
-            registre.push([new Date(), id, s, ev.t, typeof v === 'object' ? JSON.stringify(v) : String(v), 'alumne']);
+            registre.push([new Date(), id, s, ev.t, textSegur_(typeof v === 'object' ? JSON.stringify(v) : String(v), 60), 'alumne']);
           }
         });
         p.actualitzat_alumne = ara;

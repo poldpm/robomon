@@ -23,7 +23,7 @@ function doGet(e) {
   if (!esMestre_()) return HtmlService.createHtmlOutput('<p style="font:20px sans-serif">Aquesta pàgina és només per al mestre.</p>');
   var vista = e && e.parameter && e.parameter.vista;
   var t = HtmlService.createTemplateFromFile(vista === 'projeccio' ? 'Projeccio' : 'Admin');
-  t.urlAdmin = ScriptApp.getService().getUrl();
+  t.urlAdmin = JSON.stringify(ScriptApp.getService().getUrl()).replace(/</g, '\\u003c');
   return t.evaluate()
     .setTitle(vista === 'projeccio' ? 'Taller 3r · Projecció' : 'Taller 3r · Administrador')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
@@ -225,7 +225,7 @@ function generaIds() {
 function inici_() {
   var cfg = config_();
   var calendari = objectes_('CALENDARI').map(function (c) {
-    return { grup: String(c.grup), sessio: String(c.sessio), estat: String(c.estat), data: c.data ? textData_(new Date(c.data)).slice(0, 10) : '',
+    return { grup: String(c.grup), sessio: String(c.sessio), estat: String(c.estat), data: dataText_(c.data),
              codi: String(c.codi_classe || ''), fusionada: String(c.fusionada_amb || '') };
   });
   var oberta = null;
@@ -247,9 +247,16 @@ function inici_() {
            config: { noms_generics: cfg.noms_generics, mostra_codi: cfg.mostra_codi, fita_pct: cfg.fita_pct, url_mon: String(cfg.url_mon || '') } };
 }
 
+function dataText_(v) {
+  if (!v) return '';
+  var d = (v instanceof Date || (v && typeof v.getTime === 'function')) ? v : new Date(v);
+  return isNaN(d.getTime()) ? String(v) : textData_(d).slice(0, 10);
+}
+
+/** Codi de classe de 4 xifres (Pla B). Cada vegada que obres la sessió, n'hi ha un de nou. */
 function nouCodi_(anterior) {
   var c;
-  do { c = String(100 + Math.floor(Math.random() * 900)); } while (c === String(anterior));
+  do { c = String(1000 + Math.floor(Math.random() * 9000)); } while (c === String(anterior));
   return c;
 }
 
@@ -314,11 +321,7 @@ function creaEquipsSiCal_(grup, sessio, forca) {
   var d = llegeix_('EQUIPS');
   var existeix = d.files.some(function (f) { return String(f[d.idx.grup]) === grup && String(f[d.idx.sessio]) === sessio; });
   if (existeix && !forca) return;
-  if (existeix) {
-    var queden = d.files.filter(function (f) { return !(String(f[d.idx.grup]) === grup && String(f[d.idx.sessio]) === sessio); });
-    d.pestanya.getRange(2, 1, Math.max(d.files.length, 1), d.cap.length).clearContent();
-    if (queden.length) d.pestanya.getRange(2, 1, queden.length, d.cap.length).setValues(queden);
-  }
+  var queden = d.files.filter(function (f) { return !(String(f[d.idx.grup]) === grup && String(f[d.idx.sessio]) === sessio); });
   var alumnes = barreja_(alumnesDelGrup_(grup));
   var unitats = SESSIONS[sessio].unitats;
   var m = missioDeSessio_(sessio, true);
@@ -339,7 +342,20 @@ function creaEquipsSiCal_(grup, sessio, forca) {
       });
     });
   }
-  afegeixFiles_('EQUIPS', files);
+  // Una sola escriptura (els alumnes llegeixen EQUIPS: mai la deixem buida ni a mitges)
+  reescriu_(d, queden.concat(files));
+}
+
+/** Reescriu les files de dades d'una pestanya amb UNA crida, omplint amb blancs si n'hi ha menys que abans. */
+function reescriu_(dades, files) {
+  var amplada = dades.cap.length;
+  var n = Math.max(files.length, dades.files.length);
+  if (!n) return;
+  var buida = [];
+  for (var k = 0; k < amplada; k++) buida.push('');
+  var tot = [];
+  for (var i = 0; i < n; i++) tot.push(i < files.length ? files[i].slice(0, amplada).concat(buida).slice(0, amplada) : buida.slice());
+  dades.pestanya.getRange(2, 1, n, amplada).setValues(tot);
 }
 
 function refaEquips_(grup, sessio) {
@@ -371,7 +387,7 @@ function tauler_(grup, sessio) {
   objectes_('EQUIPS').forEach(function (q) { if (String(q.sessio) === sessio) equips[String(q.id_alumne)] = q; });
   var d = llegeix_('PROGRES');
   var m = missioDeSessio_(sessio, true);
-  var targetes = [], perEscriure = [];
+  var targetes = [];
   var totes = d.files.map(function (f, i) { return objecte_(d, f, i); });
 
   totes.forEach(function (p) {
@@ -379,12 +395,8 @@ function tauler_(grup, sessio) {
     var a = alumnes[String(p.id_alumne)];
     if (!a) return;
     var e = estatEfectiu_(p);
-    var notaAuto = calculaNota_(e, cfg.pesos);
-    var nota = notaFinal_(notaAuto, p.ajust);
-    if (String(notaAuto) !== String(p.nota_auto) || String(nota) !== String(p.nota)) {
-      p.nota_auto = notaAuto; p.nota = nota;
-      perEscriure.push(p);
-    }
+    // Només llegeix: la nota es calcula al moment. (Escriure aquí podria trepitjar una validació feta mentrestant.)
+    var nota = notaFinal_(calculaNota_(e, cfg.pesos), p.ajust);
     var q = equips[String(p.id_alumne)];
     var sortidaFeta = m ? m.sortida.length > 0 && m.sortida.every(function (s) { return e.sortida[s.clau]; }) : false;
     targetes.push({
@@ -395,7 +407,6 @@ function tauler_(grup, sessio) {
       observacio: String(p.observacio || '')
     });
   });
-  perEscriure.forEach(function (p) { escriuBloc_(d, p._fila, BLOC_MESTRE, p); });
 
   targetes.sort(function (x, y) { return x.nom.localeCompare(y.nom, 'ca'); });
   var cua = function (filtre) {
@@ -445,7 +456,7 @@ function valida_(id, sessio, que) {
       case 'desfes':
         if (nm >= 3) { p.nivell_mestre = 2; p.n3_explica = ''; }
         else if (nm === 2) { p.nivell_mestre = 1; p.via_n2 = ''; }
-        else { p.nivell_mestre = 0; }
+        else { p.nivell_mestre = 0; p.via_n2 = ''; p.n1_rebutjat_des_de = ara; }
         break;
     }
     var e = estatEfectiu_(p);
@@ -520,8 +531,11 @@ function ajusta_(id, sessio, ajust, observacio) {
 
 /** Recalcula nota_auto i nota de TOTES les files (menú del full). Només toca el bloc del mestre. */
 function recalculaNotes() {
-  return ambBloqueig_(function () {
-    oblidaCache_('config');
+  return ambBloqueig_(function () { oblidaCache_('config'); return recalculaSenseBloqueig_(); });
+}
+
+function recalculaSenseBloqueig_() {
+  {
     var cfg = config_();
     var d = llegeix_('PROGRES');
     if (!d.files.length) return 0;
@@ -536,13 +550,14 @@ function recalculaNotes() {
     });
     d.pestanya.getRange(2, c1 + 1, bloc.length, c2 - c1 + 1).setValues(bloc);
     return bloc.length;
-  });
+  }
 }
 
 /** Omple la pestanya INFORME. Conserva el comentari_final que hagis escrit. */
 function preparaInforme(grupTriat) {
   var grup = typeof grupTriat === 'string' ? grupTriat : '';
   return ambBloqueig_(function () {
+    recalculaSenseBloqueig_();   // les notes desades al full queden al dia
     var cfg = config_();
     var inf = llegeix_('INFORME');
     var comentaris = {};
@@ -578,10 +593,7 @@ function preparaInforme(grupTriat) {
     }).sort(function (x, y) { return (x[2] + x[1]).localeCompare(y[2] + y[1], 'ca'); });
     // Si és un sol grup, es conserven les files dels altres grups
     var altres = grup ? inf.files.filter(function (f) { return String(f[inf.idx.grup]) !== grup; }) : [];
-    var totes = altres.concat(files);
-    var n = Math.max(inf.files.length, 1);
-    inf.pestanya.getRange(2, 1, n, FULLS.INFORME.length).clearContent();
-    if (totes.length) inf.pestanya.getRange(2, 1, totes.length, FULLS.INFORME.length).setValues(totes);
+    reescriu_(inf, altres.concat(files));
     return { files: files.length };
   });
 }
@@ -620,9 +632,7 @@ function desaMissions_(sessio, files) {
         return [sessio, String(r.tipus), String(r.clau), Number(r.ordre) || i + 1, String(r.text || ''), String(r.imatge || ''),
                 String(r.opcions || ''), String(r.correcta || ''), String(r.estat) === 'publicada' ? 'publicada' : 'esborrany'];
       });
-    var totes = altres.concat(noves);
-    d.pestanya.getRange(2, 1, Math.max(d.files.length, 1), FULLS.MISSIONS.length).clearContent();
-    if (totes.length) d.pestanya.getRange(2, 1, totes.length, FULLS.MISSIONS.length).setValues(totes);
+    reescriu_(d, altres.concat(noves));
     oblidaCache_('missions');
     return missionsEditor_(sessio);
   });
@@ -647,7 +657,7 @@ function reiniciaPin_(id) {
   ambBloqueig_(function () {
     var d = llegeix_('ALUMNES');
     d.files.some(function (f, i) {
-      if (String(f[0]) === String(id)) { d.pestanya.getRange(i + 2, d.idx.pin + 1).setValue(''); return true; }
+      if (String(f[0]) === String(id)) { d.pestanya.getRange(i + 2, d.idx.pin + 1).setValue('reiniciat'); return true; }
       return false;
     });
   });

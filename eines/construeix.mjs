@@ -31,7 +31,7 @@ function munta(src, subs) {
 const sortides = {
   'apps-script/mon/Mon.html': munta('src/mon/Mon.src.html', { FONTS, IL, INICIAL: '<?!= inicial ?>', TRANSPORT: 'gas' }),
   'pla-b/index.html': munta('src/mon/Mon.src.html', { FONTS, IL, INICIAL: '{"pla":"B"}', TRANSPORT: 'fetch' }),
-  'apps-script/admin/Admin.html': munta('src/admin/Admin.src.html', { FONTS, IL: '', URL_ADMIN: '<?= urlAdmin ?>' }),
+  'apps-script/admin/Admin.html': munta('src/admin/Admin.src.html', { FONTS, IL: '', URL_ADMIN: '<?!= urlAdmin ?>' }),
   'apps-script/admin/Projeccio.html': munta('src/admin/Projeccio.src.html', { FONTS, IL })
 };
 
