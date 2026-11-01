@@ -754,16 +754,22 @@ var FITXERS_PROJECTE = {
           ['appsscript', 'JSON', 'appsscript.json']]
 };
 
-/** Menú del full. */
+/** Menú del full, o «Executa» des de l'editor d'Apps Script (llavors el resultat surt al registre d'execució). */
 function actualitzaDesDeGitHub() {
-  var ui = SpreadsheetApp.getUi();
+  var ui = null;
+  try { ui = SpreadsheetApp.getUi(); } catch (e) { ui = null; }
+  var avisa = function (titol, text) {
+    if (ui) ui.alert(titol, text, ui.ButtonSet.OK);
+    else console.log(titol + ' · ' + text);
+  };
   try {
     var r = actualitza_();
-    ui.alert('RoboMón actualitzat', 'Versió ' + r.sha.slice(0, 7) + '.\n' + r.projectes.map(function (p) {
+    avisa('RoboMón actualitzat', 'Versió ' + r.sha.slice(0, 7) + '.\n' + r.projectes.map(function (p) {
       return (p.carpeta === 'mon' ? 'Món' : 'Administrador') + ': versió ' + p.versio + ', ' + p.desplegaments + ' desplegament(s) actualitzat(s).';
-    }).join('\n'), ui.ButtonSet.OK);
+    }).join('\n'));
   } catch (err) {
-    ui.alert('No s\'ha pogut actualitzar', String(err.message || err), ui.ButtonSet.OK);
+    avisa('No s\'ha pogut actualitzar', String(err.message || err));
+    if (!ui) throw err;
   }
 }
 
@@ -814,6 +820,7 @@ function actualitzaProjecte_(scriptId, carpeta, sha) {
 }
 
 function actualitza_() {
+  oblidaCache_('config');   // l'ID es pot haver escrit fa un moment al full
   var cfg = config_();
   var idMon = String(cfg.id_script_mon || '').trim();
   if (!idMon) throw new Error('Falta l\'ID del projecte del món: Sessions → «ID del projecte del món» (Configuració del projecte del món → ID de l\'script).');
