@@ -123,7 +123,7 @@ export function creaMon() {
           };
           return t;
         },
-        createHtmlOutput: h => ({ contingut: h, getContent() { return this.contingut; } })
+        createHtmlOutput: h => ({ contingut: h, setTitle() { return this; }, addMetaTag() { return this; }, getContent() { return this.contingut; } })
       },
       ContentService: { createTextOutput: t => ({ text: t, setMimeType() { return this; } }), MimeType: { JSON: 'json' } },
       ScriptApp: { getService: () => ({ getUrl: () => `/${nom}` }) },

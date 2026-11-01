@@ -48,6 +48,11 @@ ok(/privada/.test(error), 'Les funcions acabades en _ no es poden cridar des del
 ok(alumne(0, 'estat', { simula: 'A901' }).dades.alumne.id === 'A001', 'Un alumne no pot fer-se passar per un altre amb «simula»');
 ok(mon.crida('mon', 'api', ['estat', {}, 'testimoni-fals'], '').motiu === 'identitat', 'Un testimoni inventat no dona accés');
 
+const htmlAdmin = async u => (await fetch(`${BASE}/admin${u ? '?usuari=' + encodeURIComponent(u) : ''}`)).text();
+ok((await htmlAdmin(correu(0))).includes('Compte que obre la pàgina: ' + correu(0)), 'L\'administrador rebutja un alumne i diu quin compte ha vist');
+ok((await htmlAdmin('')).includes('const AVIS = "sense-correu"'), 'Si Google no dona el correu, el tauler s\'obre amb l\'avís de comprovar el desplegament');
+ok(!(await htmlAdmin(MESTRE)).includes('const AVIS = "sense-correu"'), 'Amb el correu del mestre, el tauler s\'obre sense avís');
+
 console.log('\n3 · El mestre obre la sessió S1 per al grup 2');
 const ini = admin('obreSessio', { grup: 'G2', sessio: 'S1' });
 ok(ini.ok && ini.dades.oberta.sessio === 'S1', 'Sessió oberta');

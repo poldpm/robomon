@@ -20,24 +20,46 @@ function onOpen() {
 }
 
 function doGet(e) {
-  if (!esMestre_()) return HtmlService.createHtmlOutput('<p style="font:20px sans-serif">Aquesta pàgina és només per al mestre.</p>');
+  var qui = identitatMestre_();
+  if (!qui.ok) return paginaNoMestre_(qui);
   var vista = e && e.parameter && e.parameter.vista;
   var t = HtmlService.createTemplateFromFile(vista === 'projeccio' ? 'Projeccio' : 'Admin');
   t.urlAdmin = JSON.stringify(ScriptApp.getService().getUrl()).replace(/</g, '\\u003c');
+  t.avis = JSON.stringify(qui.verificat ? '' : 'sense-correu');
   return t.evaluate()
     .setTitle(vista === 'projeccio' ? 'RoboMón · Projecció' : 'RoboMón · Administrador')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
-function esMestre_() {
-  var actiu = '';
-  try { actiu = String(Session.getActiveUser().getEmail() || '').toLowerCase(); } catch (e) { actiu = ''; }
-  var efectiu = '';
-  try { efectiu = String(Session.getEffectiveUser().getEmail() || '').toLowerCase(); } catch (e) { efectiu = ''; }
+/**
+ * Qui obre l'administrador?
+ * · Si Google ens dona el correu (actiu), ha de ser el del mestre.
+ * · Si NO ens el dona (passa, per exemple, amb scripts d'unitats compartides), confiem en el desplegament:
+ *   amb «Qui hi té accés: Només jo», Google ja no deixa entrar ningú més. El tauler ho avisa amb una franja.
+ */
+function identitatMestre_() {
+  var actiu = '', efectiu = '';
+  try { actiu = String(Session.getActiveUser().getEmail() || '').toLowerCase().trim(); } catch (e) { actiu = ''; }
+  try { efectiu = String(Session.getEffectiveUser().getEmail() || '').toLowerCase().trim(); } catch (e) { efectiu = ''; }
   var cfg = {};
   try { cfg = config_(); } catch (e) { cfg = {}; }
-  var mestre = String(cfg.correu_mestre || efectiu).toLowerCase();
-  return !!actiu && (actiu === mestre || actiu === efectiu);
+  var mestre = String(cfg.correu_mestre || '').toLowerCase().trim();
+  if (!actiu) return { ok: true, verificat: false, actiu: '', efectiu: efectiu, mestre: mestre };
+  var ok = actiu === efectiu || (!!mestre && actiu === mestre);
+  return { ok: ok, verificat: ok, actiu: actiu, efectiu: efectiu, mestre: mestre };
+}
+
+function esMestre_() { return identitatMestre_().ok; }
+
+function paginaNoMestre_(qui) {
+  var esc = function (t) { return String(t || '—').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  return HtmlService.createHtmlOutput(
+    '<div style="font:20px/1.5 Verdana,sans-serif;max-width:720px;margin:40px auto;color:#1c2733">' +
+    '<p><b>Aquesta pàgina és només per al mestre.</b></p>' +
+    '<p>Compte que obre la pàgina: ' + esc(qui.actiu) + '<br>Compte que ha desplegat l\'script: ' + esc(qui.efectiu) +
+    '<br>Mestre configurat (CONFIG → correu_mestre): ' + esc(qui.mestre) + '</p>' +
+    '<p>Si el primer i el segon no coincideixen, obre l\'enllaç amb el compte que ha desplegat l\'script ' +
+    '(o tanca la sessió dels altres comptes del navegador).</p></div>').setTitle('RoboMón');
 }
 
 /** L'única porta d'entrada des del navegador del mestre. */

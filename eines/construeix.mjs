@@ -36,7 +36,7 @@ function munta(src, subs) {
 const sortides = {
   'apps-script/mon/Mon.html': munta('src/mon/Mon.src.html', { FONTS, IL, INICIAL: '<?!= inicial ?>', TRANSPORT: 'gas' }),
   'pla-b/index.html': munta('src/mon/Mon.src.html', { FONTS, IL, INICIAL: '{"pla":"B"}', TRANSPORT: 'fetch' }),
-  'apps-script/admin/Admin.html': munta('src/admin/Admin.src.html', { FONTS, IL: '', URL_ADMIN: '<?!= urlAdmin ?>' }),
+  'apps-script/admin/Admin.html': munta('src/admin/Admin.src.html', { FONTS, IL: '', URL_ADMIN: '<?!= urlAdmin ?>', AVIS: '<?!= avis ?>' }),
   'apps-script/admin/Projeccio.html': munta('src/admin/Projeccio.src.html', { FONTS, IL: IL_PROJ })
 };
 
@@ -44,7 +44,7 @@ const sortides = {
 const errors = [];
 for (const [nom, t] of Object.entries(sortides)) {
   const scriptlets = (t.match(/<\?/g) || []).length;
-  const esperats = nom.endsWith('Mon.html') ? 1 : nom.endsWith('Admin.html') ? 1 : 0;
+  const esperats = nom.endsWith('Mon.html') ? 1 : nom.endsWith('Admin.html') ? 2 : 0;
   if (scriptlets !== esperats) errors.push(`${nom}: hi ha ${scriptlets} «<?» i n'hi ha d'haver ${esperats} (Apps Script els interpreta).`);
   if (/font-weight\s*:\s*(800|900|bolder|black)/i.test(t) || /font-weight="(800|900)"/.test(t)) errors.push(`${nom}: pes tipogràfic > 700.`);
   if (/<pattern|url\(#/.test(t)) errors.push(`${nom}: <pattern> o url(#id) a l'SVG.`);

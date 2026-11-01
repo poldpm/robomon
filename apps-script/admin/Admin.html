@@ -100,6 +100,7 @@ td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
 .ajuda-text { background: var(--blanc); border: 2px solid var(--vora); border-radius: 16px; padding: 10px 14px; font-size: 16px; margin-bottom: 12px; }
 .ajuda-text ul { margin: 6px 0; padding-left: 22px; }
 
+.avis-identitat { background: #f6e7c4; box-shadow: inset 0 -2px 0 #d9a441; padding: 10px 16px; font-size: 16px; }
 .avis { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--tinta); color: #fff; padding: 12px 20px; border-radius: 12px; z-index: 30; font-weight: 700; }
 #aula-oberta { display: flex; flex-direction: column; }
 @media (max-width: 760px) {
@@ -126,6 +127,7 @@ td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
   </div>
 </div>
 
+<div class="avis-identitat" id="avis-identitat" hidden>Google no ha donat el teu correu, així que el tauler no pot confirmar qui ets. És segur només si el desplegament de l'administrador és «Qui hi té accés: Només jo». Comprova-ho a Desplega → Gestiona els desplegaments.</div>
 <div class="cos">
   <!-- AULA -->
   <section id="v-aula">
@@ -218,6 +220,7 @@ td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
 <script>
 'use strict';
 const URL_ADMIN = <?!= urlAdmin ?>;
+const AVIS = <?!= avis ?>;
 const A = { inici: null, grup: 'G1', sessio: 'S1', vista: 'aula', tauler: null, notes: null, missio: null, ocupat: false };
 const $ = id => document.getElementById(id);
 const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -461,6 +464,7 @@ $('b-desa-url').onclick = () => desaConfig('url_mon', $('c-url').value.trim());
 $('b-pin').onclick = () => { const id = $('sel-pin').value; if (id) crida('reiniciaPin', { id: id }).then(() => avis('PIN reiniciat. El triarà de nou en entrar pel Pla B.')); };
 
 /* ---------- Inici i consulta cada 10 s ---------- */
+if (AVIS === 'sense-correu') $('avis-identitat').hidden = false;
 crida('inici').then(i => {
   A.inici = i;
   if (i.oberta) { A.grup = i.oberta.grup; A.sessio = i.oberta.sessio; }
