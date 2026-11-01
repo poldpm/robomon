@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El meu món</title>
+<style>
+/*@@FONTS@@*/
+:root {
+  --tinta: #1d2433; --suau: #4a5160; --fons: #f3f7fb; --blanc: #ffffff;
+  --mar: #d8eefa; --blau: #1f5fbf; --verd: #1e7a3c; --pissarra: #3d4a63; --groc: #fff4d6;
+  --vora: #c9d3df; --radi: 22px;
+  --lletra: "Andika", "Atkinson Hyperlegible", Verdana, "Segoe UI", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; }
+body { font-family: var(--lletra); font-size: 22px; font-weight: 400; color: var(--tinta); background: var(--fons); }
+b, strong, h1, h2, h3, button { font-weight: 700; }   /* màxim Bold 700. Mai 800/900 */
+[hidden] { display: none !important; }
+svg { display: block; width: 100%; height: 100%; }
+
+.app { height: 100vh; display: flex; flex-direction: column; }
+.capcal { flex: 0 0 auto; height: 72px; display: flex; align-items: center; gap: 14px; padding: 0 20px; background: var(--blanc); border-bottom: 2px solid var(--vora); }
+.capcal .mini-avatar { width: 54px; height: 54px; }
+.capcal .nom { font-size: 26px; font-weight: 700; }
+.capcal .lloc { font-size: 22px; color: var(--suau); margin-left: 6px; }
+.capcal .espai { flex: 1; }
+.contingut { flex: 1 1 auto; min-height: 0; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+.pantalla { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 14px; }
+
+h1 { font-size: 34px; margin: 0; line-height: 1.15; }
+h2 { font-size: 28px; margin: 0; line-height: 1.2; }
+.pregunta { font-size: 30px; font-weight: 700; line-height: 1.2; margin: 0; }
+.text { font-size: 24px; line-height: 1.3; margin: 0; }
+.suau { color: var(--suau); }
+
+/* ---------- Botons: 2 × 2 cm com a mínim ---------- */
+.boto { font-family: inherit; font-size: 24px; font-weight: 700; min-height: 84px; min-width: 200px; padding: 12px 26px;
+  border-radius: var(--radi); border: 3px solid transparent; cursor: pointer; display: inline-flex; align-items: center;
+  justify-content: center; gap: 12px; text-align: center; line-height: 1.15; color: var(--blanc); background: var(--blau); }
+.boto:focus-visible { outline: 5px solid #f2b632; outline-offset: 3px; }
+.boto:active { transform: translateY(2px); }
+.boto.si { background: var(--verd); }
+.boto.no { background: var(--pissarra); }
+.boto.clar { background: var(--blanc); color: var(--tinta); border-color: var(--tinta); }
+.boto.petit { min-height: 76px; min-width: 120px; font-size: 22px; padding: 8px 18px; }
+.boto[disabled] { background: #c9ced6; color: #3b4252; cursor: default; }
+.botons { display: flex; gap: 18px; flex-wrap: wrap; }
+.botons .boto { flex: 1 1 0; }
+
+/* Graella de tries (avatar, PIN, opcions, noms) */
+.graella { display: grid; gap: 14px; flex: 1 1 auto; min-height: 0; }
+.tria { font-family: inherit; background: var(--blanc); border: 3px solid var(--vora); border-radius: var(--radi); cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px; min-height: 84px; min-width: 84px; color: var(--tinta); }
+.tria:focus-visible { outline: 5px solid #f2b632; outline-offset: 2px; }
+.tria .dibuix { flex: 1 1 auto; min-height: 0; width: 100%; display: flex; justify-content: center; }
+.tria .dibuix svg { width: auto; max-width: 100%; height: 100%; }
+.tria .etiqueta { font-size: 22px; font-weight: 700; }
+.tria.triat { border-color: var(--blau); background: #e6efff; }
+.tria[disabled] { opacity: .45; cursor: default; }
+
+/* ---------- Mapa ---------- */
+.mapa { flex: 1 1 auto; min-height: 0; display: flex; justify-content: center; }
+.mapa svg { width: 100%; height: 100%; }
+.illa { cursor: pointer; }
+.illa path { transition: fill 1s ease; }
+.peu-mapa { flex: 0 0 auto; display: flex; gap: 18px; align-items: stretch; }
+.carnet { flex: 1 1 auto; display: flex; gap: 10px; background: var(--blanc); border: 2px solid var(--vora); border-radius: var(--radi); padding: 8px 14px; align-items: center; }
+.carnet .titol { font-size: 20px; font-weight: 700; margin-right: 6px; }
+.segell { display: flex; flex-direction: column; align-items: center; width: 104px; }
+.segell .cercle { width: 56px; height: 56px; border-radius: 50%; border: 3px solid var(--vora); background: #eef1f5; padding: 6px; filter: grayscale(1); opacity: .5; }
+.segell.te .cercle { border-color: var(--verd); background: #e7f5ea; filter: none; opacity: 1; }
+.segell span { font-size: 20px; font-weight: 700; white-space: nowrap; }
+.peu-mapa .boto { min-width: 300px; font-size: 28px; }
+.avis-illa { position: fixed; left: 50%; top: 90px; transform: translateX(-50%); background: var(--tinta); color: var(--blanc); padding: 14px 26px; border-radius: 16px; font-size: 24px; font-weight: 700; }
+
+/* ---------- Missió ---------- */
+.missio { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 300px 1fr; gap: 18px; }
+.lateral { background: var(--blanc); border: 2px solid var(--vora); border-radius: var(--radi); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.xapa { display: inline-block; background: var(--groc); border: 2px solid var(--tinta); border-radius: 14px; padding: 6px 12px; font-size: 22px; font-weight: 700; }
+.nivells { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+.nivell { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; color: var(--suau); }
+.nivell .punt { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--vora); background: var(--blanc); transition: background 1s ease, border-color 1s ease; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; }
+.nivell.fet { color: var(--tinta); }
+.nivell.fet .punt { background: var(--verd); border-color: var(--verd); }
+.targeta { background: var(--blanc); border: 2px solid var(--vora); border-radius: var(--radi); padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+.targeta .cos { flex: 1 1 auto; min-height: 0; display: flex; gap: 22px; align-items: center; }
+.targeta .il { flex: 0 0 auto; height: 100%; max-height: 230px; aspect-ratio: 1; }
+.targeta .il svg { height: 100%; }
+.banner { background: var(--groc); border: 3px solid #f2b632; border-radius: var(--radi); padding: 10px 16px; display: flex; align-items: center; gap: 16px; font-size: 24px; font-weight: 700; }
+.banner .boto { margin-left: auto; }
+
+/* ---------- Teclat del codi ---------- */
+.codi-caselles { display: flex; gap: 14px; justify-content: center; }
+.codi-caselles span { width: 84px; height: 84px; border: 3px solid var(--tinta); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 44px; font-weight: 700; background: var(--blanc); }
+.teclat { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; max-width: 760px; width: 100%; margin: 0 auto; }
+.teclat .boto { min-width: 0; font-size: 34px; }
+.pin-caselles { display: flex; gap: 14px; justify-content: center; }
+.pin-caselles .forat { width: 92px; height: 92px; border: 3px dashed var(--suau); border-radius: 16px; background: var(--blanc); padding: 6px; }
+.missatge { font-size: 26px; font-weight: 700; text-align: center; min-height: 34px; margin: 0; }
+.centre { text-align: center; }
+.fet-gran { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+.fet-gran .il { height: 46vh; aspect-ratio: 200/140; }
+.estat-xarxa { position: fixed; right: 16px; bottom: 12px; background: var(--tinta); color: #fff; font-size: 18px; padding: 8px 14px; border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="capcal" id="capcal" hidden>
+    <div class="mini-avatar" id="capcal-avatar"></div>
+    <span class="nom" id="capcal-nom"></span>
+    <span class="lloc" id="capcal-lloc"></span>
+    <span class="espai"></span>
+    <button class="boto clar petit" id="boto-mapa" hidden>Mapa</button>
+  </header>
+
+  <main class="contingut">
+    <!-- CÀRREGA -->
+    <section class="pantalla" id="p-carrega"><div class="fet-gran"><h1>Un moment…</h1></div></section>
+
+    <!-- ERROR -->
+    <section class="pantalla" id="p-error" hidden>
+      <div class="fet-gran"><h1>No s'ha pogut obrir el món.</h1><p class="text">Torna-ho a provar. Si no va, avisa el mestre.</p>
+      <button class="boto" id="boto-recarrega">Torna-ho a provar</button></div>
+    </section>
+
+    <!-- MODE PROVA (només el mestre) -->
+    <section class="pantalla" id="p-prova" hidden>
+      <h1>Mode prova</h1>
+      <p class="text suau">Només ho veu el compte del mestre. Tria un alumne de prova.</p>
+      <div class="graella" id="prova-llista" style="grid-template-columns: repeat(3, 1fr); flex: 0 1 auto;"></div>
+      <div class="botons"><button class="boto clar" id="prova-plab">Prova el Pla B (codi + dibuixos)</button></div>
+    </section>
+
+    <!-- PLA B: CODI -->
+    <section class="pantalla" id="p-codi" hidden>
+      <h1 class="centre">Escriu el codi de la pissarra</h1>
+      <div class="codi-caselles"><span id="codi-0"></span><span id="codi-1"></span><span id="codi-2"></span></div>
+      <p class="missatge" id="codi-missatge"></p>
+      <div class="teclat" id="teclat"></div>
+    </section>
+
+    <!-- PLA B: NOM -->
+    <section class="pantalla" id="p-nom" hidden>
+      <h1>Qui ets?</h1>
+      <div class="graella" id="noms" style="grid-template-columns: repeat(5, 1fr);"></div>
+      <div class="botons" style="flex:0 0 auto"><button class="boto clar petit" id="nom-enrere" style="flex:0 0 auto">Enrere</button></div>
+    </section>
+
+    <!-- PIN: ENTRAR o CREAR -->
+    <section class="pantalla" id="p-pin" hidden>
+      <div style="display:grid; grid-template-columns: 1fr 1.25fr; gap: 24px; flex: 1 1 auto; min-height: 0;">
+        <div style="display:flex; flex-direction:column; gap:18px; justify-content:center;">
+          <h1 id="pin-titol">Tria els teus 3 dibuixos</h1>
+          <div class="pin-caselles" style="justify-content:flex-start;"><div class="forat" id="pin-0"></div><div class="forat" id="pin-1"></div><div class="forat" id="pin-2"></div></div>
+          <p class="missatge" id="pin-missatge" style="text-align:left;"></p>
+          <div class="botons" style="flex:0 0 auto;">
+            <button class="boto clar petit" id="pin-enrere" style="flex:0 0 auto">Enrere</button>
+            <button class="boto clar petit" id="pin-esborra" style="flex:0 0 auto">Torna a començar</button>
+          </div>
+        </div>
+        <div class="graella" id="pin-graella" style="grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr;"></div>
+      </div>
+    </section>
+
+    <!-- PIN: RECORDA -->
+    <section class="pantalla" id="p-recorda" hidden>
+      <div class="fet-gran">
+        <h1>Aquesta és la teva clau secreta</h1>
+        <div class="pin-caselles" id="recorda-dibuixos"></div>
+        <p class="text">Recorda aquests 3 dibuixos, en aquest ordre.</p>
+        <div class="botons" style="width: 640px;">
+          <button class="boto clar" id="recorda-canvia">Vull canviar-los</button>
+          <button class="boto si" id="recorda-ok">D'acord</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- AVATAR -->
+    <section class="pantalla" id="p-avatar" hidden>
+      <h1 id="avatar-titol">Tria el teu personatge</h1>
+      <div class="graella" id="avatar-graella" style="grid-template-columns: repeat(4, 1fr);"></div>
+    </section>
+
+    <!-- MAPA -->
+    <section class="pantalla" id="p-mapa" hidden>
+      <div class="mapa" id="mapa"></div>
+      <div class="peu-mapa">
+        <div class="carnet" id="carnet"></div>
+        <button class="boto" id="boto-missio">Missió d'avui</button>
+      </div>
+    </section>
+
+    <!-- MISSIÓ -->
+    <section class="pantalla" id="p-missio" hidden>
+      <div class="missio">
+        <aside class="lateral">
+          <h2 id="m-titol"></h2>
+          <p class="text" id="m-frase"></p>
+          <div id="m-xapes" style="display:flex; flex-direction:column; gap:8px; align-items:flex-start;"></div>
+          <div class="nivells" id="m-nivells"></div>
+        </aside>
+        <div style="display:flex; flex-direction:column; gap:14px; min-height:0;">
+          <div class="banner" id="m-banner" hidden><span id="m-banner-text"></span><button class="boto clar petit" id="m-banner-cancela">Ja no cal</button></div>
+          <div class="targeta" id="m-targeta" style="flex:1 1 auto;">
+            <p class="pregunta" id="m-pregunta"></p>
+            <div class="cos" id="m-cos"></div>
+            <div class="botons" id="m-botons"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENCALLAT -->
+    <section class="pantalla" id="p-encallat" hidden>
+      <h1>On t'has encallat?</h1>
+      <div class="graella" id="encallat-graella" style="grid-template-columns: repeat(4, 1fr);"></div>
+      <div class="botons" style="flex:0 0 auto"><button class="boto clar petit" id="encallat-enrere" style="flex:0 0 auto">Enrere</button></div>
+    </section>
+
+    <!-- PISTA -->
+    <section class="pantalla" id="p-pista" hidden>
+      <div class="targeta" style="flex:1 1 auto;">
+        <p class="pregunta">Prova això:</p>
+        <div class="cos"><div class="il" id="pista-il"></div><p class="text" id="pista-text" style="font-size:30px;"></p></div>
+        <div class="botons">
+          <button class="boto" id="pista-torna">Ho torno a provar</button>
+          <button class="boto no" id="pista-ajuda">Necessito ajuda</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TARGETA DE SORTIDA -->
+    <section class="pantalla" id="p-sortida" hidden>
+      <p class="suau text" id="sortida-compte"></p>
+      <div class="targeta" style="flex:1 1 auto;">
+        <p class="pregunta" id="sortida-pregunta"></p>
+        <div class="cos" id="sortida-cos"></div>
+      </div>
+    </section>
+
+    <!-- FET -->
+    <section class="pantalla" id="p-fet" hidden>
+      <div class="fet-gran">
+        <h1 id="fet-titol">Sessió acabada!</h1>
+        <div class="il" id="fet-il"></div>
+        <p class="text" id="fet-text">Ja pots tancar el Chromebook.</p>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="avis-illa" id="avis-illa" hidden></div>
+<div class="estat-xarxa" id="estat-xarxa" hidden>Sense connexió: ho guardo i ho torno a enviar.</div>
+
+<script>
+/*@@IL@@*/
+</script>
+<script>
+'use strict';
+/* ============================================================
+   EL MÓN — client
+   Regles: retroacció immediata (l'estat es canvia aquí ABANS de parlar amb el servidor),
+   cap clic espera el servidor, i res de dades d'altres alumnes.
+   ============================================================ */
+const INICIAL = /*@@INICIAL@@*/;
+const TRANSPORT = '/*@@TRANSPORT@@*/';
+const URL_API = (function () { try { return new URLSearchParams(location.search).get('api') || ''; } catch (e) { return ''; } })();
+
+const S = {
+  testimoni: null, simula: null, estat: null, pla: INICIAL.pla,
+  cua: [], enviant: false, pantalla: '', codi: '', nomsB: [], alumneB: null,
+  pin: [], pinMode: 'entra', avatarCos: null, sortidaVista: false, ultimaCrida: 0
+};
+const $ = id => document.getElementById(id);
+const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+/* ---------- Transport (Pla A/B1: google.script.run · Pla B2: fetch) ---------- */
+function crida(accio, args) {
+  args = Object.assign({}, args || {});
+  if (S.simula) args.simula = S.simula;
+  S.ultimaCrida = Date.now();
+  return new Promise((ok, ko) => {
+    if (TRANSPORT === 'gas') {
+      google.script.run.withSuccessHandler(ok).withFailureHandler(ko).api(accio, args, S.testimoni);
+    } else {
+      fetch(URL_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ accio: accio, args: args, testimoni: S.testimoni }) })
+        .then(r => r.json()).then(ok, ko);
+    }
+  });
+}
+
+/* ---------- Bústia de sortida: si la xarxa falla, res es perd ---------- */
+function clauBustia() { return 'taller3r_bustia_' + (S.estat ? S.estat.alumne.id : 'x'); }
+function desaBustia() { try { localStorage.setItem(clauBustia(), JSON.stringify(S.cua)); } catch (e) { /* sense espai: no passa res */ } }
+function recuperaBustia() {
+  try { const c = JSON.parse(localStorage.getItem(clauBustia()) || '[]'); if (Array.isArray(c)) S.cua = c.concat(S.cua); } catch (e) { S.cua = S.cua || []; }
+}
+
+function envia(t, v) {
+  const ev = { t: t, v: v, s: S.estat && S.estat.avui ? S.estat.avui.sessio : '' };
+  aplicaLocal(ev);
+  S.cua.push(ev);
+  desaBustia();
+  buidaCua();
+}
+
+function buidaCua() {
+  if (S.enviant || !S.cua.length) return;
+  S.enviant = true;
+  const lot = S.cua.slice();
+  crida('registra', { esdeveniments: lot }).then(r => {
+    S.enviant = false;
+    if (!r || !r.ok) { if (r && r.motiu === 'identitat') return perdIdentitat(); throw new Error(r ? r.motiu : 'buit'); }
+    S.cua = S.cua.slice(lot.length);
+    desaBustia();
+    $('estat-xarxa').hidden = true;
+    S.estat = r.dades;
+    S.cua.forEach(aplicaLocal);
+    refresca();
+    if (S.cua.length) buidaCua();
+  }).catch(() => {
+    S.enviant = false;
+    $('estat-xarxa').hidden = false;
+    setTimeout(buidaCua, 15000);
+  });
+}
+
+/** Retroacció immediata: el canvi es veu abans que el servidor contesti. */
+function aplicaLocal(ev) {
+  const a = S.estat && S.estat.avui;
+  if (ev.t === 'avatar') { S.estat.alumne.avatar = ev.v; return; }
+  if (ev.t === 'pin') { S.estat.alumne.tePin = true; return; }
+  if (!a || (ev.s && ev.s !== a.sessio)) return;
+  const p = a.progres;
+  switch (ev.t) {
+    case 'prediccio': if (!p.prediccio) p.prediccio = ev.v; break;
+    case 'c0': p.c0 = true; break;
+    case 'n1': p.nivell = Math.max(p.nivell, 1); break;
+    case 'encallat': p.encallatOn = ev.v; break;
+    case 'ajuda': p.espera = 'ajuda'; break;
+    case 'demo': p.espera = 'demo' + ev.v; break;
+    case 'cancela': p.espera = ''; break;
+    case 'sortida': p.sortida[ev.v.clau] = ev.v.resp; break;
+  }
+}
+
+function perdIdentitat() {
+  S.testimoni = null;
+  try { sessionStorage.removeItem('taller3r_testimoni'); } catch (e) { /* res */ }
+  mostra('p-codi'); preparaCodi();
+}
+
+/* ---------- Consulta periòdica: perquè s'encengui la llum quan el mestre valida ---------- */
+function consulta() {
+  if (!S.estat || S.enviant || S.cua.length) return;
+  if (['p-mapa', 'p-missio', 'p-fet'].indexOf(S.pantalla) < 0) return;
+  crida('estat', {}).then(r => {
+    if (r && r.ok) { S.estat = r.dades; refresca(); }
+    else if (r && r.motiu === 'identitat') perdIdentitat();
+  }).catch(() => { /* ja ho tornarem a provar */ });
+}
+function bucle() {
+  const a = S.estat && S.estat.avui;
+  const espera = a && a.progres && a.progres.espera;
+  const interval = espera ? 10000 : 30000;
+  if (Date.now() - S.ultimaCrida >= interval - 500) consulta();
+  setTimeout(bucle, 5000);
+}
+
+/* ---------- Pantalles ---------- */
+function mostra(id) {
+  document.querySelectorAll('.pantalla').forEach(p => { p.hidden = p.id !== id; });
+  S.pantalla = id;
+  const ambCapcal = ['p-mapa', 'p-missio', 'p-encallat', 'p-pista', 'p-sortida', 'p-fet'].indexOf(id) >= 0;
+  $('capcal').hidden = !ambCapcal;
+  $('boto-mapa').hidden = ['p-missio', 'p-encallat', 'p-pista'].indexOf(id) < 0;
+  if (ambCapcal && S.estat) {
+    $('capcal-avatar').innerHTML = avatarSVG(S.estat.alumne.avatar);
+    $('capcal-nom').textContent = S.estat.alumne.nom;
+    const z = zonaAvui();
+    $('capcal-lloc').textContent = z && id !== 'p-mapa' ? '· ' + z.nom : '';
+  }
+}
+
+function zonaAvui() {
+  const a = S.estat && S.estat.avui;
+  if (!a) return null;
+  return S.estat.mon.find(z => z.zona === a.zona) || null;
+}
+
+/** Decideix on ha d'anar el nen ara mateix. */
+function decideix() {
+  const e = S.estat;
+  recuperaBustia();
+  if (S.cua.length) buidaCua();
+  if (!e.alumne.avatar) return obreAvatar();
+  if (!e.alumne.tePin) return obrePin('crea');
+  const a = e.avui;
+  if (a && a.missio && a.estat === 'sortida' && !sortidaFeta()) return obreSortida();
+  obreMapa();
+}
+
+/** Quan arriba un estat nou del servidor, redibuixa la pantalla on som. */
+function refresca() {
+  const a = S.estat.avui;
+  if (a && a.missio && a.estat === 'sortida' && !sortidaFeta() && (S.pantalla === 'p-missio' || S.pantalla === 'p-mapa')) return obreSortida();
+  if (S.pantalla === 'p-mapa') pintaMapa();
+  if (S.pantalla === 'p-missio') {
+    if (!a || !a.missio) return obreMapa();
+    pintaMissio();
+  }
+}
+
+/* ---------- Mapa ---------- */
+function obreMapa() { mostra('p-mapa'); pintaMapa(); }
+function pintaMapa() {
+  const e = S.estat;
+  const oberta = ['Z9', 'Z8', 'Z7', 'Z6', 'Z5', 'Z4', 'Z3', 'Z2', 'Z1'].find(z => e.zones[z] && e.zones[z] !== 'tancada') || 'Z1';
+  $('mapa').innerHTML = mapaSVG(e.mon, e.zones, { avatar: e.alumne.avatar, zonaBarca: e.avui ? e.avui.zona : oberta, farEnces: e.fitaAssolida, destaca: e.avui ? e.avui.zona : '' });
+  $('mapa').querySelectorAll('.illa').forEach(g => g.addEventListener('click', () => avisIlla(g.dataset.zona, g.dataset.estat)));
+  $('carnet').innerHTML = '<span class="titol">Les meves eines</span>' + ['scottie', 'ozobot', 'dash', 'spike', 'scratch'].map(k =>
+    `<div class="segell ${e.carnet[k] ? 'te' : ''}"><div class="cercle">${SEGELLS[k][1]}</div><span>${SEGELLS[k][0]}</span></div>`).join('');
+  const b = $('boto-missio');
+  const pot = !!(e.avui && e.avui.missio);
+  b.disabled = !pot;
+  b.textContent = pot ? "Missió d'avui" : 'Avui no hi ha missió';
+}
+function avisIlla(zona, estat) {
+  const z = S.estat.mon.find(x => x.zona === zona);
+  const textos = { tancada: 'Encara no és oberta', oberta: 'Oberta', n1: 'Nivell 1', n2: 'Nivell 2', n3: 'Nivell 3' };
+  const av = $('avis-illa');
+  av.textContent = (z ? z.nom : '') + ' · ' + (textos[estat] || '');
+  av.hidden = false;
+  clearTimeout(avisIlla.t);
+  avisIlla.t = setTimeout(() => { av.hidden = true; }, 2500);
+}
+
+/* ---------- Missió ---------- */
+function pasActual() {
+  const a = S.estat.avui, m = a.missio, p = a.progres;
+  if (m.abans && !p.prediccio && p.nivell === 0) return 'abans';
+  if (m.controls.c0 && !p.c0 && p.nivell === 0) return 'c0';
+  if (p.nivell === 0) return 'n1';
+  if (p.espera && p.espera.indexOf('demo') === 0) return 'espera';
+  if (p.nivell === 1) return 'n2';
+  if (p.nivell === 2) return 'n3';
+  return 'tot';
+}
+
+function obreMissio() {
+  if (!S.estat.avui || !S.estat.avui.missio) return;
+  if (!S.entrada) { S.entrada = S.estat.avui.sessio; envia('entrada', ''); }
+  mostra('p-missio');
+  pintaMissio();
+}
+
+function pintaMissio() {
+  const a = S.estat.avui, m = a.missio, p = a.progres;
+  $('m-titol').textContent = m.titol;
+  $('m-frase').textContent = m.frase;
+  let xapes = '';
+  if (a.equip) xapes += `<span class="xapa">${esc(a.equip)}</span>`;
+  if (a.variant) xapes += `<span class="xapa">La teva: ${esc(a.textVariant || a.variant)}</span>`;
+  $('m-xapes').innerHTML = xapes;
+  $('m-nivells').innerHTML = [1, 2, 3].map(n =>
+    `<div class="nivell ${p.nivell >= n ? 'fet' : ''}"><span class="punt">${p.nivell >= n ? '✓' : ''}</span>Nivell ${n}</div>`).join('');
+
+  const banner = $('m-banner');
+  banner.hidden = p.espera !== 'ajuda';
+  $('m-banner-text').textContent = 'El mestre vindrà a ajudar-te.';
+
+  const pas = pasActual();
+  const preg = $('m-pregunta'), cos = $('m-cos'), bot = $('m-botons');
+  const il = (clau) => clau && IL[clau] ? `<div class="il">${IL[clau]}</div>` : '';
+  if (pas === 'abans') {
+    preg.textContent = 'Abans de provar-ho: ' + m.abans.text.charAt(0).toLowerCase() + m.abans.text.slice(1);
+    cos.innerHTML = `<div class="graella" style="grid-template-columns: repeat(${m.abans.opcions.length}, 1fr); height:100%;">` +
+      m.abans.opcions.map(o => `<button class="tria" data-v="${esc(o.clau)}"><span class="dibuix">${IL[o.imatge] || ''}</span><span class="etiqueta">${esc(o.text)}</span></button>`).join('') + '</div>';
+    bot.innerHTML = '';
+    cos.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => { envia('prediccio', b.dataset.v); pintaMissio(); }));
+    return;
+  }
+  const control = (clauControl, clauNivell, esdeveniment) => {
+    const c = m.controls[clauControl] || {};
+    const n = m.nivells[clauNivell] || {};
+    preg.textContent = c.text || n.text || '';
+    cos.innerHTML = il(c.imatge || n.imatge) + (c.text && n.text ? `<p class="text">${esc(n.text)}</p>` : '');
+    bot.innerHTML = `<button class="boto si" id="b-si">Sí ✓</button><button class="boto no" id="b-no">No me n'he sortit</button>`;
+    $('b-si').onclick = () => { envia(esdeveniment, ''); pintaMissio(); };
+    $('b-no').onclick = obreEncallat;
+  };
+  if (pas === 'c0') return control('c0', 'c0', 'c0');
+  if (pas === 'n1') return control('n1', 'n1', 'n1');
+  if (pas === 'n2' || pas === 'n3') {
+    const n = m.nivells[pas] || {};
+    preg.textContent = (pas === 'n2' ? 'Nivell 2: ' : 'Nivell 3: ') + (n.text || '');
+    cos.innerHTML = il(n.imatge);
+    bot.innerHTML = `<button class="boto si" id="b-demo">Ja ho puc ensenyar</button><button class="boto no" id="b-no">No me n'he sortit</button>`;
+    $('b-demo').onclick = () => { envia('demo', pas === 'n2' ? '2' : '3'); pintaMissio(); };
+    $('b-no').onclick = obreEncallat;
+    return;
+  }
+  if (pas === 'espera') {
+    preg.textContent = 'Ets a la llista. El mestre vindrà.';
+    cos.innerHTML = il('mestre') + `<p class="text">Prepara-ho per ensenyar-ho.<br>Pensa què li explicaràs.</p>`;
+    bot.innerHTML = `<button class="boto clar" id="b-cancela">Ja no cal</button>`;
+    $('b-cancela').onclick = () => { envia('cancela', ''); pintaMissio(); };
+    return;
+  }
+  preg.textContent = 'Has fet els 3 nivells!';
+  cos.innerHTML = il('carta') + `<p class="text">Pots ajudar un company.<br><b>Qui ajuda parla, no toca.</b></p>`;
+  bot.innerHTML = '';
+}
+
+/* ---------- No me n'he sortit → on? → pista → ajuda ---------- */
+function obreEncallat() {
+  const m = S.estat.avui.missio;
+  if (!m.encallat.length) { envia('ajuda', ''); return obreMissio(); }
+  mostra('p-encallat');
+  const g = $('encallat-graella');
+  g.style.gridTemplateColumns = `repeat(${Math.min(m.encallat.length, 4)}, 1fr)`;
+  g.innerHTML = m.encallat.map(o => `<button class="tria" data-v="${esc(o.clau)}"><span class="dibuix">${IL[o.imatge] || ''}</span><span class="etiqueta">${esc(o.text)}</span></button>`).join('');
+  g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => obrePista(b.dataset.v)));
+}
+function obrePista(clau) {
+  const o = S.estat.avui.missio.encallat.find(x => x.clau === clau);
+  envia('encallat', clau);
+  mostra('p-pista');
+  $('pista-il').innerHTML = IL[o.imatgePista] || IL[o.imatge] || '';
+  $('pista-text').textContent = o.pista;
+}
+
+/* ---------- Targeta de sortida ---------- */
+function sortidaFeta() {
+  const a = S.estat.avui;
+  if (!a || !a.missio) return true;
+  return a.missio.sortida.every(q => a.progres.sortida[q.clau]);
+}
+function obreSortida() {
+  const a = S.estat.avui, qs = a.missio.sortida;
+  const q = qs.find(x => !a.progres.sortida[x.clau]);
+  if (!q) return obreFet();
+  mostra('p-sortida');
+  $('sortida-compte').textContent = 'Targeta de sortida · ' + (qs.indexOf(q) + 1) + ' de ' + qs.length;
+  $('sortida-pregunta').textContent = q.text;
+  const ilP = q.imatge && IL[q.imatge] ? `<div class="il">${IL[q.imatge]}</div>` : '';
+  $('sortida-cos').innerHTML = ilP + `<div class="graella" style="grid-template-columns: repeat(${q.opcions.length}, 1fr); height:100%; flex:1 1 auto;">` +
+    q.opcions.map(o => `<button class="tria" data-v="${esc(o.clau)}"><span class="dibuix">${IL[o.imatge] || ''}</span><span class="etiqueta">${esc(o.text)}</span></button>`).join('') + '</div>';
+  $('sortida-cos').querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => {
+    envia('sortida', { clau: q.clau, resp: b.dataset.v });
+    obreSortida();
+  }));
+}
+function obreFet() {
+  mostra('p-fet');
+  const e = S.estat, z = zonaAvui();
+  const i = z ? e.mon.indexOf(z) : 0;
+  $('fet-il').innerHTML = z ? illaSVG(z, e.zones[z.zona] || 'oberta', i) : '';
+  $('fet-titol').textContent = 'Sessió acabada!';
+  $('fet-text').textContent = 'Ja pots tancar el Chromebook.';
+  clearTimeout(obreFet.t);
+  obreFet.t = setTimeout(() => { if (S.pantalla === 'p-fet') obreMapa(); }, 8000);
+}
+
+/* ---------- Avatar ---------- */
+function obreAvatar() {
+  mostra('p-avatar');
+  S.avatarCos = null;
+  $('avatar-titol').textContent = 'Tria el teu personatge';
+  const g = $('avatar-graella');
+  g.innerHTML = COLORS_AVATAR.map((c, i) => `<button class="tria" data-i="${i}"><span class="dibuix">${avatarSVG('c' + i + '-a0')}</span><span class="etiqueta">${c[0]}</span></button>`).join('');
+  g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => obreComplement(+b.dataset.i)));
+}
+function obreComplement(cos) {
+  S.avatarCos = cos;
+  $('avatar-titol').textContent = 'Què porta?';
+  const g = $('avatar-graella');
+  g.innerHTML = COMPLEMENTS.map((c, i) => `<button class="tria" data-i="${i}"><span class="dibuix">${avatarSVG('c' + cos + '-a' + i)}</span><span class="etiqueta">${c[0]}</span></button>`).join('');
+  g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => {
+    envia('avatar', 'c' + cos + '-a' + b.dataset.i);
+    if (!S.estat.alumne.tePin) obrePin('crea'); else decideix();
+  }));
+}
+
+/* ---------- PIN de 3 dibuixos ---------- */
+function obrePin(mode) {
+  S.pinMode = mode; S.pin = [];
+  mostra('p-pin');
+  $('pin-titol').textContent = mode === 'crea' ? 'Tria 3 dibuixos. Seran la teva clau secreta.'
+    : (S.alumneB && !S.alumneB.tePin ? 'Hola, ' + S.alumneB.nom + '! Tria 3 dibuixos i recorda\'ls.' : 'Hola, ' + (S.alumneB ? S.alumneB.nom : '') + '! Posa els teus 3 dibuixos.');
+  $('pin-missatge').textContent = '';
+  $('pin-enrere').hidden = mode === 'crea';
+  const g = $('pin-graella');
+  g.innerHTML = ORDRE_PIN.map(k => `<button class="tria" data-k="${k}"><span class="dibuix">${PIN[k][1]}</span><span class="etiqueta">${PIN[k][0]}</span></button>`).join('');
+  g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => triaPin(b.dataset.k)));
+  pintaPin();
+}
+function pintaPin() {
+  for (let i = 0; i < 3; i++) $('pin-' + i).innerHTML = S.pin[i] ? PIN[S.pin[i]][1] : '';
+  $('pin-graella').querySelectorAll('.tria').forEach(b => { b.disabled = S.pin.indexOf(b.dataset.k) >= 0; });
+}
+function triaPin(k) {
+  if (S.pin.length >= 3 || S.pin.indexOf(k) >= 0) return;
+  S.pin.push(k); pintaPin();
+  if (S.pin.length < 3) return;
+  const pin = S.pin.join('-');
+  if (S.pinMode === 'crea') return obreRecorda(pin);
+  $('pin-missatge').textContent = 'Comprovant…';
+  crida('entraPin', { codi: S.codi, id: S.alumneB.id, pin: pin }).then(r => {
+    if (r && r.ok) {
+      S.testimoni = r.dades.testimoni;
+      try { sessionStorage.setItem('taller3r_testimoni', S.testimoni); } catch (e) { /* res */ }
+      S.estat = r.dades.estat;
+      return decideix();
+    }
+    S.pin = []; pintaPin();
+    const motiu = r && r.motiu;
+    $('pin-missatge').textContent = motiu === 'massa-intents' ? 'Avisa el mestre.' : motiu === 'codi' ? 'El codi ha canviat. Torna a començar.' : 'No són aquests. Torna-ho a provar.';
+    if (motiu === 'codi') setTimeout(() => { mostra('p-codi'); preparaCodi(); }, 1500);
+  }).catch(() => { S.pin = []; pintaPin(); $('pin-missatge').textContent = 'No hi ha connexió. Torna-ho a provar.'; });
+}
+function obreRecorda(pin) {
+  mostra('p-recorda');
+  $('recorda-dibuixos').innerHTML = pin.split('-').map(k => `<div class="forat" style="border-style:solid; width:140px; height:140px;">${PIN[k][1]}</div>`).join('');
+  $('recorda-ok').onclick = () => { envia('pin', pin); decideix(); };
+  $('recorda-canvia').onclick = () => obrePin('crea');
+}
+
+/* ---------- Pla B: codi de la pissarra + nom ---------- */
+function preparaCodi() {
+  S.codi = '';
+  pintaCodi();
+  $('codi-missatge').textContent = '';
+  const t = $('teclat');
+  t.innerHTML = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].map(d => `<button class="boto clar" data-d="${d}">${d}</button>`).join('') +
+    `<button class="boto clar" data-d="x" style="grid-column: span 2; font-size:24px;">Esborra</button>`;
+  t.querySelectorAll('button').forEach(b => b.addEventListener('click', () => teclaCodi(b.dataset.d)));
+}
+function pintaCodi() { for (let i = 0; i < 3; i++) $('codi-' + i).textContent = S.codi[i] || ''; }
+function teclaCodi(d) {
+  if (d === 'x') { S.codi = S.codi.slice(0, -1); pintaCodi(); return; }
+  if (S.codi.length >= 3) return;
+  S.codi += d; pintaCodi();
+  if (S.codi.length < 3) return;
+  $('codi-missatge').textContent = 'Comprovant…';
+  crida('llistaNoms', { codi: S.codi }).then(r => {
+    const d = r && r.ok && r.dades;
+    if (d && d.correcte) { S.nomsB = d.noms; return obreNoms(); }
+    S.codi = ''; pintaCodi();
+    $('codi-missatge').textContent = d && d.bloquejat ? 'Avisa el mestre.' : 'Aquest codi no és. Mira la pissarra.';
+  }).catch(() => { S.codi = ''; pintaCodi(); $('codi-missatge').textContent = 'No hi ha connexió. Torna-ho a provar.'; });
+}
+function obreNoms() {
+  mostra('p-nom');
+  const g = $('noms');
+  const n = S.nomsB.length;
+  g.style.gridTemplateColumns = `repeat(${n > 15 ? 5 : 4}, 1fr)`;
+  g.innerHTML = S.nomsB.map((a, i) => `<button class="tria" data-i="${i}"><span class="etiqueta" style="font-size:24px;">${esc(a.nom)}</span></button>`).join('');
+  g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => { S.alumneB = S.nomsB[+b.dataset.i]; obrePin('entra'); }));
+}
+
+/* ---------- Mode prova (només el compte del mestre) ---------- */
+function obreProva() {
+  mostra('p-prova');
+  const g = $('prova-llista');
+  g.innerHTML = (INICIAL.proves || []).map(a => `<button class="tria" data-id="${esc(a.id)}"><span class="etiqueta">${esc(a.nom)}</span></button>`).join('');
+  g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => {
+    S.simula = b.dataset.id;
+    crida('estat', {}).then(r => { if (r && r.ok) { S.estat = r.dades; decideix(); } else mostra('p-error'); }).catch(() => mostra('p-error'));
+  }));
+}
+
+/* ---------- Connexions dels botons fixos ---------- */
+$('boto-missio').onclick = obreMissio;
+$('boto-mapa').onclick = obreMapa;
+$('boto-recarrega').onclick = () => location.reload();
+$('m-banner-cancela').onclick = () => { envia('cancela', ''); pintaMissio(); };
+$('encallat-enrere').onclick = () => { mostra('p-missio'); pintaMissio(); };
+$('pista-torna').onclick = () => { mostra('p-missio'); pintaMissio(); };
+$('pista-ajuda').onclick = () => { envia('ajuda', ''); mostra('p-missio'); pintaMissio(); };
+$('pin-esborra').onclick = () => { S.pin = []; pintaPin(); $('pin-missatge').textContent = ''; };
+$('pin-enrere').onclick = () => obreNoms();
+$('nom-enrere').onclick = () => { mostra('p-codi'); preparaCodi(); };
+$('prova-plab').onclick = () => { S.simula = null; mostra('p-codi'); preparaCodi(); };
+
+/* ---------- Inici ---------- */
+(function inici() {
+  try { S.testimoni = sessionStorage.getItem('taller3r_testimoni'); } catch (e) { S.testimoni = null; }
+  if (INICIAL.error) return mostra('p-error');
+  if (INICIAL.pla === 'A' && INICIAL.estat) { S.estat = INICIAL.estat; decideix(); }
+  else if (INICIAL.pla === 'prova') obreProva();
+  else if (S.testimoni) {
+    crida('estat', {}).then(r => { if (r && r.ok) { S.estat = r.dades; decideix(); } else { S.testimoni = null; mostra('p-codi'); preparaCodi(); } })
+      .catch(() => { mostra('p-codi'); preparaCodi(); });
+  } else { mostra('p-codi'); preparaCodi(); }
+  setTimeout(bucle, 5000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taller 3r · Administrador</title>
+<style>
+/*@@FONTS@@*/
+:root {
+  --tinta: #1d2433; --suau: #4a5160; --fons: #f3f7fb; --blanc: #fff; --vora: #c9d3df;
+  --blau: #1f5fbf; --verd: #1e7a3c; --pissarra: #3d4a63; --groc: #fff4d6; --taronja: #8a4b00;
+  --pista: #cde2fb; --ple: #256abf;
+  --lletra: "Andika", "Atkinson Hyperlegible", Verdana, "Segoe UI", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font-family: var(--lletra); font-size: 18px; color: var(--tinta); background: var(--fons); }
+b, strong, h1, h2, h3, button, th { font-weight: 700; }
+[hidden] { display: none !important; }
+button, select, input, textarea { font-family: inherit; font-size: 18px; color: var(--tinta); }
+svg { display: block; }
+
+.barra { position: sticky; top: 0; z-index: 5; background: var(--blanc); border-bottom: 2px solid var(--vora); padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.barra h1 { font-size: 22px; margin: 0 8px 0 0; }
+.barra select { min-height: 48px; border: 2px solid var(--vora); border-radius: 12px; padding: 4px 10px; background: var(--blanc); }
+.pestanyes { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+.pestanya { min-height: 48px; padding: 6px 16px; border-radius: 12px; border: 2px solid var(--vora); background: var(--blanc); cursor: pointer; }
+.pestanya[aria-selected="true"] { background: var(--tinta); color: var(--blanc); border-color: var(--tinta); }
+.xip { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 16px; font-weight: 700; border: 2px solid var(--tinta); }
+.xip.oberta { background: #e7f5ea; border-color: var(--verd); }
+.xip.sortida { background: var(--groc); border-color: #f2b632; }
+.cos { padding: 16px; }
+
+.boto { min-height: 48px; padding: 8px 16px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; background: var(--blau); color: var(--blanc); font-weight: 700; }
+.boto.clar { background: var(--blanc); color: var(--tinta); border-color: var(--tinta); }
+.boto.verd { background: var(--verd); }
+.boto.fosc { background: var(--pissarra); }
+.boto.gran { min-height: 64px; font-size: 20px; padding: 10px 18px; }
+.boto:focus-visible, .pestanya:focus-visible, .targeta:focus-visible { outline: 4px solid #f2b632; outline-offset: 2px; }
+.fila { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* ---------- Aula ---------- */
+.aula { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
+.cues { display: flex; flex-direction: column; gap: 12px; }
+.cua { background: var(--blanc); border: 2px solid var(--vora); border-radius: 16px; padding: 10px 12px; }
+.cua h2 { font-size: 18px; margin: 0 0 8px; }
+.cua.ajuda { border-color: var(--taronja); }
+.cua button { width: 100%; text-align: left; min-height: 48px; margin-top: 6px; border-radius: 10px; border: 2px solid var(--vora); background: var(--fons); cursor: pointer; padding: 6px 10px; display: flex; justify-content: space-between; gap: 8px; }
+.cua .buida { color: var(--suau); font-size: 16px; margin: 0; }
+.resum { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; align-items: stretch; }
+.rajola { background: var(--blanc); border: 2px solid var(--vora); border-radius: 16px; padding: 10px 14px; min-width: 200px; }
+.rajola .etiq { font-size: 15px; color: var(--suau); font-weight: 700; }
+.rajola .valor { font-size: 32px; font-weight: 700; line-height: 1.1; }
+.metre { margin-top: 6px; height: 12px; border-radius: 6px; background: var(--pista); position: relative; overflow: hidden; }
+.metre span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: var(--ple); }
+.graella { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.targeta { text-align: left; background: var(--blanc); border: 2px solid var(--vora); border-radius: 16px; padding: 10px 12px; cursor: pointer; display: flex; flex-direction: column; gap: 6px; min-height: 112px; }
+.targeta.ajuda { border-color: var(--taronja); background: #fff1e0; }
+.targeta.demo { border-color: var(--blau); background: #e6efff; }
+.targeta.absent { opacity: .55; }
+.targeta .nom { font-size: 19px; font-weight: 700; }
+.targeta .petit { font-size: 15px; color: var(--suau); }
+.punts { display: flex; gap: 6px; }
+.punts i { width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--vora); display: inline-block; }
+.punts i.declarat { border-color: var(--verd); }
+.punts i.vist { background: var(--verd); border-color: var(--verd); }
+.estat-t { font-size: 15px; font-weight: 700; }
+
+/* ---------- Diàleg ---------- */
+.fons-dialeg { position: fixed; inset: 0; background: #1d243399; display: flex; align-items: center; justify-content: center; z-index: 20; padding: 12px; }
+.dialeg { background: var(--blanc); border-radius: 20px; padding: 18px; width: min(560px, 100%); max-height: 96vh; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
+.dialeg h2 { margin: 0; font-size: 24px; }
+.dialeg .grup-botons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.dialeg .grup-botons .boto { min-height: 64px; font-size: 18px; }
+.dialeg .info { font-size: 16px; color: var(--suau); margin: 0; }
+.dialeg textarea { width: 100%; min-height: 70px; border: 2px solid var(--vora); border-radius: 12px; padding: 8px; }
+
+/* ---------- Notes ---------- */
+table { border-collapse: collapse; background: var(--blanc); }
+th, td { border: 1px solid var(--vora); padding: 6px 8px; text-align: center; font-size: 16px; }
+th:first-child, td:first-child { text-align: left; }
+td.cel { cursor: pointer; min-width: 52px; }
+td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
+.q-NA { background: #f3f4f6; } .q-AS { background: #cde2fb; } .q-AN { background: #9ec5f4; } .q-AE { background: #6da7ec; }
+.taula-ample { overflow-x: auto; }
+.llegenda { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 12px; font-size: 15px; }
+.llegenda span { padding: 2px 10px; border: 1px solid var(--vora); border-radius: 8px; }
+
+/* ---------- Missions ---------- */
+.ed-missio td, .ed-missio th { text-align: left; vertical-align: top; }
+.ed-missio input, .ed-missio select, .ed-missio textarea { width: 100%; border: 2px solid var(--vora); border-radius: 8px; padding: 4px 6px; font-size: 16px; }
+.ed-missio textarea { min-height: 52px; }
+.ajuda-text { background: var(--blanc); border: 2px solid var(--vora); border-radius: 16px; padding: 10px 14px; font-size: 16px; margin-bottom: 12px; }
+.ajuda-text ul { margin: 6px 0; padding-left: 22px; }
+
+.avis { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--tinta); color: #fff; padding: 12px 20px; border-radius: 12px; z-index: 30; font-weight: 700; }
+#aula-oberta { display: flex; flex-direction: column; }
+@media (max-width: 760px) {
+  #aula-oberta .resum { order: 2; margin-top: 14px; }
+  .aula { grid-template-columns: 1fr; }
+  .graella { grid-template-columns: repeat(2, 1fr); }
+  .barra h1 { display: none; }
+  .pestanyes { margin-left: 0; width: 100%; }
+  .pestanya { flex: 1 1 0; }
+}
+</style>
+</head>
+<body>
+<div class="barra">
+  <h1>Taller 3r</h1>
+  <select id="sel-grup" aria-label="Grup"></select>
+  <select id="sel-sessio" aria-label="Sessió"></select>
+  <span class="xip" id="xip-estat">—</span>
+  <div class="pestanyes" role="tablist">
+    <button class="pestanya" role="tab" data-p="aula" aria-selected="true">Aula</button>
+    <button class="pestanya" role="tab" data-p="notes" aria-selected="false">Notes</button>
+    <button class="pestanya" role="tab" data-p="missions" aria-selected="false">Missions</button>
+    <button class="pestanya" role="tab" data-p="sessions" aria-selected="false">Sessions</button>
+  </div>
+</div>
+
+<div class="cos">
+  <!-- AULA -->
+  <section id="v-aula">
+    <div id="aula-tancada" hidden>
+      <div class="rajola" style="max-width:640px;">
+        <p style="font-size:20px; margin:0 0 12px;" id="aula-tancada-text">Aquesta sessió no és oberta.</p>
+        <button class="boto gran verd" id="b-obre">Obre la sessió</button>
+      </div>
+    </div>
+    <div id="aula-oberta" hidden>
+      <div class="resum">
+        <div class="rajola"><div class="etiq">Fita del grup (N2)</div><div class="valor" id="r-fita">—</div><div class="metre"><span id="r-fita-metre"></span></div></div>
+        <div class="rajola"><div class="etiq">Presents</div><div class="valor" id="r-presents">—</div></div>
+        <div class="rajola"><div class="etiq">Codi (Pla B)</div><div class="valor" id="r-codi">—</div></div>
+        <div class="fila" style="flex:1 1 300px; justify-content:flex-end;">
+          <button class="boto gran" id="b-sortida">Targeta de sortida</button>
+          <button class="boto gran clar" id="b-reobre" hidden>Torna a obrir</button>
+          <button class="boto gran fosc" id="b-tanca">Tanca la sessió</button>
+          <button class="boto gran clar" id="b-projeccio">Projecció ↗</button>
+        </div>
+      </div>
+      <div class="aula">
+        <div class="cues">
+          <div class="cua ajuda"><h2 id="t-ajuda">Ajuda</h2><div id="cua-ajuda"></div></div>
+          <div class="cua"><h2 id="t-demo">Volen ensenyar-ho</h2><div id="cua-demo"></div></div>
+          <button class="boto clar" id="b-equips">Refés els equips</button>
+        </div>
+        <div class="graella" id="graella"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTES -->
+  <section id="v-notes" hidden>
+    <div class="fila" style="margin-bottom:8px;">
+      <h2 style="margin:0; font-size:22px;" id="notes-titol">Notes</h2>
+      <button class="boto" id="b-informe">Prepara l'informe al full</button>
+    </div>
+    <div class="llegenda"><span class="q-NA">NA · &lt; 5</span><span class="q-AS">AS · 5–6,9</span><span class="q-AN">AN · 7–8,9</span><span class="q-AE">AE · ≥ 9</span><span>Toca una nota per ajustar-la</span></div>
+    <div class="taula-ample"><table id="taula-notes"></table></div>
+  </section>
+
+  <!-- MISSIONS -->
+  <section id="v-missions" hidden>
+    <div class="ajuda-text">
+      <b>Abans de publicar una pregunta, ha de passar aquests 4 filtres:</b>
+      <ul>
+        <li>Un nen de 8 anys la respon en 10 segons?</li>
+        <li>L'app no ho sap ja?</li>
+        <li>Canvia la nota o una decisió teva?</li>
+        <li>Es pot respondre amb el que té a la taula ara mateix?</li>
+      </ul>
+      <b>Tipus:</b> missio (titol, frase) · nivell (n1, n2, n3) · control (c0, n1) · abans (predicció: només abans de provar) ·
+      encallat (text = on s'encalla · opcions = pista · correcta = dibuix de la pista) · sortida (diag, eina, com) · variant (A, B, C…).
+      Opcions: <code>clau|text|dibuix;clau|text|dibuix</code>.
+    </div>
+    <div class="fila" style="margin-bottom:10px;">
+      <select id="sel-missio" aria-label="Sessió de la missió"></select>
+      <button class="boto clar" id="b-afegeix">Afegeix una fila</button>
+      <button class="boto verd" id="b-desa-missio">Desa</button>
+    </div>
+    <div class="taula-ample"><table class="ed-missio" id="taula-missio"></table></div>
+  </section>
+
+  <!-- SESSIONS -->
+  <section id="v-sessions" hidden>
+    <h2 style="font-size:22px; margin:0 0 8px;" id="sessions-titol">Calendari</h2>
+    <div class="taula-ample"><table id="taula-calendari"></table></div>
+    <h2 style="font-size:22px; margin:20px 0 8px;">Configuració</h2>
+    <div class="fila" style="gap:16px;">
+      <label class="fila"><input type="checkbox" id="c-generics" style="width:28px;height:28px;"> Noms genèrics al mapa (Zona 1, Zona 2…)</label>
+      <label class="fila"><input type="checkbox" id="c-codi" style="width:28px;height:28px;"> Mostra el codi a la projecció</label>
+      <label class="fila">Fita del grup: <input type="number" id="c-fita" min="10" max="100" step="5" style="width:90px; min-height:48px;"> %</label>
+    </div>
+    <div class="fila" style="margin-top:12px;">
+      <label style="flex:1 1 400px;">URL del món: <input type="url" id="c-url" style="width:100%; min-height:48px;" placeholder="https://script.google.com/a/macros/…/exec"></label>
+      <button class="boto" id="b-desa-url">Desa l'URL</button>
+    </div>
+    <h2 style="font-size:22px; margin:20px 0 8px;">Reiniciar el PIN d'un alumne</h2>
+    <div class="fila"><select id="sel-pin" style="min-height:48px;"></select><button class="boto clar" id="b-pin">Reinicia el PIN</button></div>
+  </section>
+</div>
+
+<div class="fons-dialeg" id="dialeg" hidden><div class="dialeg" id="dialeg-cos"></div></div>
+<div class="avis" id="avis" hidden></div>
+
+<script>
+/*@@IL@@*/
+</script>
+<script>
+'use strict';
+const URL_ADMIN = '/*@@URL_ADMIN@@*/';
+const A = { inici: null, grup: 'G1', sessio: 'S1', vista: 'aula', tauler: null, notes: null, missio: null, ocupat: false };
+const $ = id => document.getElementById(id);
+const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function crida(accio, args) {
+  return new Promise((ok, ko) => {
+    google.script.run.withSuccessHandler(r => {
+      if (r && r.ok) ok(r.dades);
+      else { avis('Error: ' + (r && (r.missatge || r.motiu))); ko(r); }
+    }).withFailureHandler(e => { avis('Sense connexió'); ko(e); }).api(accio, args || {});
+  });
+}
+function avis(t) { const a = $('avis'); a.textContent = t; a.hidden = false; clearTimeout(avis.t); avis.t = setTimeout(() => { a.hidden = true; }, 2500); }
+function tancaModal() { $('dialeg').hidden = true; $('dialeg-cos').innerHTML = ''; }
+$('dialeg').addEventListener('click', e => { if (e.target.id === 'dialeg') tancaModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') tancaModal(); });
+
+/* ---------- Capçalera ---------- */
+function pintaSelectors() {
+  const I = A.inici;
+  $('sel-grup').innerHTML = I.grups.map(g => `<option value="${g}" ${g === A.grup ? 'selected' : ''}>${g === 'GP' ? 'Proves' : 'Grup ' + g.slice(1)} (${I.alumnes[g] || 0})</option>`).join('');
+  $('sel-sessio').innerHTML = I.ordre.map(s => `<option value="${s}" ${s === A.sessio ? 'selected' : ''}>${s} · ${esc(I.missions[s].titol)}</option>`).join('');
+  const c = calendari(A.grup, A.sessio);
+  const x = $('xip-estat');
+  x.textContent = c ? c.estat : '—';
+  x.className = 'xip ' + (c ? c.estat : '');
+}
+function calendari(g, s) { return A.inici.calendari.find(c => c.grup === g && c.sessio === s); }
+$('sel-grup').onchange = e => { A.grup = e.target.value; canviaVista(A.vista); };
+$('sel-sessio').onchange = e => { A.sessio = e.target.value; canviaVista(A.vista); };
+document.querySelectorAll('.pestanya').forEach(b => b.onclick = () => canviaVista(b.dataset.p));
+function canviaVista(v) {
+  A.vista = v;
+  document.querySelectorAll('.pestanya').forEach(b => b.setAttribute('aria-selected', b.dataset.p === v ? 'true' : 'false'));
+  ['aula', 'notes', 'missions', 'sessions'].forEach(x => { $('v-' + x).hidden = x !== v; });
+  pintaSelectors();
+  if (v === 'aula') carregaAula();
+  if (v === 'notes') carregaNotes();
+  if (v === 'missions') carregaMissio();
+  if (v === 'sessions') pintaSessions();
+}
+
+/* ---------- AULA ---------- */
+function carregaAula() {
+  const c = calendari(A.grup, A.sessio);
+  const oberta = c && (c.estat === 'oberta' || c.estat === 'sortida');
+  $('aula-tancada').hidden = !!oberta;
+  $('aula-oberta').hidden = !oberta;
+  if (!oberta) {
+    const altra = A.inici.oberta;
+    $('aula-tancada-text').textContent = 'Aquesta sessió no és oberta.' + (altra ? ' Ara hi ha oberta: ' + altra.grup + ' · ' + altra.sessio + ' (es tancarà).' : '') +
+      (A.inici.missions[A.sessio].publicada ? '' : ' Atenció: aquesta missió encara és un esborrany.');
+    return;
+  }
+  return crida('tauler', { grup: A.grup, sessio: A.sessio }).then(t => { A.tauler = t; pintaAula(); });
+}
+function minuts(ms) { return ms ? Math.max(0, Math.round((Date.now() - ms) / 60000)) + ' min' : ''; }
+function pintaAula() {
+  const t = A.tauler;
+  const f = t.fita;
+  $('r-fita').textContent = f.ambN2 + ' / ' + f.objectiu + (f.assolida ? ' ✓' : '');
+  $('r-fita-metre').style.width = Math.min(100, Math.round(f.ambN2 / Math.max(1, f.objectiu) * 100)) + '%';
+  $('r-presents').textContent = f.presents + ' / ' + t.targetes.length;
+  $('r-codi').textContent = t.codi || '—';
+  $('b-sortida').hidden = t.estat !== 'oberta';
+  $('b-reobre').hidden = t.estat !== 'sortida';
+  $('t-ajuda').textContent = 'Ajuda (' + t.cues.ajuda.length + ')';
+  $('t-demo').textContent = 'Volen ensenyar-ho (' + t.cues.demo.length + ')';
+  const cua = (llista, buit) => llista.length ? llista.map(x =>
+    `<button data-id="${esc(x.id)}"><span>${esc(x.nom)}${x.espera.indexOf('demo') === 0 ? ' · N' + x.espera.slice(4) : ''}</span><span>${minuts(x.des_de)}</span></button>`).join('') : `<p class="buida">${buit}</p>`;
+  $('cua-ajuda').innerHTML = cua(t.cues.ajuda, 'Ningú');
+  $('cua-demo').innerHTML = cua(t.cues.demo, 'Ningú');
+  document.querySelectorAll('.cua button').forEach(b => b.onclick = () => obreAlumne(b.dataset.id));
+  $('graella').innerHTML = t.targetes.map(x => {
+    const classe = x.espera === 'ajuda' ? 'ajuda' : x.espera.indexOf('demo') === 0 ? 'demo' : !x.present ? 'absent' : '';
+    const punt = n => x.nivell >= n ? (n === 1 && !x.n1Vist ? 'declarat' : 'vist') : '';
+    let estat = '';
+    if (x.espera === 'ajuda') estat = 'Ajuda · ' + minuts(x.esperaDesDe);
+    else if (x.espera.indexOf('demo') === 0) estat = 'Vol ensenyar N' + x.espera.slice(4);
+    else if (!x.present) estat = 'No ha entrat';
+    else if (x.nivell === 0 && x.encallatOn) estat = 'Encallat: ' + (t.encallatTextos[x.encallatOn] || x.encallatOn);
+    else if (x.sortidaFeta) estat = 'Sortida feta';
+    return `<button class="targeta ${classe}" data-id="${esc(x.id)}">
+      <span class="nom">${esc(x.nom)}</span>
+      <span class="petit">${esc(x.equip || '')}${x.variant ? ' · ' + esc(x.variant) : ''}${x.nota !== '' ? ' · ' + x.nota : ''}</span>
+      <span class="punts" aria-label="Nivell ${x.nivell}"><i class="${punt(1)}"></i><i class="${punt(2)}"></i><i class="${punt(3)}"></i></span>
+      <span class="estat-t">${esc(estat)}</span></button>`;
+  }).join('');
+  document.querySelectorAll('.targeta').forEach(b => b.onclick = () => obreAlumne(b.dataset.id));
+}
+function obreAlumne(id) {
+  const x = A.tauler.targetes.find(t => t.id === id);
+  if (!x) return;
+  const t = A.tauler;
+  const b = (que, text, classe) => `<button class="boto ${classe || ''}" data-q="${que}">${text}</button>`;
+  let botons = '';
+  if (x.nivell < 2 || x.espera === 'demo2') botons += b('n2funciona', 'N2 · Funciona i ho explica', 'verd') + b('n2diagnostic', 'N2 · No funciona, però sap per què', 'verd');
+  if (x.nivell >= 2 || x.espera === 'demo3') botons += b('n3explica', 'N3 · Fet i ho explica', 'verd') + b('n3', 'N3 · Fet', 'verd');
+  if (x.espera) botons += b(x.espera === 'ajuda' ? 'atesa' : 'encarano', x.espera === 'ajuda' ? 'Ajuda atesa' : 'Encara no', 'fosc');
+  if (x.nivell >= 1 && !x.n1Vist) botons += b('n1', 'N1 vist ✓', 'clar');
+  if (x.nivell === 0) botons += b('n1', 'Té el N1', 'clar');
+  if (x.nivell >= 1 && x.nivell < 2) botons += b('n1no', 'N1 no és cert', 'clar');
+  if (x.nivell >= 1) botons += b('desfes', 'Desfés un nivell', 'clar');
+  botons += x.present ? b('presentno', 'Marca absent', 'clar') : b('presentsi', 'Marca present', 'clar');
+  const info = [
+    x.equip ? x.equip + (x.variant ? ' · variant ' + x.variant : '') : '',
+    x.prediccio ? 'Predicció: ' + x.prediccio : '',
+    x.encallatOn ? 'S\'ha encallat: ' + (t.encallatTextos[x.encallatOn] || x.encallatOn) : '',
+    x.fallat ? 'Ha dit «no me n\'he sortit» alguna vegada' : '',
+    x.sortidaFeta ? 'Sortida: ' + (x.encerts.length ? 'encerta ' + x.encerts.join(', ') : 'cap encert') : '',
+    'Nota ara: ' + (x.nota === '' ? '—' : x.nota)
+  ].filter(Boolean).join(' · ');
+  $('dialeg-cos').innerHTML = `<h2>${esc(x.nom)} · Nivell ${x.nivell}</h2><p class="info">${esc(info)}</p>
+    <div class="grup-botons">${botons}</div><button class="boto clar" data-q="tanca">Tanca</button>`;
+  $('dialeg').hidden = false;
+  $('dialeg-cos').querySelectorAll('button[data-q]').forEach(bt => bt.onclick = () => {
+    const q = bt.dataset.q;
+    if (q === 'tanca') return tancaModal();
+    tancaModal();
+    crida('valida', { id: id, sessio: A.sessio, que: q }).then(t2 => { A.tauler = t2; pintaAula(); avis('Fet: ' + x.nom); });
+  });
+}
+$('b-obre').onclick = () => crida('obreSessio', { grup: A.grup, sessio: A.sessio }).then(i => { A.inici = i; pintaSelectors(); carregaAula(); avis('Sessió oberta'); });
+$('b-sortida').onclick = () => canviaEstat('sortida');
+$('b-reobre').onclick = () => canviaEstat('oberta');
+$('b-tanca').onclick = () => {
+  $('dialeg-cos').innerHTML = `<h2>Tancar la sessió?</h2><p class="info">Els alumnes ja no podran registrar res més. Les notes queden desades.</p>
+    <div class="grup-botons"><button class="boto clar" id="no-tanca">No</button><button class="boto fosc" id="si-tanca">Sí, tanca-la</button></div>`;
+  $('dialeg').hidden = false;
+  $('no-tanca').onclick = tancaModal;
+  $('si-tanca').onclick = () => { tancaModal(); canviaEstat('tancada'); };
+};
+function canviaEstat(estat) {
+  return crida('canviaEstat', { grup: A.grup, sessio: A.sessio, estat: estat }).then(i => { A.inici = i; pintaSelectors(); carregaAula(); });
+}
+$('b-equips').onclick = () => crida('refaEquips', { grup: A.grup, sessio: A.sessio }).then(t => { A.tauler = t; pintaAula(); avis('Equips nous'); });
+$('b-projeccio').onclick = () => window.open(URL_ADMIN + '?vista=projeccio', 'projeccio');
+
+/* ---------- NOTES ---------- */
+function carregaNotes() { return crida('notes', { grup: A.grup }).then(n => { A.notes = n; pintaNotes(); }); }
+function pintaNotes() {
+  const n = A.notes;
+  $('notes-titol').textContent = 'Notes · ' + (A.grup === 'GP' ? 'Proves' : 'Grup ' + A.grup.slice(1));
+  const q = v => v === '' || v == null ? '' : v >= 9 ? 'AE' : v >= 7 ? 'AN' : v >= 5 ? 'AS' : 'NA';
+  const cap = '<tr><th>Alumne</th>' + A.inici.ordre.map(s => `<th>${s}</th>`).join('') + '<th>Mitjana</th><th>Inf.</th></tr>';
+  const files = n.files.map(f => '<tr><td>' + esc(f.nom) + '</td>' + A.inici.ordre.map(s => {
+    const x = f.sessions[s];
+    if (!x) return '<td></td>';
+    const txt = x.nota === '' ? (x.present ? '' : 'abs.') : String(x.nota).replace('.', ',') + (x.ajust ? '*' : '');
+    return `<td class="cel ${q(x.nota) ? 'q-' + q(x.nota) : ''}" data-id="${esc(f.id)}" data-s="${s}">${txt}</td>`;
+  }).join('') + `<td class="${f.qualificacio ? 'q-' + f.qualificacio : ''}"><b>${f.mitjana === '' ? '' : String(f.mitjana).replace('.', ',')}</b></td><td>${f.qualificacio}</td></tr>`).join('');
+  $('taula-notes').innerHTML = cap + files;
+  document.querySelectorAll('td.cel').forEach(td => td.onclick = () => obreAjust(td.dataset.id, td.dataset.s));
+}
+function obreAjust(id, s) {
+  const f = A.notes.files.find(x => x.id === id), x = f.sessions[s];
+  let ajust = x.ajust || 0;
+  const pinta = () => {
+    const final = x.auto === '' ? '—' : Math.max(0, Math.min(10, Math.round((Number(x.auto) + ajust) * 10) / 10));
+    $('aj-valor').textContent = 'Automàtica ' + (x.auto === '' ? '—' : x.auto) + ' · ajust ' + (ajust > 0 ? '+' : '') + ajust + ' · final ' + final;
+  };
+  $('dialeg-cos').innerHTML = `<h2>${esc(f.nom)} · ${s}</h2><p class="info" id="aj-valor"></p>
+    <div class="grup-botons" style="grid-template-columns: repeat(5, 1fr);">${[-1, -0.5, 0, 0.5, 1].map(v => `<button class="boto clar" data-v="${v}">${v > 0 ? '+' : ''}${String(v).replace('.', ',')}</button>`).join('')}</div>
+    <label>Observació<textarea id="aj-obs">${esc(x.observacio)}</textarea></label>
+    <div class="grup-botons"><button class="boto clar" id="aj-no">Cancel·la</button><button class="boto verd" id="aj-si">Desa</button></div>`;
+  $('dialeg').hidden = false;
+  pinta();
+  $('dialeg-cos').querySelectorAll('button[data-v]').forEach(b => b.onclick = () => { ajust = Number(b.dataset.v); pinta(); });
+  $('aj-no').onclick = tancaModal;
+  $('aj-si').onclick = () => {
+    const obs = $('aj-obs').value;
+    tancaModal();
+    crida('ajusta', { id: id, sessio: s, ajust: ajust, observacio: obs }).then(n => { A.notes = n; pintaNotes(); avis('Desat'); });
+  };
+}
+$('b-informe').onclick = () => crida('informe', { grup: A.grup }).then(r => avis('Informe preparat: ' + r.files + ' alumnes (pestanya INFORME)'));
+
+/* ---------- MISSIONS ---------- */
+const TIPUS = ['missio', 'nivell', 'control', 'abans', 'encallat', 'sortida', 'variant'];
+function carregaMissio() {
+  $('sel-missio').innerHTML = A.inici.ordre.map(s => `<option value="${s}" ${s === A.sessio ? 'selected' : ''}>${s} · ${esc(A.inici.missions[s].titol)}</option>`).join('');
+  return crida('missions', { sessio: $('sel-missio').value || A.sessio }).then(m => { A.missio = m; pintaMissio(); });
+}
+$('sel-missio').onchange = () => crida('missions', { sessio: $('sel-missio').value }).then(m => { A.missio = m; pintaMissio(); });
+function pintaMissio() {
+  const cap = '<tr><th>Ordre</th><th>Tipus</th><th>Clau</th><th>Text</th><th>Dibuix</th><th>Opcions / pista</th><th>Correcta</th><th>Estat</th><th></th></tr>';
+  $('taula-missio').innerHTML = cap + A.missio.files.map((r, i) => `<tr data-i="${i}">
+    <td style="width:70px"><input data-c="ordre" type="number" value="${esc(r.ordre)}"></td>
+    <td style="width:120px"><select data-c="tipus">${TIPUS.map(t => `<option ${t === r.tipus ? 'selected' : ''}>${t}</option>`).join('')}</select></td>
+    <td style="width:110px"><input data-c="clau" value="${esc(r.clau)}"></td>
+    <td><textarea data-c="text">${esc(r.text)}</textarea></td>
+    <td style="width:140px"><input data-c="imatge" value="${esc(r.imatge)}"></td>
+    <td><textarea data-c="opcions">${esc(r.opcions)}</textarea></td>
+    <td style="width:110px"><input data-c="correcta" value="${esc(r.correcta)}"></td>
+    <td style="width:130px"><select data-c="estat"><option ${r.estat === 'esborrany' ? 'selected' : ''}>esborrany</option><option ${r.estat === 'publicada' ? 'selected' : ''}>publicada</option></select></td>
+    <td style="width:60px"><button class="boto clar" data-treu="${i}" aria-label="Treu la fila">✕</button></td></tr>`).join('');
+  document.querySelectorAll('[data-treu]').forEach(b => b.onclick = () => { llegeixMissio(); A.missio.files.splice(+b.dataset.treu, 1); pintaMissio(); });
+}
+function llegeixMissio() {
+  document.querySelectorAll('#taula-missio tr[data-i]').forEach(tr => {
+    const r = A.missio.files[+tr.dataset.i];
+    tr.querySelectorAll('[data-c]').forEach(el => { r[el.dataset.c] = el.value; });
+  });
+}
+$('b-afegeix').onclick = () => { llegeixMissio(); A.missio.files.push({ ordre: A.missio.files.length + 1, tipus: 'nivell', clau: '', text: '', imatge: '', opcions: '', correcta: '', estat: 'esborrany' }); pintaMissio(); };
+$('b-desa-missio').onclick = () => {
+  llegeixMissio();
+  crida('desaMissions', { sessio: A.missio.sessio, files: A.missio.files }).then(m => { A.missio = m; pintaMissio(); avis('Missió desada. Els alumnes la veuran en 1 minut.'); return crida('inici'); })
+    .then(i => { A.inici = i; pintaSelectors(); });
+};
+
+/* ---------- SESSIONS ---------- */
+function pintaSessions() {
+  const I = A.inici;
+  $('sessions-titol').textContent = 'Calendari · ' + (A.grup === 'GP' ? 'Proves' : 'Grup ' + A.grup.slice(1));
+  $('taula-calendari').innerHTML = '<tr><th>Sessió</th><th>Missió</th><th>Data</th><th>Estat</th><th>Accions</th></tr>' +
+    I.ordre.map(s => {
+      const c = calendari(A.grup, s) || { estat: 'pendent', data: '' };
+      const accions = [
+        c.estat !== 'oberta' ? `<button class="boto clar" data-s="${s}" data-e="oberta">Obre</button>` : '',
+        c.estat !== 'pendent' ? `<button class="boto clar" data-s="${s}" data-e="pendent">Torna a pendent</button>` : '',
+        s === 'S6' && c.estat !== 'fusionada' ? `<button class="boto clar" data-s="${s}" data-e="fusionada">Fusiona amb S5</button>` : ''
+      ].join(' ');
+      return `<tr><td>${s}</td><td style="text-align:left">${esc(I.missions[s].titol)}${I.missions[s].publicada ? '' : ' <i>(esborrany)</i>'}</td><td>${esc(c.data)}</td><td>${esc(c.estat)}</td><td><div class="fila">${accions}</div></td></tr>`;
+    }).join('');
+  document.querySelectorAll('#taula-calendari button').forEach(b => b.onclick = () =>
+    crida('canviaEstat', { grup: A.grup, sessio: b.dataset.s, estat: b.dataset.e }).then(i => { A.inici = i; pintaSelectors(); pintaSessions(); avis('Fet'); }));
+  $('c-generics').checked = I.config.noms_generics;
+  $('c-codi').checked = I.config.mostra_codi;
+  $('c-fita').value = I.config.fita_pct;
+  $('c-url').value = I.config.url_mon;
+  crida('notes', { grup: A.grup }).then(n => {
+    $('sel-pin').innerHTML = n.files.map(f => `<option value="${esc(f.id)}">${esc(f.nom)}</option>`).join('');
+  });
+}
+const desaConfig = (clau, valor) => crida('configura', { clau: clau, valor: valor }).then(i => { A.inici = i; avis('Desat'); });
+$('c-generics').onchange = e => desaConfig('noms_generics', e.target.checked ? 'sí' : 'no');
+$('c-codi').onchange = e => desaConfig('mostra_codi', e.target.checked ? 'sí' : 'no');
+$('c-fita').onchange = e => desaConfig('fita_pct', Number(e.target.value) || 80);
+$('b-desa-url').onclick = () => desaConfig('url_mon', $('c-url').value.trim());
+$('b-pin').onclick = () => { const id = $('sel-pin').value; if (id) crida('reiniciaPin', { id: id }).then(() => avis('PIN reiniciat. El triarà de nou en entrar pel Pla B.')); };
+
+/* ---------- Inici i consulta cada 10 s ---------- */
+crida('inici').then(i => {
+  A.inici = i;
+  if (i.oberta) { A.grup = i.oberta.grup; A.sessio = i.oberta.sessio; }
+  canviaVista('aula');
+});
+setInterval(() => {
+  if (A.vista !== 'aula' || !$('dialeg').hidden || document.hidden || !A.inici) return;
+  const c = calendari(A.grup, A.sessio);
+  if (c && (c.estat === 'oberta' || c.estat === 'sortida')) crida('tauler', { grup: A.grup, sessio: A.sessio }).then(t => { A.tauler = t; pintaAula(); });
+}, 10000);
+</script>
+</body>
+</html>
