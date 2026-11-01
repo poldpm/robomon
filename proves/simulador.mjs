@@ -69,6 +69,15 @@ class Full {
   getId() { return 'FULL-SIMULAT'; }
 }
 
+/**
+ * Imita una manía real de HtmlService (comprovada l'1/11/2026 amb un error al Chromebook del mestre):
+ * dins dels <script>, Google esborra el que hi ha després de «//» (com si fos un comentari) quan el «//» no forma
+ * part de dades base64. Si el nostre codi en tingués, aquí també es trencaria i les proves ho detectarien.
+ */
+export function comGoogle(html) {
+  return html.replace(/<script>([\s\S]*?)<\/script>/g, (m, js) => '<script>' + js.replace(/(?<![A-Za-z0-9+/=])\/\/[^\n]*/g, '') + '</script>');
+}
+
 // ---------------- Entorn Apps Script ----------------
 export function creaMon() {
   const full = new Full();
@@ -118,6 +127,7 @@ export function creaMon() {
               const v = String(t[expr]);
               return tipus === '!=' ? v : v.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
             });
+            html = comGoogle(html);
             const sortida = { contingut: html, setTitle() { return this; }, addMetaTag() { return this; }, getContent() { return this.contingut; } };
             return sortida;
           };

@@ -7,6 +7,7 @@
 - Disseny: **màxim Bold 700** (mai 800/900/Black), cap Impact, lletra Lexend incrustada (400/600/700), contrast ≥ 4,5:1, botons ≥ 2×2 cm, **cap scroll** a les pantalles dels alumnes, cap arrossegar, cap so, cap animació constant.
 - Estil visual: l'Arxipèlag il·lustrat (mapa pictòric, sorra/boira, mar fosc, daurat per al progrés). Res de ninots infantils ni contorns gruixuts: en Pol ho va rebutjar.
 - Imatges noves: generar-les amb IA en graelles (fons crema llis), retallar-les a `src/imatges/*.webp` i referenciar-les a `illustracions.js`. Els esquemes de línies, en SVG amb el mateix llenguatge (full blanc, marc fi, robot blanc).
+- **Mai `//` dins dels `<script>`** (ni comentaris ni `http://`): Google (HtmlService) esborra la resta de la línia i trenca el codi. Comentaris amb `/* */`, SVG sense `xmlns`. `construeix.mjs` ho comprova i el simulador ho imita.
 - SVG: res de `<pattern>` ni `url(#id)`. `[hidden]{display:none!important}` i una sola `tancaModal()`.
 - Seguretat: al projecte del món, **només `api`, `doGet` i `doPost` poden ser funcions sense `_` final**. Les respostes correctes mai arriben al navegador de l'alumne. Mai dades d'un alumne a un altre. Mai noms a la projecció.
 - PROGRES té dos blocs: el món només escriu el bloc de l'alumne; l'administrador només el del mestre.

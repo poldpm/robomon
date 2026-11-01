@@ -49,6 +49,11 @@ for (const [nom, t] of Object.entries(sortides)) {
   if (/font-weight\s*:\s*(800|900|bolder|black)/i.test(t) || /font-weight="(800|900)"/.test(t)) errors.push(`${nom}: pes tipogràfic > 700.`);
   if (/<pattern|url\(#/.test(t)) errors.push(`${nom}: <pattern> o url(#id) a l'SVG.`);
   if (/\bImpact\b/.test(t)) errors.push(`${nom}: Impact a la pila de lletres.`);
+  // Google (HtmlService) esborra el que hi ha després de «//» a cada línia dels <script> (ho tracta com un comentari,
+  // fins i tot dins d'un text). Per això el codi del navegador no pot tenir cap «//» (fora de les línies de dades base64).
+  (t.match(/<script>[\s\S]*?<\/script>/g) || []).forEach(scr => scr.split('\n').forEach((l, k) => {
+    if (l.includes('//') && !/^\s*"[\w-]+":"data:/.test(l) && !/^const IMG = \{"/.test(l)) errors.push(`${nom}: «//» dins d'un <script> (Google ho esborraria): ${l.trim().slice(0, 80)}`);
+  }));
   if (nom.includes('Mon') || nom.startsWith('pla-b')) {
     if (/window\.(top|parent)/.test(t)) errors.push(`${nom}: window.top / window.parent a l'app dels alumnes.`);
   }

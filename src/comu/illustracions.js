@@ -8,7 +8,7 @@ const img = (k, cls = '') => IMG[k] ? `<img class="${cls}" src="${IMG[k]}" alt="
 const TINTA = '#1f2328';
 
 function esquema(contingut) {
-  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  return `<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
     <rect x="0" y="0" width="100" height="100" rx="6" fill="#f3eee4"/>
     <rect x="16" y="9" width="68" height="82" rx="2.5" fill="#ffffff" stroke="${TINTA}" stroke-width="1.6"/>${contingut}</svg>`;
 }
@@ -28,11 +28,11 @@ const marcaDubte = (x, y) => `<g transform="translate(${x} ${y})"><circle r="7" 
 const CAMI = 'M28 78 C 34 54, 52 74, 58 52 S 70 26, 74 24';
 
 const IL = {
-  // Escenes (imatge)
+  /* Escenes (imatge) */
   'ozo-cami': img('ozo-cami'), 'ozo-arriba': img('ozo-arriba'), 'mestre': img('mestre'), 'carta': img('carta'),
   'e-encen': img('e-encen'), 'e-nose': img('e-nose'), 'ozo-boto': img('ozo-boto'), 'ozo-calibra': img('ozo-calibra'),
   'pred-nose': img('e-nose'),
-  // Esquemes (vectorials)
+  /* Esquemes (vectorials) */
   'pred-si': esquema(marcador(CAMI) + robot(73, 25, 0.9) + marcaOk(30, 22)),
   'pred-perd': esquema(marcador(CAMI) + robot(42, 38, 0.9) + marcaDubte(70, 78)),
   'e-perd': esquema(marcador(CAMI) + robot(42, 38, 0.9) + marcaDubte(70, 78)),
@@ -44,7 +44,7 @@ const IL = {
   'ozo-forat': esquema(marcador('M24 58 L45 58') + marcador('M57 58 L76 58') + robot(33, 50, 0.95)),
   'op-forat': esquema(marcador('M24 50 L45 50') + marcador('M57 50 L76 50')),
   'op-llarga': esquema(marcador('M26 20 H74 V34 H26 V48 H74 V62 H26 V76 H70', '#141414', 4)),
-  'op-full': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+  'op-full': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
     <rect x="9" y="6" width="82" height="88" rx="2.5" fill="#fff" stroke="${TINTA}" stroke-width="1.6"/></svg>`
 };
 
@@ -97,12 +97,12 @@ function mapaHTML(mon, zones, opcions = {}) {
     const p = ILLES[i]; if (!p) return;
     const estat = zones[z.zona] || 'tancada';
     const nivell = estat === 'n3' ? 3 : estat === 'n2' ? 2 : estat === 'n1' ? 1 : 0;
-    const ry = p.r * PROP_MAPA;   // radi en % de l'alçada
+    const ry = p.r * PROP_MAPA;   /* radi en % de l'alçada */
     const amplBoira = Math.min(p.r * 2.6, 2 * (100 - p.x) - 0.5, 2 * p.x - 0.5);
     if (estat === 'tancada') capes += `<div class="boira" style="left:${p.x}%; top:${p.y}%; width:${amplBoira}%;"></div>`;
     if (opcions.destaca === z.zona) {
       capes += `<div class="anell" style="left:${p.x}%; top:${p.y}%; width:${p.r * 2.3}%;"></div>`;
-      // L'illa del dia es pot tocar: obre la missió (el dit hi va d'instint)
+      /* L'illa del dia es pot tocar: obre la missió (el dit hi va d'instint) */
       capes += `<button class="illa-avui" id="illa-avui" aria-label="Missió d'avui" style="left:${p.x}%; top:${p.y}%; width:${Math.max(p.r * 2.3, 7)}%;"></button>`;
     }
     const punts = estat === 'tancada' ? `<span class="aviat">${CADENAT}Aviat</span>`
@@ -125,8 +125,8 @@ function mapaHTML(mon, zones, opcions = {}) {
 /** Una illa retallada del mapa (pantalla de «Fet» i projecció), en un requadre 4:3. */
 function illaHTML(i, estat) {
   const p = ILLES[i] || ILLES[0];
-  const zoom = Math.max(2.3, 100 / (p.r * 3.4));      // amplada del mapa respecte del requadre
-  const altMapa = zoom / PROP_MAPA;                   // alçada del mapa (en amplades del requadre)
+  const zoom = Math.max(2.3, 100 / (p.r * 3.4));      /* amplada del mapa respecte del requadre */
+  const altMapa = zoom / PROP_MAPA;                   /* alçada del mapa (en amplades del requadre) */
   const px = p.x / 100 * zoom, py = p.y / 100 * altMapa;
   const bx = Math.max(0, Math.min(100, (0.5 - px) / (1 - zoom) * 100));
   const by = Math.max(0, Math.min(100, (0.375 - py) / (0.75 - altMapa) * 100));
@@ -151,7 +151,7 @@ const CODIS_OZOBOT = {
 function codiSVG(seq, ambFletxa = true) {
   const n = seq.length, q = 14, marge = 16, w = marge * 2 + n * q, h = ambFletxa ? 30 : 20;
   const y = ambFletxa ? 12 : 3;
-  let s = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="codi">`;
+  let s = `<svg viewBox="0 0 ${w} ${h}" aria-hidden="true" class="codi">`;
   s += `<rect x="0" y="${y}" width="${w}" height="${q}" fill="#141414"/>`;
   seq.split('').forEach((c, i) => {
     const [col, , ini] = COLORS_CODI[c] || COLORS_CODI.K;
@@ -174,12 +174,12 @@ function xuletaHTML(id) {
 
 /* Esquemes de la S1 (codis) */
 function tramCodi(seq, opts = {}) {
-  // tram de línia horitzontal amb una casella de codi al mig (y = 50)
+  /* tram de línia horitzontal amb una casella de codi al mig (y = 50) */
   const q = 7, x0 = 50 - (seq.length * q) / 2;
   let s = `<rect x="22" y="${50 - q / 2}" width="${x0 - 22 - (opts.forat ? 0 : 0)}" height="${q}" fill="#141414"/>`;
   let x = x0;
   seq.split('').forEach((c, i) => {
-    if (opts.forat && i === Math.floor(seq.length / 2)) x += 4;          // blanc entremig
+    if (opts.forat && i === Math.floor(seq.length / 2)) x += 4;          /* blanc entremig */
     s += c === '_' ? `<rect x="${x}" y="${50 - q / 2}" width="${q}" height="${q}" fill="#fff" stroke="#b9b9b9" stroke-width="0.5"/>`
       : `<rect x="${x}" y="${50 - q / 2}" width="${q}" height="${q}" fill="${(COLORS_CODI[c] || COLORS_CODI.K)[0]}"/>`;
     x += q;
