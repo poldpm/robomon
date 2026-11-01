@@ -126,13 +126,33 @@ export function creaMon() {
         createHtmlOutput: h => ({ contingut: h, setTitle() { return this; }, addMetaTag() { return this; }, getContent() { return this.contingut; } })
       },
       ContentService: { createTextOutput: t => ({ text: t, setMimeType() { return this; } }), MimeType: { JSON: 'json' } },
-      ScriptApp: { getService: () => ({ getUrl: () => `/${nom}` }) },
+      ScriptApp: { getService: () => ({ getUrl: () => `/${nom}` }), getOAuthToken: () => 'testimoni-oauth', getScriptId: () => 'SCRIPT-' + nom.toUpperCase() },
+      UrlFetchApp: { fetch: (url, op) => urlFetch(url, op || {}) },
       Logger: { log: () => {} }
     };
     vm.createContext(ctx);
     const codi = ['Comu.gs', 'Codi.gs'].map(f => readFileSync(join(ARREL, 'apps-script', nom, f), 'utf8')).join('\n');
     vm.runInContext(codi, ctx, { filename: nom + '.gs' });
     return ctx;
+  }
+  // GitHub i l'API d'Apps Script simulats (per provar «Actualitza des de GitHub»)
+  const apiScript = { crides: [], versions: {}, desplegaments: { 'SCRIPT-ADMIN': [{ deploymentId: 'HEAD', deploymentConfig: {} }, { deploymentId: 'D-ADM', deploymentConfig: { versionNumber: 3, description: 'Admin' } }],
+    'SCRIPT-MON': [{ deploymentId: 'HEAD', deploymentConfig: {} }, { deploymentId: 'D-MON', deploymentConfig: { versionNumber: 5 } }, { deploymentId: 'D-MON-B2', deploymentConfig: { versionNumber: 5 } }] } };
+  function urlFetch(url, op) {
+    const resp = (codi, cos) => ({ getResponseCode: () => codi, getContentText: () => typeof cos === 'string' ? cos : JSON.stringify(cos) });
+    if (url.indexOf('https://api.github.com/repos/poldpm/robomon/commits/main') === 0) return resp(200, { sha: 'abcdef1234567890' });
+    let m = /^https:\/\/raw\.githubusercontent\.com\/poldpm\/robomon\/[^/]+\/(.+)$/.exec(url);
+    if (m) { const f = join(ARREL, m[1]); return existsSync(f) ? resp(200, readFileSync(f, 'utf8')) : resp(404, 'no'); }
+    m = /^https:\/\/script\.googleapis\.com\/v1\/projects\/([^/]+)\/(content|versions|deployments)(?:\/([^/]+))?$/.exec(url);
+    if (m) {
+      const [, id, recurs, dep] = m, metode = (op.method || 'get').toUpperCase(), cos = op.payload ? JSON.parse(op.payload) : null;
+      apiScript.crides.push({ id, recurs, dep, metode, cos });
+      if (recurs === 'content') return resp(200, { scriptId: id, files: cos.files });
+      if (recurs === 'versions') { apiScript.versions[id] = (apiScript.versions[id] || 10) + 1; return resp(200, { versionNumber: apiScript.versions[id] }); }
+      if (recurs === 'deployments' && metode === 'GET') return resp(200, { deployments: apiScript.desplegaments[id] || [] });
+      if (recurs === 'deployments' && metode === 'PUT') return resp(200, { deploymentId: dep, deploymentConfig: cos.deploymentConfig });
+    }
+    return resp(404, 'desconegut: ' + url);
   }
   projectes.admin = context('admin', true, {});
   projectes.mon = context('mon', false, { ID_FULL: 'FULL-SIMULAT' });
@@ -152,7 +172,7 @@ export function creaMon() {
     if (v instanceof Date || (v && v.constructor && v.constructor.name === 'Date')) throw new Error(`${on}: retorna un Date a ${cami} (google.script.run no ho permet)`);
     if (v && typeof v === 'object') Object.keys(v).forEach(k => comprovaRetorn(v[k], on, cami + '.' + k));
   }
-  return { full, projectes, crida, set usuari(u) { usuariActiu = u; } };
+  return { full, projectes, crida, apiScript, set usuari(u) { usuariActiu = u; } };
 }
 
 // ---------------- Servidor web ----------------

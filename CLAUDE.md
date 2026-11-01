@@ -3,7 +3,7 @@
 - **Sempre en català**: interfície, textos, noms visibles, missatges de commit i conversa.
 - **`git pull` en començar; `commit` + `push` en acabar cada canvi acabat**, sense esperar que en Pol ho demani.
 - **QA abans de dir que una cosa està feta**: `node eines/construeix.mjs && node proves/proves.mjs` (han de passar totes) i mirar les captures de `proves/captures/`.
-- Lliura **fitxers sencers**: en Pol els enganxa a l'editor d'Apps Script. Digues sempre quins fitxers d'`apps-script/` han canviat.
+- En Pol **no copia fitxers a mà**: després de fer push, digues-li que premi **Tauler → Sessions → Actualitza des de GitHub** (puja `apps-script/` als dos projectes i actualitza els desplegaments). Si canvia el manifest de l'administrador (permisos nous), avisa'l que Google li demanarà acceptar-los.
 - Disseny: **màxim Bold 700** (mai 800/900/Black), cap Impact, lletra Lexend incrustada (400/600/700), contrast ≥ 4,5:1, botons ≥ 2×2 cm, **cap scroll** a les pantalles dels alumnes, cap arrossegar, cap so, cap animació constant.
 - Estil visual: l'Arxipèlag il·lustrat (mapa pictòric, sorra/boira, mar fosc, daurat per al progrés). Res de ninots infantils ni contorns gruixuts: en Pol ho va rebutjar.
 - Imatges noves: generar-les amb IA en graelles (fons crema llis), retallar-les a `src/imatges/*.webp` i referenciar-les a `illustracions.js`. Els esquemes de línies, en SVG amb el mateix llenguatge (full blanc, marc fi, robot blanc).

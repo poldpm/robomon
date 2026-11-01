@@ -190,7 +190,17 @@ td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
 
   <!-- SESSIONS -->
   <section id="v-sessions" hidden>
-    <h2 style="font-size:22px; margin:0 0 8px;" id="sessions-titol">Calendari</h2>
+    <h2 style="font-size:22px; margin:0 0 8px;">Actualitzar RoboMón</h2>
+    <div class="rajola" style="max-width:900px; display:flex; flex-direction:column; gap:10px;">
+      <p style="margin:0" id="versio-text">Comprovant la versió…</p>
+      <div class="fila">
+        <label style="flex:1 1 360px;">ID del projecte del món: <input id="c-idmon" style="width:100%; min-height:48px;" placeholder="Configuració del projecte del món → ID de l'script"></label>
+        <button class="boto clar" id="b-desa-idmon">Desa l'ID</button>
+      </div>
+      <div class="fila"><button class="boto gran verd" id="b-actualitza">Actualitza des de GitHub</button>
+        <span style="font-size:15px; color:var(--suau);">Posa la versió nova als dos projectes. Les URL no canvien. Fes-ho fora de l'horari de classe.</span></div>
+    </div>
+    <h2 style="font-size:22px; margin:20px 0 8px;" id="sessions-titol">Calendari</h2>
     <div class="taula-ample"><table id="taula-calendari"></table></div>
     <h2 style="font-size:22px; margin:20px 0 8px;">Configuració</h2>
     <div class="fila" style="gap:16px;">
@@ -457,6 +467,12 @@ function pintaSessions() {
   $('c-codi').checked = I.config.mostra_codi;
   $('c-fita').value = I.config.fita_pct;
   $('c-url').value = I.config.url_mon;
+  $('c-idmon').value = I.config.id_script_mon || '';
+  crida('estatVersio').then(v => {
+    const curt = x => x && x !== 'main' ? x.slice(0, 7) : (x || '—');
+    $('versio-text').textContent = v.installada && v.installada === v.github ? `Tens la darrera versió (${curt(v.installada)}).`
+      : `Versió instal·lada: ${curt(v.installada) || 'desconeguda'} · A GitHub: ${curt(v.github)}. ` + (v.installada ? 'Hi ha una versió nova.' : '');
+  }).catch(() => { $('versio-text').textContent = 'No s\'ha pogut comprovar la versió.'; });
   crida('notes', { grup: A.grup }).then(n => {
     $('sel-pin').innerHTML = n.files.map(f => `<option value="${esc(f.id)}">${esc(f.nom)}</option>`).join('');
   });
@@ -466,6 +482,17 @@ $('c-generics').onchange = e => desaConfig('noms_generics', e.target.checked ? '
 $('c-codi').onchange = e => desaConfig('mostra_codi', e.target.checked ? 'sí' : 'no');
 $('c-fita').onchange = e => desaConfig('fita_pct', Number(e.target.value) || 80);
 $('b-desa-url').onclick = () => desaConfig('url_mon', $('c-url').value.trim());
+$('b-desa-idmon').onclick = () => desaConfig('id_script_mon', $('c-idmon').value.trim());
+$('b-actualitza').onclick = () => {
+  const b = $('b-actualitza'); b.disabled = true; b.textContent = 'Actualitzant… (1 minut)';
+  crida('actualitza').then(r => {
+    b.textContent = 'Fet!';
+    $('dialeg-cos').innerHTML = `<h2>RoboMón actualitzat</h2><p class="info">Versió ${r.sha.slice(0, 7)}. ` +
+      r.projectes.map(p => `${p.carpeta === 'mon' ? 'Món' : 'Administrador'}: versió ${p.versio}, ${p.desplegaments} desplegament(s).`).join(' ') +
+      `</p><p class="info">Recarrega aquesta pàgina per veure l'administrador nou. Els Chromebooks agafaran el món nou quan el tornin a obrir.</p><button class="boto" onclick="location.reload()">Recarrega</button>`;
+    $('dialeg').hidden = false;
+  }).catch(() => { b.disabled = false; b.textContent = 'Actualitza des de GitHub'; });
+};
 $('b-pin').onclick = () => { const id = $('sel-pin').value; if (id) crida('reiniciaPin', { id: id }).then(() => avis('PIN reiniciat. El triarà de nou en entrar pel Pla B.')); };
 
 /* ---------- Inici i consulta cada 10 s ---------- */

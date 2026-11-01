@@ -113,9 +113,18 @@ Tot viu a Google Apps Script i a un Google Sheet de la unitat compartida del cen
 | Final de trimestre | Notes → **Prepara l'informe al full** → pestanya `INFORME` |
 | Final de curs | Menú del full → **Esborra les dades del curs** |
 
-## Quan Claude canviï alguna cosa
+## Actualitzar RoboMón (un clic)
 
-Claude et dirà quins fitxers han canviat. Només cal tornar-los a enganxar **sencers** a l'editor i, al món o a l'administrador, fer **Desplega → Gestiona els desplegaments → editar (llapis) → Versió: nova → Desplega**. L'URL no canvia.
+Quan Claude puja canvis a GitHub, **no cal copiar ni enganxar res**:
+
+> Tauler → **Sessions** → **Actualitza des de GitHub** (o, al full, menú **RoboMón → Actualitza des de GitHub**)
+
+Posa els fitxers nous als dos projectes (administrador i món), en fa una versió i hi apunta tots els desplegaments (també el del Pla B2). **Les URL no canvien.** Fes-ho fora de l'horari de classe.
+
+**Preparació (un sol cop):**
+1. Activa l'API d'Apps Script al teu compte: https://script.google.com/home/usersettings → «API de Google Apps Script» → **Activada**.
+2. Copia l'**ID de l'script** del projecte del món (Configuració del projecte → IDs) i desa'l al tauler: Sessions → «ID del projecte del món».
+3. L'última vegada a mà: enganxa `Codi.gs` i `appsscript.json` de `apps-script/admin/` a l'administrador, desplega una versió nova i accepta els permisos nous que demana (gestionar projectes i desplegaments d'Apps Script, i connectar-se a GitHub).
 
 ## Per a Claude (desenvolupament)
 

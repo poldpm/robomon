@@ -14,6 +14,7 @@ function onOpen() {
     .addItem('Genera els ID d\'alumnes que falten', 'generaIds')
     .addItem('Recalcula les notes', 'recalculaNotes')
     .addItem('Prepara l\'informe', 'preparaInforme')
+    .addItem('Actualitza des de GitHub', 'actualitzaDesDeGitHub')
     .addSeparator()
     .addItem('Esborra les dades del curs…', 'esborraCurs')
     .addToUi();
@@ -84,6 +85,8 @@ function api(accio, args) {
       case 'reiniciaPin':   r = reiniciaPin_(args.id); break;
       case 'projeccio':     r = projeccio_(); break;
       case 'informe':       r = preparaInforme(args.grup); break;
+      case 'actualitza':    r = actualitza_(); break;
+      case 'estatVersio':   r = estatVersio_(); break;
       default: return { ok: false, motiu: 'accio' };
     }
     return { ok: true, dades: r };
@@ -293,7 +296,7 @@ function inici_() {
   });
   return { grups: GRUPS, sessions: SESSIONS, ordre: ORDRE_SESSIONS, eines: EINES, calendari: calendari, oberta: oberta,
            missions: missions, alumnes: alumnes, mon: mon_(cfg),
-           config: { noms_generics: cfg.noms_generics, mostra_codi: cfg.mostra_codi, fita_pct: cfg.fita_pct, url_mon: String(cfg.url_mon || '') } };
+           config: { noms_generics: cfg.noms_generics, mostra_codi: cfg.mostra_codi, fita_pct: cfg.fita_pct, url_mon: String(cfg.url_mon || ''), id_script_mon: String(cfg.id_script_mon || '') } };
 }
 
 function dataText_(v) {
@@ -688,7 +691,7 @@ function desaMissions_(sessio, files) {
 }
 
 function configura_(clau, valor) {
-  var permeses = ['noms_generics', 'mostra_codi', 'fita_pct', 'url_mon'];
+  var permeses = ['noms_generics', 'mostra_codi', 'fita_pct', 'url_mon', 'id_script_mon'];
   if (permeses.indexOf(clau) < 0) throw new Error('Paràmetre no editable');
   ambBloqueig_(function () {
     var d = llegeix_('CONFIG');
@@ -734,4 +737,105 @@ function projeccio_() {
     codi: cfg.mostra_codi ? String(oberta.codi_classe || '') : '',
     hora: araMs_()
   };
+}
+
+// ============================================================
+//  ACTUALITZAR DES DE GITHUB (un clic)
+//  Baixa els fitxers d'apps-script/ del repositori públic poldpm/robomon, els posa als dos projectes
+//  (aquest i el del món), crea una versió nova i hi apunta TOTS els desplegaments. Les URL no canvien.
+//  Requisit (un sol cop): activar l'API d'Apps Script a https://script.google.com/home/usersettings
+// ============================================================
+
+var REPO = 'poldpm/robomon';
+var FITXERS_PROJECTE = {
+  admin: [['Codi', 'SERVER_JS', 'Codi.gs'], ['Comu', 'SERVER_JS', 'Comu.gs'], ['Admin', 'HTML', 'Admin.html'],
+          ['Projeccio', 'HTML', 'Projeccio.html'], ['appsscript', 'JSON', 'appsscript.json']],
+  mon:   [['Codi', 'SERVER_JS', 'Codi.gs'], ['Comu', 'SERVER_JS', 'Comu.gs'], ['Mon', 'HTML', 'Mon.html'],
+          ['appsscript', 'JSON', 'appsscript.json']]
+};
+
+/** Menú del full. */
+function actualitzaDesDeGitHub() {
+  var ui = SpreadsheetApp.getUi();
+  try {
+    var r = actualitza_();
+    ui.alert('RoboMón actualitzat', 'Versió ' + r.sha.slice(0, 7) + '.\n' + r.projectes.map(function (p) {
+      return (p.carpeta === 'mon' ? 'Món' : 'Administrador') + ': versió ' + p.versio + ', ' + p.desplegaments + ' desplegament(s) actualitzat(s).';
+    }).join('\n'), ui.ButtonSet.OK);
+  } catch (err) {
+    ui.alert('No s\'ha pogut actualitzar', String(err.message || err), ui.ButtonSet.OK);
+  }
+}
+
+function darrerCommit_() {
+  try {
+    var r = UrlFetchApp.fetch('https://api.github.com/repos/' + REPO + '/commits/main',
+      { muteHttpExceptions: true, headers: { Accept: 'application/vnd.github+json' } });
+    if (r.getResponseCode() === 200) return String(JSON.parse(r.getContentText()).sha);
+  } catch (e) { /* sense API de GitHub: es fa servir «main» */ }
+  return 'main';
+}
+
+function baixa_(sha, cami) {
+  var r = UrlFetchApp.fetch('https://raw.githubusercontent.com/' + REPO + '/' + sha + '/' + cami, { muteHttpExceptions: true });
+  if (r.getResponseCode() !== 200) throw new Error('No s\'ha pogut baixar ' + cami + ' (' + r.getResponseCode() + ')');
+  return r.getContentText('UTF-8');
+}
+
+function apiScript_(metode, cami, cos) {
+  var opcions = { method: metode, muteHttpExceptions: true, headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() } };
+  if (cos) { opcions.contentType = 'application/json'; opcions.payload = JSON.stringify(cos); }
+  var r = UrlFetchApp.fetch('https://script.googleapis.com/v1' + cami, opcions);
+  var codi = r.getResponseCode(), text = r.getContentText();
+  if (codi >= 300) {
+    if (/has not been used|is disabled|not enabled|SERVICE_DISABLED|User has not enabled/i.test(text))
+      throw new Error('Cal activar l\'API d\'Apps Script: https://script.google.com/home/usersettings → «API de Google Apps Script» → Activada. Després torna-ho a provar.');
+    throw new Error('Apps Script API ' + codi + ': ' + text.slice(0, 300));
+  }
+  return text ? JSON.parse(text) : {};
+}
+
+function actualitzaProjecte_(scriptId, carpeta, sha) {
+  var files = FITXERS_PROJECTE[carpeta].map(function (f) {
+    return { name: f[0], type: f[1], source: baixa_(sha, 'apps-script/' + carpeta + '/' + f[2]) };
+  });
+  apiScript_('PUT', '/projects/' + scriptId + '/content', { files: files });
+  var versio = apiScript_('POST', '/projects/' + scriptId + '/versions', { description: 'RoboMón ' + sha.slice(0, 7) });
+  var llista = apiScript_('GET', '/projects/' + scriptId + '/deployments').deployments || [];
+  var n = 0;
+  llista.forEach(function (d) {
+    var c = d.deploymentConfig || {};
+    if (!c.versionNumber) return;                     // el desplegament «HEAD» (proves) no té versió
+    apiScript_('PUT', '/projects/' + scriptId + '/deployments/' + d.deploymentId, { deploymentConfig: {
+      scriptId: scriptId, versionNumber: versio.versionNumber, manifestFileName: 'appsscript', description: c.description || 'RoboMón' } });
+    n++;
+  });
+  return { carpeta: carpeta, versio: versio.versionNumber, desplegaments: n };
+}
+
+function actualitza_() {
+  var cfg = config_();
+  var idMon = String(cfg.id_script_mon || '').trim();
+  if (!idMon) throw new Error('Falta l\'ID del projecte del món: Sessions → «ID del projecte del món» (Configuració del projecte del món → ID de l\'script).');
+  var sha = darrerCommit_();
+  // Primer el món (si falla, l'administrador continua com estava i el pots tornar a provar)
+  var projectes = [actualitzaProjecte_(idMon, 'mon', sha), actualitzaProjecte_(ScriptApp.getScriptId(), 'admin', sha)];
+  desaConfig_('versio_github', sha);
+  afegeixFiles_('REGISTRE', [[new Date(), '', '', 'actualitza-github', sha.slice(0, 7), 'mestre']]);
+  return { sha: sha, projectes: projectes };
+}
+
+function estatVersio_() {
+  var cfg = config_();
+  return { installada: String(cfg.versio_github || ''), github: darrerCommit_(), idMon: String(cfg.id_script_mon || '') };
+}
+
+function desaConfig_(clau, valor) {
+  var d = llegeix_('CONFIG');
+  var trobat = d.files.some(function (f, i) {
+    if (String(f[0]) === clau) { d.pestanya.getRange(i + 2, 2).setValue(valor); return true; }
+    return false;
+  });
+  if (!trobat) afegeixFiles_('CONFIG', [[clau, valor, '']]);
+  oblidaCache_('config');
 }

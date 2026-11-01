@@ -66,17 +66,21 @@ for (const carpeta of readdirSync(join(ARREL, 'materials'))) {
 copyFileSync(join(ARREL, 'apps-script/comu/Comu.gs'), join(ARREL, 'apps-script/mon/Comu.gs'));
 copyFileSync(join(ARREL, 'apps-script/comu/Comu.gs'), join(ARREL, 'apps-script/admin/Comu.gs'));
 
-const manifest = (webapp) => JSON.stringify({
+const manifest = (webapp, extra = []) => JSON.stringify({
   timeZone: 'Europe/Madrid', exceptionLogging: 'STACKDRIVER', runtimeVersion: 'V8',
   oauthScopes: [
     'https://www.googleapis.com/auth/spreadsheets',
     'https://www.googleapis.com/auth/script.container.ui',
     'https://www.googleapis.com/auth/userinfo.email'
-  ],
+  ].concat(extra),
   webapp
 }, null, 2) + '\n';
 escriu('apps-script/mon/appsscript.json', manifest({ executeAs: 'USER_DEPLOYING', access: 'DOMAIN' }));
-escriu('apps-script/admin/appsscript.json', manifest({ executeAs: 'USER_DEPLOYING', access: 'MYSELF' }));
+escriu('apps-script/admin/appsscript.json', manifest({ executeAs: 'USER_DEPLOYING', access: 'MYSELF' }, [
+  'https://www.googleapis.com/auth/script.projects',
+  'https://www.googleapis.com/auth/script.deployments',
+  'https://www.googleapis.com/auth/script.external_request'
+]));
 
 for (const [nom, t] of Object.entries(sortides)) console.log(`✓ ${nom}  (${Math.round(t.length / 1024)} KB)`);
 console.log('✓ Comu.gs copiat a mon/ i admin/');

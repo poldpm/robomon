@@ -4,7 +4,7 @@
 //  Ús: node proves/proves.mjs      (desa captures a proves/captures/)
 // ============================================================
 import { createRequire } from 'node:module';
-import { mkdirSync, rmSync } from 'node:fs';
+import { mkdirSync, rmSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { engega, MESTRE } from './simulador.mjs';
@@ -334,6 +334,21 @@ for (const k of ['sol', 'peix', 'casa']) await pb.click(`#pin-graella .tria[data
 await espera(pb, '#p-mapa');
 await revisa(pb, '42-plab-dins', REVISA_MON);
 ok(true, 'L\'Anna entra pel Pla B2 amb el seu PIN i veu el seu món');
+
+console.log('\n12b · Actualitzar des de GitHub (un clic)');
+ok(admin('actualitza').motiu === 'error', 'Sense l\'ID del projecte del món, l\'actualització s\'atura amb un missatge');
+admin('configura', { clau: 'id_script_mon', valor: 'SCRIPT-MON' });
+const act = admin('actualitza');
+ok(act.ok && act.dades.sha === 'abcdef1234567890', 'Actualització feta amb el darrer commit de GitHub');
+const cr = mon.apiScript.crides;
+const contMon = cr.find(c => c.id === 'SCRIPT-MON' && c.recurs === 'content');
+ok(contMon && contMon.cos.files.map(f => f.name).join() === 'Codi,Comu,Mon,appsscript' && contMon.cos.files.every(f => f.source.length > 100), 'Al món s\'hi posen Codi, Comu, Mon i el manifest');
+const contAdm = cr.find(c => c.id === 'SCRIPT-ADMIN' && c.recurs === 'content');
+ok(contAdm && contAdm.cos.files.map(f => f.name).join() === 'Codi,Comu,Admin,Projeccio,appsscript', 'A l\'administrador s\'hi posen Codi, Comu, Admin, Projeccio i el manifest');
+const puts = cr.filter(c => c.recurs === 'deployments' && c.metode === 'PUT');
+ok(puts.map(c => c.dep).sort().join() === 'D-ADM,D-MON,D-MON-B2' && puts.every(c => c.cos.deploymentConfig.versionNumber === 11), 'S\'actualitzen tots els desplegaments (també el del Pla B2) i no el HEAD');
+ok(admin('estatVersio').dades.installada === 'abcdef1234567890', 'Queda apuntada la versió instal·lada');
+ok(JSON.parse(readFileSync(join(ARREL, 'apps-script/admin/appsscript.json'), 'utf8')).oauthScopes.includes('https://www.googleapis.com/auth/script.projects'), 'El manifest de l\'administrador demana permís per a l\'API d\'Apps Script');
 
 console.log('\n13 · Mode prova i noms genèrics');
 const ctxT = await nav.newContext({ viewport: VP_CHROMEBOOK });
