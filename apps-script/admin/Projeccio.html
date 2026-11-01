@@ -200,7 +200,11 @@ function mapaHTML(mon, zones, opcions = {}) {
     const ry = p.r * PROP_MAPA;   // radi en % de l'alçada
     const amplBoira = Math.min(p.r * 2.6, 2 * (100 - p.x) - 0.5, 2 * p.x - 0.5);
     if (estat === 'tancada') capes += `<div class="boira" style="left:${p.x}%; top:${p.y}%; width:${amplBoira}%;"></div>`;
-    if (opcions.destaca === z.zona) capes += `<div class="anell" style="left:${p.x}%; top:${p.y}%; width:${p.r * 2.3}%;"></div>`;
+    if (opcions.destaca === z.zona) {
+      capes += `<div class="anell" style="left:${p.x}%; top:${p.y}%; width:${p.r * 2.3}%;"></div>`;
+      // L'illa del dia es pot tocar: obre la missió (el dit hi va d'instint)
+      capes += `<button class="illa-avui" id="illa-avui" aria-label="Missió d'avui" style="left:${p.x}%; top:${p.y}%; width:${Math.max(p.r * 2.3, 7)}%;"></button>`;
+    }
     const punts = estat === 'tancada' ? `<span class="aviat">${CADENAT}Aviat</span>`
       : `<span class="llums" aria-label="Nivell ${nivell}">${[1, 2, 3].map(n => `<i class="${nivell >= n ? 'on' : ''}"></i>`).join('')}</span>`;
     const yEtiq = p.etiqueta === 'sobre' ? `bottom:${100 - p.y + ry * 0.62}%` : `top:${p.y + ry * 0.5}%`;

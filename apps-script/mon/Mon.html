@@ -122,6 +122,13 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
 .segell span { font-size: 19px; font-weight: 600; white-space: nowrap; color: var(--suau); }
 .segell.te span { color: var(--tinta); }
 .peu-mapa .boto { min-width: 300px; font-size: 26px; border-radius: var(--radi); }
+/* El botó de la missió ha de destacar sobre el mar: daurat amb text fosc */
+#boto-missio { background: var(--daurat); color: var(--tinta); box-shadow: 0 0 0 3px rgba(255, 245, 220, .9), 0 0 26px 6px rgba(255, 214, 140, .55), var(--ombra-boto); }
+#boto-missio:hover { background: #e2b04f; }
+#boto-missio[disabled] { background: #d9d3c6; color: #3f4650; box-shadow: none; }
+.illa-avui { position: absolute; z-index: 2; aspect-ratio: 1.6; transform: translate(-50%, -42%); border-radius: 50%; border: 0;
+  background: transparent; cursor: pointer; min-width: 84px; min-height: 76px; }
+.illa-avui:focus-visible { outline: 4px solid var(--daurat); outline-offset: 2px; }
 .avis-illa { position: fixed; left: 50%; top: 92px; z-index: 5; transform: translateX(-50%); background: rgba(28, 39, 51, .92); color: #fff;
   padding: 14px 26px; border-radius: 16px; font-size: 22px; font-weight: 600; box-shadow: var(--ombra); }
 .capcal.sobre-mapa { position: absolute; left: 0; right: 0; top: 0; background: rgba(255, 253, 248, .72); border-bottom: 0; }
@@ -472,7 +479,11 @@ function mapaHTML(mon, zones, opcions = {}) {
     const ry = p.r * PROP_MAPA;   // radi en % de l'alçada
     const amplBoira = Math.min(p.r * 2.6, 2 * (100 - p.x) - 0.5, 2 * p.x - 0.5);
     if (estat === 'tancada') capes += `<div class="boira" style="left:${p.x}%; top:${p.y}%; width:${amplBoira}%;"></div>`;
-    if (opcions.destaca === z.zona) capes += `<div class="anell" style="left:${p.x}%; top:${p.y}%; width:${p.r * 2.3}%;"></div>`;
+    if (opcions.destaca === z.zona) {
+      capes += `<div class="anell" style="left:${p.x}%; top:${p.y}%; width:${p.r * 2.3}%;"></div>`;
+      // L'illa del dia es pot tocar: obre la missió (el dit hi va d'instint)
+      capes += `<button class="illa-avui" id="illa-avui" aria-label="Missió d'avui" style="left:${p.x}%; top:${p.y}%; width:${Math.max(p.r * 2.3, 7)}%;"></button>`;
+    }
     const punts = estat === 'tancada' ? `<span class="aviat">${CADENAT}Aviat</span>`
       : `<span class="llums" aria-label="Nivell ${nivell}">${[1, 2, 3].map(n => `<i class="${nivell >= n ? 'on' : ''}"></i>`).join('')}</span>`;
     const yEtiq = p.etiqueta === 'sobre' ? `bottom:${100 - p.y + ry * 0.62}%` : `top:${p.y + ry * 0.5}%`;
@@ -740,6 +751,8 @@ function pintaMapa() {
   $('mapa').innerHTML = mapaHTML(e.mon, e.zones, { avatar: e.alumne.avatar, zonaAvatar: e.avui ? e.avui.zona : oberta, farEnces: e.fitaAssolida, destaca: e.avui ? e.avui.zona : '' });
   $('carnet').innerHTML = '<span class="titol">Les meves eines</span>' + ['scottie', 'ozobot', 'dash', 'spike', 'scratch'].map(k =>
     `<div class="segell ${e.carnet[k] ? 'te' : ''}"><div class="cercle">${SEGELLS[k][1]}</div><span>${SEGELLS[k][0]}</span></div>`).join('');
+  const illa = $('illa-avui');
+  if (illa) illa.onclick = () => { if (e.avui && e.avui.missio) obreMissio(); };
   const b = $('boto-missio');
   const pot = !!(e.avui && e.avui.missio);
   b.disabled = !pot;
