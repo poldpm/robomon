@@ -35,6 +35,7 @@ svg { display: block; }
 
 .boto { min-height: 48px; padding: 8px 16px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; background: var(--blau); color: var(--blanc); font-weight: 700; }
 .boto.clar { background: var(--blanc); color: var(--tinta); border-color: var(--tinta); }
+a.boto { display: inline-flex; align-items: center; text-decoration: none; font: inherit; font-weight: 700; }
 .boto.verd { background: var(--verd); }
 .boto.fosc { background: var(--pissarra); }
 .boto.gran { min-height: 64px; font-size: 20px; padding: 10px 18px; }
@@ -457,6 +458,10 @@ $('b-restaura-missio').onclick = () => {
 };
 
 /* ---------- SESSIONS ---------- */
+/* El material imprimible de cada sessió, publicat a GitHub Pages (l'URL es munta amb join perquè HtmlService esborra la doble barra) */
+const BASE_MATERIALS = ['https:', '', 'poldpm.github.io', 'robomon', 'materials', ''].join('/');
+const MATERIALS = { S1: 'S1-primers-codis-RECURS', S2: 'S2-programa-amb-cartes-RECURS', S3: 'S3-el-teu-circuit-RECURS', S4: 'S4-arriba-a-la-marca-RECURS', S5: 'S5-munta-i-modifica-RECURS', S6: 'S6-la-parada-classifica-RECURS', S7: 'S7-circula-RECURS', S8: 'S8-el-marcador-RECURS', S9: 'S9-missio-final-RECURS' };
+const urlMaterial = s => MATERIALS[s] ? BASE_MATERIALS + MATERIALS[s] + '/imprimir.pdf' : '';
 function pintaSessions() {
   const I = A.inici;
   $('sessions-titol').textContent = 'Calendari · ' + (A.grup === 'GP' ? 'Proves' : 'Grup ' + A.grup.slice(1));
@@ -465,6 +470,7 @@ function pintaSessions() {
       const c = calendari(A.grup, s) || { estat: 'pendent', data: '' };
       const accions = [
         c.estat !== 'oberta' ? `<button class="boto clar" data-s="${s}" data-e="oberta">Obre</button>` : '',
+        urlMaterial(s) ? `<a class="boto clar" href="${urlMaterial(s)}" target="_blank" rel="noopener" title="Obre el PDF del material de la sessió per imprimir-lo">Imprimeix</a>` : '',
         c.estat !== 'pendent' ? `<button class="boto clar" data-s="${s}" data-e="pendent">Torna a pendent</button>` : '',
         s === 'S6' && c.estat !== 'fusionada' ? `<button class="boto clar" data-s="${s}" data-e="fusionada">Fusiona amb S5</button>` : ''
       ].join(' ');

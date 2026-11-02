@@ -294,6 +294,10 @@ await revisa(mestre, '23-admin-missions', { senseScroll: false, lletraMin: 13.3 
 await mestre.click('.pestanya[data-p="sessions"]');
 await mestre.waitForSelector('#taula-calendari button');
 await revisa(mestre, '24-admin-sessions', { senseScroll: false, lletraMin: 14.6 });
+const enllacos = await mestre.evaluate(() => [...document.querySelectorAll('#taula-calendari a.boto')].map(a => a.href));
+ok(enllacos.length === 9 && enllacos.every(h => /^https:\/\/poldpm\.github\.io\/robomon\/materials\/S\d-[a-z-]+-RECURS\/imprimir\.pdf$/.test(h)), 'Sessions: cada sessió té el botó «Imprimeix» amb el PDF del seu material');
+const fs = await import('node:fs');
+ok(enllacos.every(h => fs.existsSync(join(ARREL, h.split('/robomon/')[1]))), '…i tots els PDF existeixen al repositori');
 
 ok(admin('restauraMissio', { sessio: 'S1' }).dades.files.length === 18, 'El botó «Restaura la missió per defecte» torna a posar les 18 files de la S1');
 
