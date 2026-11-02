@@ -471,6 +471,7 @@ Object.assign(IL, {
 function dibuix(k) {
   if (!k) return '';
   if (k.indexOf('codi:') === 0) return codiSVG(k.slice(5));
+  if (k.indexOf('eina:') === 0) return SEGELLS[k.slice(5)] ? SEGELLS[k.slice(5)][1] : '';
   if (k.indexOf('prog:') === 0) return progSVG(k.slice(5));
   if (k.indexOf('carta:') === 0) { const p = k.slice(6).split('|'); return cartaSVG(p[0], p[1] || ''); }
   if (k.indexOf('bloc:') === 0) { const p = k.slice(5).split('|'); return blocSVG(p[0], p[1] || ''); }

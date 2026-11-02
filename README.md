@@ -147,3 +147,5 @@ node eines/pdf-materials.mjs materials/S1-primers-codis-RECURS
 Lletra: Lexend (SIL Open Font License, `docs/LLICENCIA-LEXEND-OFL.txt`), incrustada a cada pàgina.
 
 Il·lustracions: generades amb IA (Gamma), retallades i incrustades en WebP des de `src/imatges/`. El mapa és `src/imatges/mapa.webp`; les coordenades de cada illa són a `src/comu/illustracions.js` (`ILLES`).
+
+Icona i logotip de RoboMón: `src/marca/` (`robomon-icona.svg`, PNG de 512, 192 i 32 px, i `robomon-logo.svg`/`.png` amb el nom). Engranatge (robòtica) amb el món de l'Arxipèlag a dins: no representa cap robot concret.

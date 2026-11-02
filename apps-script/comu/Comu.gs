@@ -49,6 +49,9 @@ var SESSIONS = {
 };
 var ORDRE_SESSIONS = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9'];
 
+/** La icona de RoboMón (pestanya del navegador), publicada a GitHub Pages. */
+var ICONA_URL_ = 'https://poldpm.github.io/robomon/src/marca/robomon-icona-192.png';
+
 var EINES = { scottie: 'Scottie Go!', ozobot: 'Ozobot', dash: 'Dash', spike: 'SPIKE', scratch: 'Scratch' };
 var ORDRE_EINES = ['scottie', 'ozobot', 'dash', 'spike', 'scratch'];
 

@@ -128,12 +128,12 @@ export function creaMon() {
               return tipus === '!=' ? v : v.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
             });
             html = comGoogle(html);
-            const sortida = { contingut: html, setTitle() { return this; }, addMetaTag() { return this; }, getContent() { return this.contingut; } };
+            const sortida = { contingut: html, setTitle() { return this; }, setFaviconUrl() { return this; }, addMetaTag() { return this; }, getContent() { return this.contingut; } };
             return sortida;
           };
           return t;
         },
-        createHtmlOutput: h => ({ contingut: h, setTitle() { return this; }, addMetaTag() { return this; }, getContent() { return this.contingut; } })
+        createHtmlOutput: h => ({ contingut: h, setTitle() { return this; }, setFaviconUrl() { return this; }, addMetaTag() { return this; }, getContent() { return this.contingut; } })
       },
       ContentService: { createTextOutput: t => ({ text: t, setMimeType() { return this; } }), MimeType: { JSON: 'json' } },
       ScriptApp: { getService: () => ({ getUrl: () => `/${nom}` }), getOAuthToken: () => 'testimoni-oauth', getScriptId: () => 'SCRIPT-' + nom.toUpperCase() },

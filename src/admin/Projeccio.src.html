@@ -38,6 +38,8 @@ svg { display: block; width: 100%; height: 100%; }
 .codi-classe { background: #f6e7c4; border: 3px solid var(--daurat); border-radius: 3vh; padding: 1.6vh 2vw; font-size: 4vh; font-weight: 700; }
 .gran { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3vh; text-align: center; }
 .gran h1 { font-size: 9vh; margin: 0; }
+.marca-gran { width: 30vh; height: 30vh; }
+.marca-gran svg { width: 100%; height: 100%; }
 .gran p { font-size: 5vh; margin: 0; }
 .cos-treball { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 2vw; }
 .cos-treball.amb-xuleta { display: grid; grid-template-columns: 1fr 2.1fr; }
@@ -99,7 +101,7 @@ svg { display: block; width: 100%; height: 100%; }
       <li><span class="n">4</span><div><b>Obre RoboMón</b> amb el marcador o des del Classroom.</div></li>
     </ol>
   </div>
-  <div class="gran" id="buida" hidden><h1>RoboMón</h1><p>Encara no hi ha cap sessió oberta.</p></div>
+  <div class="gran" id="buida" hidden><div class="marca-gran" aria-hidden="true">/*@@MARCA@@*/</div><h1>RoboMón</h1><p>Encara no hi ha cap sessió oberta.</p></div>
   <div class="baix" id="baix" hidden>
     <div class="far"><span class="etiq" id="far-text"></span><div class="metre"><span id="far-metre"></span></div></div>
     <div class="codi-classe" id="codi" hidden></div>

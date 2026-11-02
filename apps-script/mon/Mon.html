@@ -195,6 +195,8 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
 .tria .dibuix svg.bloc, .il svg.bloc { width: auto; height: 58px; max-width: 100%; border-radius: 0; margin: auto 0; }
 .estat-xarxa { position: fixed; right: 16px; bottom: 12px; z-index: 6; background: var(--tinta); color: #fff; font-size: 19px; padding: 8px 14px; border-radius: 12px; }
 .benvinguda { background: linear-gradient(var(--boira), var(--paper)); }
+.marca-gran { width: 160px; height: 160px; margin: 0 auto; }
+.marca-gran svg { width: 100%; height: 100%; }
 </style>
 </head>
 <body>
@@ -210,7 +212,17 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
 
   <main class="contingut">
     <!-- CÀRREGA -->
-    <section class="pantalla" id="p-carrega"><div class="fet-gran"><h1>Un moment…</h1></div></section>
+    <section class="pantalla" id="p-carrega"><div class="fet-gran"><div class="marca-gran" aria-hidden="true"><svg viewBox="0 0 512 512" role="img" aria-label="RoboMón">
+  <circle cx="256" cy="256" r="248" fill="#17565d"/>
+  <path d="M232.2 67.5 L239.4 30.6 L272.6 30.6 L279.8 67.5 L305.1 72.4 L329.6 80.8 L354.4 52.5 L383.0 69.1 L370.9 104.7 L390.3 121.6 L407.3 141.1 L442.9 129.0 L459.5 157.6 L431.2 182.4 L439.5 206.7 L444.5 232.2 L481.4 239.4 L481.4 272.6 L444.5 279.8 L439.6 305.1 L431.2 329.6 L459.5 354.4 L442.9 383.0 L407.3 370.9 L390.4 390.3 L370.9 407.3 L383.0 442.9 L354.4 459.5 L329.6 431.2 L305.3 439.5 L279.8 444.5 L272.6 481.4 L239.4 481.4 L232.2 444.5 L206.9 439.6 L182.4 431.2 L157.6 459.5 L129.0 442.9 L141.1 407.3 L121.7 390.4 L104.7 370.9 L69.1 383.0 L52.5 354.4 L80.8 329.6 L72.5 305.3 L67.5 279.8 L30.6 272.6 L30.6 239.4 L67.5 232.2 L72.4 206.9 L80.8 182.4 L52.5 157.6 L69.1 129.0 L104.7 141.1 L121.6 121.7 L141.1 104.7 L129.0 69.1 L157.6 52.5 L182.4 80.8 L206.7 72.5 Z" fill="#d9a441" stroke="#1c2733" stroke-width="9" stroke-linejoin="round"/>
+  <circle cx="256" cy="256" r="164" fill="#1f6f78" stroke="#1c2733" stroke-width="9"/>
+  <path d="M96 222 A164 164 0 0 1 416 222 Z" fill="#e0d8bc" opacity="0.16"/>
+  <g fill="none" stroke="#2c5f6c" stroke-width="6"><ellipse cx="256" cy="256" rx="70" ry="160"/><path d="M96 256 H416 M116 180 H396 M116 332 H396 M256 96 V416"/></g>
+  <path d="M138 222 q16 -34 58 -28 q30 6 24 32 q-8 24 -44 22 q-34 -2 -38 -26 Z" fill="#e8d5a6" stroke="#1c2733" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M300 160 q30 -18 60 2 q18 18 -2 34 q-28 16 -54 2 q-22 -18 -4 -38 Z" fill="#e8d5a6" stroke="#1c2733" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M196 336 q34 -36 98 -28 q54 8 62 42 q-12 28 -84 28 q-70 0 -76 -42 Z" fill="#e8d5a6" stroke="#1c2733" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M222 232 C252 250 290 236 312 204 M346 200 C352 244 330 284 300 308" fill="none" stroke="#d9a441" stroke-width="9" stroke-linecap="round" stroke-dasharray="1 19"/>
+</svg></div><h1>Un moment…</h1></div></section>
 
     <!-- ERROR -->
     <section class="pantalla" id="p-error" hidden>
@@ -710,6 +722,7 @@ Object.assign(IL, {
 function dibuix(k) {
   if (!k) return '';
   if (k.indexOf('codi:') === 0) return codiSVG(k.slice(5));
+  if (k.indexOf('eina:') === 0) return SEGELLS[k.slice(5)] ? SEGELLS[k.slice(5)][1] : '';
   if (k.indexOf('prog:') === 0) return progSVG(k.slice(5));
   if (k.indexOf('carta:') === 0) { const p = k.slice(6).split('|'); return cartaSVG(p[0], p[1] || ''); }
   if (k.indexOf('bloc:') === 0) { const p = k.slice(5).split('|'); return blocSVG(p[0], p[1] || ''); }
@@ -1012,7 +1025,9 @@ function avisIlla(zona, estat) {
 function ambVariant(e) {
   if (!e || !e.avui || !e.avui.missio) return e;
   const v = e.avui.textVariant || '';
-  const fes = x => typeof x === 'string' ? personalitza(x, v) : Array.isArray(x) ? x.map(fes) : (x && typeof x === 'object') ? Object.fromEntries(Object.entries(x).map(([k, y]) => [k, fes(y)])) : x;
+  /* «eina» (dibuix) = l'eina de la sessió; a la S9, la de l'alumne */
+  const eina = 'eina:' + (e.avui.eina === 'totes' ? e.avui.variant : e.avui.eina);
+  const fes = x => x === 'eina' ? eina : typeof x === 'string' ? personalitza(x, v) : Array.isArray(x) ? x.map(fes) : (x && typeof x === 'object') ? Object.fromEntries(Object.entries(x).map(([k, y]) => [k, fes(y)])) : x;
   e.avui.missio = fes(e.avui.missio);
   return e;
 }
@@ -1077,8 +1092,7 @@ function pintaMissio() {
   const pas = pasActual();
   const preg = $('m-pregunta'), cos = $('m-cos'), bot = $('m-botons');
   /* «eina» = el dibuix de l'eina de l'alumne (S9: la variant és l'eina) */
-  const resol = clau => clau === 'eina' ? (SEGELLS[a.variant] ? SEGELLS[a.variant][1] : '') : dibuix(clau);
-  const il = (clau) => resol(clau) ? `<div class="il">${resol(clau)}</div>` : '';
+  const il = (clau) => dibuix(clau) ? `<div class="il">${dibuix(clau)}</div>` : '';
   if (pas === 'abans') {
     preg.textContent = m.abans.text;
     cos.innerHTML = `<div class="graella" style="grid-template-columns: repeat(${m.abans.opcions.length}, 1fr); height:100%;">` +
@@ -1109,7 +1123,7 @@ function pintaMissio() {
   }
   if (pas === 'espera') {
     preg.textContent = 'Ets a la llista. El mestre vindrà.';
-    cos.innerHTML = il('mestre') + `<p class="text">Prepara-ho per ensenyar-ho.<br>Pensa què li explicaràs.</p>`;
+    cos.innerHTML = il('eina:' + (a.eina === 'totes' ? a.variant : a.eina)) + `<p class="text">Prepara-ho per ensenyar-ho.<br>Pensa què li explicaràs.</p>`;
     bot.innerHTML = `<button class="boto clar" id="b-cancela">Ja no cal</button>`;
     $('b-cancela').onclick = () => { envia('cancela', ''); pintaMissio(); };
     return;

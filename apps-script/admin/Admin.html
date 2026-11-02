@@ -29,6 +29,8 @@ svg { display: block; }
 
 .barra { position: sticky; top: 0; z-index: 5; background: rgba(255, 253, 248, .92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--vora); padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .barra h1 { font-size: 22px; margin: 0 8px 0 0; }
+.barra .marca { width: 40px; height: 40px; flex: 0 0 auto; }
+.marca svg { display: block; width: 100%; height: 100%; }
 .barra select { min-height: 48px; border: 2px solid var(--vora); border-radius: 12px; padding: 4px 10px; background: var(--blanc); }
 .pestanyes { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
 .pestanya { min-height: 48px; padding: 6px 16px; border-radius: 12px; border: 2px solid var(--vora); background: var(--blanc); cursor: pointer; }
@@ -116,7 +118,17 @@ td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
 </head>
 <body>
 <div class="barra">
-  <h1>RoboMón</h1>
+  <span class="marca" aria-hidden="true"><svg viewBox="0 0 512 512" role="img" aria-label="RoboMón">
+  <circle cx="256" cy="256" r="248" fill="#17565d"/>
+  <path d="M232.2 67.5 L239.4 30.6 L272.6 30.6 L279.8 67.5 L305.1 72.4 L329.6 80.8 L354.4 52.5 L383.0 69.1 L370.9 104.7 L390.3 121.6 L407.3 141.1 L442.9 129.0 L459.5 157.6 L431.2 182.4 L439.5 206.7 L444.5 232.2 L481.4 239.4 L481.4 272.6 L444.5 279.8 L439.6 305.1 L431.2 329.6 L459.5 354.4 L442.9 383.0 L407.3 370.9 L390.4 390.3 L370.9 407.3 L383.0 442.9 L354.4 459.5 L329.6 431.2 L305.3 439.5 L279.8 444.5 L272.6 481.4 L239.4 481.4 L232.2 444.5 L206.9 439.6 L182.4 431.2 L157.6 459.5 L129.0 442.9 L141.1 407.3 L121.7 390.4 L104.7 370.9 L69.1 383.0 L52.5 354.4 L80.8 329.6 L72.5 305.3 L67.5 279.8 L30.6 272.6 L30.6 239.4 L67.5 232.2 L72.4 206.9 L80.8 182.4 L52.5 157.6 L69.1 129.0 L104.7 141.1 L121.6 121.7 L141.1 104.7 L129.0 69.1 L157.6 52.5 L182.4 80.8 L206.7 72.5 Z" fill="#d9a441" stroke="#1c2733" stroke-width="9" stroke-linejoin="round"/>
+  <circle cx="256" cy="256" r="164" fill="#1f6f78" stroke="#1c2733" stroke-width="9"/>
+  <path d="M96 222 A164 164 0 0 1 416 222 Z" fill="#e0d8bc" opacity="0.16"/>
+  <g fill="none" stroke="#2c5f6c" stroke-width="6"><ellipse cx="256" cy="256" rx="70" ry="160"/><path d="M96 256 H416 M116 180 H396 M116 332 H396 M256 96 V416"/></g>
+  <path d="M138 222 q16 -34 58 -28 q30 6 24 32 q-8 24 -44 22 q-34 -2 -38 -26 Z" fill="#e8d5a6" stroke="#1c2733" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M300 160 q30 -18 60 2 q18 18 -2 34 q-28 16 -54 2 q-22 -18 -4 -38 Z" fill="#e8d5a6" stroke="#1c2733" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M196 336 q34 -36 98 -28 q54 8 62 42 q-12 28 -84 28 q-70 0 -76 -42 Z" fill="#e8d5a6" stroke="#1c2733" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M222 232 C252 250 290 236 312 204 M346 200 C352 244 330 284 300 308" fill="none" stroke="#d9a441" stroke-width="9" stroke-linecap="round" stroke-dasharray="1 19"/>
+</svg></span><h1>RoboMón</h1>
   <select id="sel-grup" aria-label="Grup"></select>
   <select id="sel-sessio" aria-label="Sessió"></select>
   <span class="xip" id="xip-estat">—</span>

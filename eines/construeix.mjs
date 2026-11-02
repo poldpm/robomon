@@ -21,6 +21,7 @@ const imgObj = filtre => '{' + IMATGES.filter(f => filtre(f.replace('.webp', '')
   `${JSON.stringify(f.replace('.webp', ''))}:"data:image/webp;base64,${b64('src/imatges/' + f)}"`).join(',\n') + '}';
 const IL = `const IMG = ${imgObj(() => true)};\n` + IL_SRC;
 const ESCENES = ['ozo-cami', 'ozo-arriba', 'mestre', 'carta', 'e-encen', 'e-nose', 'ozo-boto', 'ozo-calibra'];
+const MARCA = llegeix('src/marca/robomon-icona.svg').trim().replace(/ width="512" height="512"/, '');
 const IL_MAT = `const IMG = ${imgObj(() => false)};\n` + IL_SRC;   /* materials: només esquemes vectorials */
 const IL_PROJ = `const IMG = ${imgObj(k => k === 'mapa' || ESCENES.includes(k))};\n` + IL_SRC;
 
@@ -35,10 +36,10 @@ function munta(src, subs) {
 }
 
 const sortides = {
-  'apps-script/mon/Mon.html': munta('src/mon/Mon.src.html', { FONTS, IL, INICIAL: '<?!= inicial ?>', TRANSPORT: 'gas' }),
-  'pla-b/index.html': munta('src/mon/Mon.src.html', { FONTS, IL, INICIAL: '{"pla":"B"}', TRANSPORT: 'fetch' }),
-  'apps-script/admin/Admin.html': munta('src/admin/Admin.src.html', { FONTS, IL: '', URL_ADMIN: '<?!= urlAdmin ?>', AVIS: '<?!= avis ?>' }),
-  'apps-script/admin/Projeccio.html': munta('src/admin/Projeccio.src.html', { FONTS, IL: IL_PROJ })
+  'apps-script/mon/Mon.html': munta('src/mon/Mon.src.html', { FONTS, IL, MARCA, INICIAL: '<?!= inicial ?>', TRANSPORT: 'gas' }),
+  'pla-b/index.html': munta('src/mon/Mon.src.html', { FONTS, IL, MARCA, INICIAL: '{"pla":"B"}', TRANSPORT: 'fetch' }),
+  'apps-script/admin/Admin.html': munta('src/admin/Admin.src.html', { FONTS, IL: '', MARCA, URL_ADMIN: '<?!= urlAdmin ?>', AVIS: '<?!= avis ?>' }),
+  'apps-script/admin/Projeccio.html': munta('src/admin/Projeccio.src.html', { FONTS, IL: IL_PROJ, MARCA })
 };
 
 // ---------- Comprovacions (si una falla, no es genera res) ----------

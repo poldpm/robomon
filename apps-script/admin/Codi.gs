@@ -29,6 +29,7 @@ function doGet(e) {
   t.avis = JSON.stringify(qui.verificat ? '' : 'sense-correu');
   return t.evaluate()
     .setTitle(vista === 'projeccio' ? 'RoboMón · Projecció' : 'RoboMón · Administrador')
+    .setFaviconUrl(ICONA_URL_)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
@@ -369,7 +370,7 @@ function missionsPerDefecte_() {
     ['S7', 'encallat', 'notorna', 11, 'No torna a la sortida', 'scratch-sense-persempre',
       'La condició ha d\'anar dins de «per sempre», sota la bandera. Tria el color exacte amb el comptagotes.', 'bloc:control|per sempre', P],
     ['S7', 'encallat', 'compte', 12, 'No puc entrar a Scratch', 'e-nose',
-      'Avisa el mestre: et dirà el teu usuari i la contrasenya.', 'mestre', P],
+      'Avisa el mestre: et dirà el teu usuari i la contrasenya.', 'e-nose', P],
     ['S7', 'encallat', 'nose',  13, 'No sé què he de fer', 'e-nose',
       'Primer, que el vehicle es mogui amb una fletxa. Mira la xuleta («Codis»).', 'scratch-vehicle', P],
     ['S7', 'sortida', 'diag',   14, 'El vehicle toca el vermell i no torna. Mira el programa. Per què falla?', 'scratch-sense-persempre',
@@ -413,16 +414,16 @@ function missionsPerDefecte_() {
     ['S9', 'control', 'c0',     4, 'Ves a l\'estació de la teva eina (la diu a l\'esquerra). Està encesa, connectada o oberta?', 'eina', '', '', P],
     ['S9', 'nivell',  'n1',     5, 'Fes una primera prova de la teva missió: {teva:mira-la a l\'esquerra}.', 'eina', '', '', P],
     ['S9', 'control', 'n1',     6, 'La teva eina fa alguna cosa del que demana la missió?', 'eina', '', '', P],
-    ['S9', 'nivell',  'n2',     8, 'Acaba la teva missió: {teva:mira-la a l\'esquerra}. Quan funcioni, prem «Ja ho puc ensenyar».', 'mestre', '', '', P],
+    ['S9', 'nivell',  'n2',     8, 'Acaba la teva missió: {teva:mira-la a l\'esquerra}. Quan funcioni, prem «Ja ho puc ensenyar».', 'eina', '', '', P],
     ['S9', 'nivell',  'n3',     9, 'Agafa una carta de repte de la teva eina i fes el que demana.', 'carta', '', '', P],
     ['S9', 'encallat', 'eina',  10, 'No recordo com funciona', 'e-nose',
       'Obre «Codis»: hi ha la xuleta de la teva eina. Mira el primer pas.', 'e-nose', P],
-    ['S9', 'encallat', 'apunt', 11, 'No s\'encén o no es connecta', 'mestre',
-      'Fes-ho com el primer dia: botó d\'encendre, connectar a l\'app i provar-ho. Si no va, demana ajuda.', 'mestre', P],
-    ['S9', 'encallat', 'falla', 12, 'Ho he provat i no funciona', 'e-perd',
-      'Mira què fa i on s\'equivoca. Canvia una sola cosa i torna-ho a provar.', 'e-perd', P],
+    ['S9', 'encallat', 'apunt', 11, 'No s\'encén o no es connecta', 'eina',
+      'Fes-ho com el primer dia: botó d\'encendre, connectar a l\'app i provar-ho. Si no va, demana ajuda.', 'eina', P],
+    ['S9', 'encallat', 'falla', 12, 'Ho he provat i no funciona', 'e-nose',
+      'Mira què fa i on s\'equivoca. Canvia una sola cosa i torna-ho a provar.', 'e-nose', P],
     ['S9', 'encallat', 'nose',  13, 'No sé què he de fer', 'e-nose',
-      'Llegeix «La teva»: és la teva missió. El primer pas és fer moure l\'eina una mica.', 'mestre', P],
+      'Llegeix «La teva»: és la teva missió. El primer pas és fer moure l\'eina una mica.', 'eina', P],
     ['S9', 'sortida', 'diag',   14, 'El robot no fa el que volies. Què fas primer?', '',
       'a|Miro què fa i on s\'equivoca|;b|Ho esborro tot i torno a començar|;c|Ho deixo i faig una altra cosa|', 'a', P],
     ['S9', 'sortida', 'eina',   15, 'Quin grup d\'ordres fa REPETIR en totes les eines?', '',

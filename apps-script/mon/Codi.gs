@@ -25,6 +25,7 @@ function doGet(e) {
   t.inicial = JSON.stringify(inicial).replace(/</g, '\\u003c');
   return t.evaluate()
     .setTitle('RoboMón')
+    .setFaviconUrl(ICONA_URL_)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
