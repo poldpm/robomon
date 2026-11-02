@@ -92,7 +92,7 @@ const ILLES = [
 ];
 const FAR = { x: 59.0, y: 80.0 };
 /* Silueta negra de cada illa (src/imatges/silueta-N.webp), retallada del mapa: on va i quant ocupa (en % del mapa) */
-const SILUETES = [{x:  0.5,  y:  32.43,  w:  16.72,  h:  36.95},  {x:  11.06,  y:  10.56,  w:  17.83,  h:  39.37},  {x:  22.28,  y:  24.28,  w:  20.0,  h:  44.19},  {x:  33.11,  y:  9.2,  w:  17.28,  h:  38.16},  {x:  43.06,  y:  10.56,  w:  17.83,  h:  39.37},  {x:  55.89,  y:  33.94,  w:  9.17,  h:  20.21},  {x:  61.39,  y:  33.63,  w:  14.56,  h:  32.28},  {x:  67.61,  y:  13.57,  w:  12.94,  h:  28.66},  {x:  76.67,  y:  0,  w:  23.33,  h:  62.44}];
+const SILUETES = [{ x: 3.056, y: 41.478, w: 11.889, h: 25.189 }, { x: 13.778, y: 10.106, w: 12.333, h: 39.819 }, { x: 24.333, y: 39.517, w: 15.778, h: 24.133 }, { x: 36.333, y: 23.228, w: 11.0, h: 17.496 }, { x: 45.722, y: 17.949, w: 12.833, h: 30.468 }, { x: 57.667, y: 36.501, w: 5.722, h: 17.496 }, { x: 63.111, y: 41.478, w: 11.778, h: 22.323 }, { x: 69.333, y: 11.161, w: 11.056, h: 36.652 }, { x: 76.556, y: 0.0, w: 23.444, h: 62.745 }];
 /* Cadenat gran per a les illes tancades */
 const CADENAT_GRAN = `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#141a20" stroke="#f5efe4" stroke-width="3"/><path d="M22 29v-6a10 10 0 0 1 20 0v6" fill="none" stroke="#f5efe4" stroke-width="5" stroke-linecap="round"/><rect x="17" y="28" width="30" height="21" rx="5" fill="#f5efe4"/><circle cx="32" cy="37" r="3.2" fill="#141a20"/><path d="M32 39v5" stroke="#141a20" stroke-width="3" stroke-linecap="round"/></svg>`;
 /* Segell de passaport amb la icona de RoboMón (el món amb antena): illa feta */

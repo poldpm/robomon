@@ -430,6 +430,11 @@ for (const [ses, esp] of Object.entries(NOVES)) {
   await espera(pg, '#p-mapa');
   if (ses === 'S2') {
     await revisa(pg, '69-mapa-amb-segell', REVISA_MON);
+    const gran = await obreAlumne(6, { width: 1915, height: 785 });
+    await espera(gran, '#p-mapa');
+    await gran.waitForTimeout(300);
+    await gran.screenshot({ path: join(CAPTURES, '69b-mapa-pantalla-gran.png') });
+    await gran.context().close();
     ok(await pg.isVisible('.segell-fet') && (await pg.$$('.cadenat-illa')).length === 7, 'Mapa: la S1 feta té el segell de RoboMón i les 7 illes que falten tenen silueta i cadenat');
   }
   await pg.clic('#boto-missio');
