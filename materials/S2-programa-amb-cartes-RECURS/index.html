@@ -334,6 +334,11 @@ const XULETES = {
     { grup: 'Moure\'s', items: [{ nom: 'Avança', carta: 'STEP' }, { nom: 'Gira a la dreta', carta: 'TURN TO THE RIGHT' }, { nom: 'Gira a l\'esquerra', carta: 'TURN TO THE LEFT' }] },
     { grup: 'Números i repetir', items: [{ nom: 'Quantes vegades', carta: '3', tipus: 'num' }, { nom: 'Repeteix', carta: 'REPEAT', tipus: 'control' }, { nom: 'Fi de la repetició', carta: 'END IF / REPEAT', tipus: 'control' }] }
   ], regla: 'El número va al costat de STEP o de REPEAT. La dreta del Scottie no sempre és la teva: mira cap on mira ell.' },
+  dash: { titol: 'Blocs del Dash (Blockly)', grups: [
+    { grup: 'Començar', items: [{ bloc: 'dash-start', text: 'When [Start]' }] },
+    { grup: 'Moure\'s (cm i graus)', items: [{ bloc: 'dash-drive', text: 'Forward [50] [normal]' }, { bloc: 'dash-drive', text: 'Backward [50] [normal]' }, { bloc: 'dash-drive', text: 'Turn Left [90]' }, { bloc: 'dash-drive', text: 'Turn Right [90]' }] },
+    { grup: 'Control', items: [{ bloc: 'dash-control', text: 'Repeat [2] times' }, { bloc: 'dash-control', text: 'Wait For [2] seconds' }] }
+  ], regla: 'Forward 50 = avança 50 cm. Turn 90 = un quart de volta; 180 = mitja volta. Tots els blocs enganxats sota When Start.' },
   spike: { titol: 'Peces del SPIKE', grups: [
     { grup: 'Les peces', items: [{ nom: 'Hub', peca: 'hub' }, { nom: 'Motor', peca: 'motor' }, { nom: 'Sensor de color', peca: 'sensor' }, { nom: 'Cable al port A o B', peca: 'port' }] }
   ], regla: 'Encén el hub amb el botó i connecta\'l a l\'app. Acosta molt el color al sensor.' },
@@ -367,7 +372,9 @@ function codiSVG(seq, ambFletxa = true) {
 }
 const nomColors = seq => seq.split('').map(c => (COLORS_CODI[c] || COLORS_CODI.K)[1]).join(' · ');
 /* Colors oficials de les categories de Scratch 3; text fosc perquè es llegeixi bé */
-const COLORS_SCRATCH = { events: '#ffbf00', motion: '#4c97ff', control: '#ffab19', sensing: '#5cb1d6', variables: '#ff8c1a', operators: '#59c059', looks: '#9966ff' };
+const COLORS_SCRATCH = { events: '#ffbf00', motion: '#4c97ff', control: '#ffab19', sensing: '#5cb1d6', variables: '#ff8c1a', operators: '#59c059', looks: '#9966ff',
+  /* Blockly de Wonder Workshop (Dash): colors de les categories */
+  'dash-start': '#2fd08c', 'dash-drive': '#20b8b0', 'dash-control': '#f3c623' };
 /** Un bloc de Scratch: rectangle de color, text fosc i els [valors] en requadres blancs. */
 function blocSVG(cat, text) {
   const col = COLORS_SCRATCH[cat] || '#ccc';
@@ -506,6 +513,24 @@ function cruilla(codi, ambMetes) {
   }
   return esquema(s);
 }
+/** El Dash vist de dalt: cos blau, dues rodes, fletxa cap on mira (angle en graus, 0 = amunt). */
+function dashDalt(x, y, angle, sc) {
+  return `<g transform="translate(${x} ${y}) rotate(${angle}) scale(${sc || 1})">
+    <rect x="-9" y="-4" width="3.4" height="9" rx="1.2" fill="${TINTA}"/><rect x="5.6" y="-4" width="3.4" height="9" rx="1.2" fill="${TINTA}"/>
+    <circle cx="0" cy="0" r="7" fill="#1aa3e8" stroke="${TINTA}" stroke-width="0.9"/><circle cx="0" cy="-1.5" r="3.4" fill="#ffffff" stroke="${TINTA}" stroke-width="0.7"/>
+    <path d="M-2.4 -7.6 L0 -11 L2.4 -7.6 Z" fill="${TINTA}"/></g>`;
+}
+/** Terra amb cinta: línia de sortida, marca de la cinta mètrica i el Dash. */
+function escenaDash(extra, dx, dy, angle) {
+  let regle = '';
+  for (let i = 0; i <= 6; i++) regle += `<path d="M86 ${80 - i * 10} H90" stroke="${TINTA}" stroke-width="0.6"/>`;
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    <rect x="8" y="8" width="84" height="84" rx="3" fill="#e9dcc3"/>
+    <path d="M14 80 H76" stroke="#ffffff" stroke-width="3"/><text x="20" y="89" font-size="5.5" font-weight="600" fill="${TINTA}" font-family="Lexend, Verdana, sans-serif">sortida</text>
+    <path d="M36 40 H64" stroke="#f2c94c" stroke-width="3"/><text x="66" y="42" font-size="5.5" font-weight="600" fill="${TINTA}" font-family="Lexend, Verdana, sans-serif">marca</text>
+    <rect x="86" y="18" width="4" height="64" fill="#f7e27a" stroke="${TINTA}" stroke-width="0.5"/>${regle}
+    ${extra}${dashDalt(dx, dy, angle, 1)}</svg>`;
+}
 function escenaScratch(extra) {
   return `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
     <rect x="8" y="14" width="84" height="64" rx="3" fill="#ffffff" stroke="${TINTA}" stroke-width="1.4"/>
@@ -562,6 +587,15 @@ Object.assign(IL, {
     <path d="M64 41 Q66 34 72 35 Q79 34 80 41 Q81 48 74 50 Q66 51 64 45 Z" fill="#9aa3ad" stroke="${TINTA}" stroke-width="1"/>
     <g transform="translate(55 49.5)"><circle r="7" fill="#ffffff" stroke="${TINTA}" stroke-width="1.2"/><path d="M3 -3.5 L8 0 L3 3.5 Z" fill="${TINTA}"/></g>
     <text x="72" y="62" text-anchor="middle" font-size="9" font-weight="700" fill="#ec2027" font-family="Lexend, Verdana, sans-serif">!</text></svg>`,
+  'dash-pista': escenaDash('', 50, 74, 0),
+  'dash-connecta': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    <rect x="8" y="22" width="44" height="30" rx="4" fill="#2b3440"/><rect x="11" y="25" width="38" height="24" rx="2" fill="#dfe8ef"/>
+    <rect x="15" y="29" width="22" height="6" rx="2" fill="#2fd08c"/><rect x="17" y="37" width="26" height="6" rx="2" fill="#20b8b0"/>
+    <path d="M56 40 Q62 34 68 40 M53 44 Q62 28 71 44" fill="none" stroke="#1183c6" stroke-width="1.6" stroke-linecap="round"/>
+    ${dashDalt(78, 64, 0, 1.2)}</svg>`,
+  'dash-passa': escenaDash('', 50, 30, 0),
+  'dash-marca': escenaDash('', 50, 44, 0),
+  'dash-volta': escenaDash(`<path d="M44 66 V38 Q44 28 50 28 Q56 28 56 38 V66" fill="none" stroke="#1183c6" stroke-width="2" stroke-dasharray="3 2.5"/><path d="M52.5 62 L56 68 L59.5 62" fill="none" stroke="#1183c6" stroke-width="2" stroke-linejoin="round"/>`, 50, 74, 0),
   'scratch-vehicle': escenaScratch(''),
   'scratch-marcador': escenaScratch(`<rect x="12" y="18" width="30" height="10" rx="2" fill="#ffffff" stroke="#9aa3ad" stroke-width="0.8"/><text x="15" y="25.5" font-size="5.5" fill="${TINTA}" font-family="Lexend, Verdana, sans-serif">punts</text><rect x="31" y="19.5" width="9" height="7" rx="2" fill="#ff8c1a"/><text x="35.5" y="25" text-anchor="middle" font-size="5.5" font-weight="600" fill="#fff" font-family="Lexend, Verdana, sans-serif">3</text>`),
   'scratch-sense-persempre': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>

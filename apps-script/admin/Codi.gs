@@ -272,6 +272,33 @@ function missionsPerDefecte_() {
     ['S3', 'variant', 'B', 17, 'Meta recte', '', '', '', P],
     ['S3', 'variant', 'C', 18, 'Meta a la dreta', '', '', '', P]
   ];
+  f.S4 = [
+    ['S4', 'missio',  'titol',  1, 'Arriba a la marca', '', '', '', P],
+    ['S4', 'missio',  'frase',  2, 'Programa el Dash perquè s\'aturi just a la teva marca.', '', '', '', P],
+    ['S4', 'missio',  'xuleta', 3, 'dash', '', '', '', P],
+    ['S4', 'abans',   'prediccio', 4, 'Abans de provar: amb «Forward 50», on s\'aturarà el Dash?', 'dash-pista',
+      'abans|Abans de la meva marca|;marca|Just a la meva marca|;despres|Després de la meva marca|', '', P],
+    ['S4', 'control', 'c0',     5, 'El Dash està encès i connectat al Blockly?', 'dash-connecta', '', '', P],
+    ['S4', 'nivell',  'n1',     6, 'Posa el Dash a la sortida. Programa «When Start» i «Forward 50». Prem Start i mira on s\'atura.', 'dash-pista', '', '', P],
+    ['S4', 'control', 'n1',     7, 'El Dash avança i s\'atura?', 'dash-pista', '', '', P],
+    ['S4', 'nivell',  'n2',     8, 'Canvia el número perquè el Dash s\'aturi just a la teva marca. Ensenya-ho i explica quin número has posat i per què.', 'dash-marca', '', '', P],
+    ['S4', 'nivell',  'n3',     9, 'Ves a la teva marca, fes mitja volta i torna a la sortida.', 'dash-volta', '', '', P],
+    ['S4', 'encallat', 'connecta', 10, 'No es connecta', 'dash-connecta',
+      'Encén el Dash amb el botó de dalt. Al Blockly, toca el robot i tria el teu Dash pel nom. Només una tauleta per Dash.', 'dash-connecta', P],
+    ['S4', 'encallat', 'nofa',  11, 'Premo Start i no fa res', 'bloc:dash-start|When [Start]',
+      'El primer bloc ha d\'anar enganxat just a sota de «When Start». Si està solt, no fa res.', 'bloc:dash-start|When [Start]', P],
+    ['S4', 'encallat', 'passa', 12, 'Es passa o no arriba', 'dash-passa',
+      'Mesura amb la cinta quants centímetres falten o sobren. Si es passa, posa un número més petit. Si no arriba, més gran.', 'bloc:dash-drive|Forward [50] [normal]', P],
+    ['S4', 'encallat', 'nose',  13, 'No sé què he de fer', 'e-nose',
+      'Primer «When Start». A sota, «Forward» amb un número: són centímetres. Prem Start.', 'dash-pista', P],
+    ['S4', 'sortida', 'diag',   14, 'El Dash s\'atura 10 cm abans de la marca. Què has de canviar?', 'dash-pista',
+      'a|Posar 10 més al número de Forward|bloc:dash-drive|Forward [60] [normal];b|Posar «fast» en lloc de «normal»|bloc:dash-drive|Forward [50] [fast];c|Afegir «Turn Right 90»|bloc:dash-drive|Turn Right [90]', 'a', P],
+    ['S4', 'sortida', 'eina',   15, 'Quin bloc fa que el Dash faci mitja volta?', '',
+      'a|Turn Right 180|bloc:dash-drive|Turn Right [180];b|Turn Right 90|bloc:dash-drive|Turn Right [90];c|Backward 50|bloc:dash-drive|Backward [50] [normal]', 'a', P],
+    ['S4', 'variant', 'A', 16, 'Marca a 40 cm', '', '', '', P],
+    ['S4', 'variant', 'B', 17, 'Marca a 70 cm', '', '', '', P],
+    ['S4', 'variant', 'C', 18, 'Marca a 90 cm', '', '', '', P]
+  ];
   f.S5 = [
     ['S5', 'missio',  'titol',  1, 'Munta i modifica', '', '', '', P],
     ['S5', 'missio',  'frase',  2, 'Munta la parada Snack Stand i fes que serveixi quan vegi el teu color.', '', '', '', P],
@@ -380,7 +407,7 @@ function missionsPerDefecte_() {
     ['S8', 'variant', 'B', 17, 'Compta els cops que toques el teu color', '', '', '', P],
     ['S8', 'variant', 'C', 18, 'Compta les arribades a la meta', '', '', '', P]
   ];
-  ['S4', 'S9'].forEach(function (s) {
+  ['S9'].forEach(function (s) {
     f[s] = [[s, 'missio', 'titol', 1, SESSIONS[s].nom, '', '', '', E],
             [s, 'missio', 'frase', 2, 'Pendent de dissenyar.', '', '', '', E]];
   });

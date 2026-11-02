@@ -40,7 +40,7 @@ var SESSIONS = {
   S1: { zona: 'Z1', eina: 'ozobot',  unitats: 6, nom: 'Primers codis' },
   S2: { zona: 'Z2', eina: 'scottie', unitats: 6, nom: 'Programa amb cartes' },
   S3: { zona: 'Z3', eina: 'ozobot',  unitats: 6, nom: 'El teu circuit' },
-  S4: { zona: 'Z4', eina: 'dash',    unitats: 3, nom: 'Dash Cargo' },
+  S4: { zona: 'Z4', eina: 'dash',    unitats: 3, nom: 'Arriba a la marca' },
   S5: { zona: 'Z5', eina: 'spike',   unitats: 3, nom: 'Munta i modifica' },
   S6: { zona: 'Z6', eina: 'spike',   unitats: 3, nom: 'La parada classifica' },
   S7: { zona: 'Z7', eina: 'scratch', unitats: 0, nom: 'Circula' },
