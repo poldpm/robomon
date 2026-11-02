@@ -428,6 +428,10 @@ for (const [ses, esp] of Object.entries(NOVES)) {
   oblida();
   const pg = await obreAlumne(6);
   await espera(pg, '#p-mapa');
+  if (ses === 'S2') {
+    await revisa(pg, '69-mapa-amb-segell', REVISA_MON);
+    ok(await pg.isVisible('.segell-fet') && (await pg.$$('.cadenat-illa')).length === 7, 'Mapa: la S1 feta té el segell de RoboMón i les 7 illes que falten tenen silueta i cadenat');
+  }
   await pg.clic('#boto-missio');
   await espera(pg, '#p-missio');
   const s = ses.toLowerCase();

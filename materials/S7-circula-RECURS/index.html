@@ -247,6 +247,14 @@ const ILLES = [
   { x: 92.0, y: 38.0, r: 9.5, etiqueta: 'sota' }
 ];
 const FAR = { x: 59.0, y: 80.0 };
+/* Silueta negra de cada illa (src/imatges/silueta-N.webp), retallada del mapa: on va i quant ocupa (en % del mapa) */
+const SILUETES = [{x:  0.5,  y:  32.43,  w:  16.72,  h:  36.95},  {x:  11.06,  y:  10.56,  w:  17.83,  h:  39.37},  {x:  22.28,  y:  24.28,  w:  20.0,  h:  44.19},  {x:  33.11,  y:  9.2,  w:  17.28,  h:  38.16},  {x:  43.06,  y:  10.56,  w:  17.83,  h:  39.37},  {x:  55.89,  y:  33.94,  w:  9.17,  h:  20.21},  {x:  61.39,  y:  33.63,  w:  14.56,  h:  32.28},  {x:  67.61,  y:  13.57,  w:  12.94,  h:  28.66},  {x:  76.67,  y:  0,  w:  23.33,  h:  62.44}];
+/* Cadenat gran per a les illes tancades */
+const CADENAT_GRAN = `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#141a20" stroke="#f5efe4" stroke-width="3"/><path d="M22 29v-6a10 10 0 0 1 20 0v6" fill="none" stroke="#f5efe4" stroke-width="5" stroke-linecap="round"/><rect x="17" y="28" width="30" height="21" rx="5" fill="#f5efe4"/><circle cx="32" cy="37" r="3.2" fill="#141a20"/><path d="M32 39v5" stroke="#141a20" stroke-width="3" stroke-linecap="round"/></svg>`;
+/* Segell de passaport amb la icona de RoboMón (el món amb antena): illa feta */
+const SEGELL_FET = `<svg viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="#17565d"><circle cx="60" cy="60" r="55" fill="rgba(255,253,248,.72)" stroke-width="5"/><circle cx="60" cy="60" r="47" stroke-width="2" stroke-dasharray="3 4"/>
+  <circle cx="60" cy="58" r="22" stroke-width="5"/><ellipse cx="60" cy="58" rx="9" ry="22" stroke-width="3.4"/><path d="M38 58h44" stroke-width="3.4"/><path d="M60 36v-9" stroke-width="4" stroke-linecap="round"/></g>
+  <circle cx="60" cy="24" r="5.5" fill="#d9a441"/><text x="60" y="97" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="2" fill="#17565d" font-family="Lexend, Verdana, sans-serif">FET</text></svg>`;
 const CADENAT = `<svg viewBox="0 0 16 16" aria-hidden="true" class="cadenat"><path d="M4.5 7V5.2a3.5 3.5 0 0 1 7 0V7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="7" width="10" height="7.5" rx="1.8" fill="currentColor"/></svg>`;
 
 /**
@@ -260,8 +268,15 @@ function mapaHTML(mon, zones, opcions = {}) {
     const estat = zones[z.zona] || 'tancada';
     const nivell = estat === 'n3' ? 3 : estat === 'n2' ? 2 : estat === 'n1' ? 1 : 0;
     const ry = p.r * PROP_MAPA;   /* radi en % de l'alçada */
-    const amplBoira = Math.min(p.r * 2.6, 2 * (100 - p.x) - 0.5, 2 * p.x - 0.5);
-    if (estat === 'tancada') capes += `<div class="boira" style="left:${p.x}%; top:${p.y}%; width:${amplBoira}%;"></div>`;
+    const s = SILUETES[i];
+    if (estat === 'tancada') {
+      /* Tancada: la silueta negra de l'illa i un cadenat. Res més. */
+      if (s && IMG['silueta-' + (i + 1)]) capes += `<img class="silueta" alt="" src="${IMG['silueta-' + (i + 1)]}" style="left:${s.x}%; top:${s.y}%; width:${s.w}%; height:${s.h}%;">`;
+      capes += `<div class="cadenat-illa" style="left:${p.x}%; top:${p.y}%;" aria-label="Tancada">${CADENAT_GRAN}</div>`;
+      return;
+    }
+    /* Feta (no és la d'avui i hi ha arribat al nivell 1 o més): segell de passaport */
+    if (nivell >= 1 && opcions.destaca !== z.zona) capes += `<div class="segell-fet" style="left:${p.x + p.r * 0.35}%; top:${p.y - ry * 0.25}%;" aria-label="Feta">${SEGELL_FET}</div>`;
     if (opcions.destaca === z.zona) {
       capes += `<div class="anell" style="left:${p.x}%; top:${p.y}%; width:${p.r * 2.3}%;"></div>`;
       /* L'illa del dia es pot tocar: obre la missió (el dit hi va d'instint) */
