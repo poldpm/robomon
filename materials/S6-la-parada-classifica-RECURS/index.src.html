@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<title>S6 · La parada classifica · RECURS (mestre)</title>
+<!-- RECURS generat per eines/genera-materials.mjs a partir de la llavor de missions. No l'editis a mà: canvia el generador. -->
+<style>
+/*@@FONTS@@*/
+@page { size: A4; margin: 0; }
+@page apaisat { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Lexend", "Atkinson Hyperlegible", Verdana, "Segoe UI", Arial, sans-serif; color: #000; background: #e9ecef; }
+b, strong, h1, h2, h3, th { font-weight: 600; }
+.full { width: 210mm; height: 297mm; padding: 14mm 15mm; margin: 8mm auto; background: #fff; position: relative; overflow: hidden; page-break-after: always; break-after: page; }
+.full.apaisat { page: apaisat; width: 297mm; height: 210mm; padding: 0; }
+@media print { body { background: #fff; } .full { margin: 0; } .no-imprimir { display: none; } }
+h1 { font-size: 21pt; margin: 0 0 4mm; }
+h2 { font-size: 14pt; margin: 5mm 0 2mm; }
+p, li, td, th { font-size: 10.5pt; line-height: 1.32; }
+.peu { position: absolute; bottom: 8mm; right: 15mm; font-size: 8.5pt; color: #444; }
+table { border-collapse: collapse; width: 100%; }
+td, th { border: 1px solid #000; padding: 1.6mm 2.6mm; vertical-align: top; text-align: left; }
+th { background: #eee; }
+.caixa { border: 1.5px solid #000; border-radius: 4mm; padding: 3mm 4mm; margin: 3mm 0; }
+.check li { list-style: none; margin-left: -6mm; }
+.check li::before { content: "☐  "; font-size: 12pt; }
+.codi-txt { font-family: inherit; font-weight: 600; letter-spacing: .5px; white-space: nowrap; }
+/* Xuleta en color */
+.xuleta-a5 { height: 133mm; border: 1px dashed #888; border-radius: 3mm; padding: 6mm 7mm; margin-bottom: 4mm; display: flex; flex-direction: column; gap: 2.5mm; }
+.xuleta-a5 h2 { margin: 0; font-size: 15pt; }
+.xg h3 { margin: 0 0 1.5mm; font-size: 11pt; color: #333; }
+.xc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm 3mm; }
+.xi { border: 0.4mm solid #bbb; border-radius: 2mm; padding: 1.5mm 2mm; display: flex; flex-direction: column; align-items: center; gap: 1mm; }
+.xi span { font-size: 10.5pt; font-weight: 600; }
+.xi svg { width: 100%; height: 11mm; }
+.regla { font-size: 9.5pt; margin: auto 0 0; }
+/* Cartes */
+.cartes { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 86mm); }
+div.carta { border: 1px dashed #000; padding: 8mm; display: flex; flex-direction: column; gap: 4mm; overflow: hidden; }
+div.carta .t { font-size: 12pt; font-weight: 600; border: 1.5px solid #000; border-radius: 3mm; padding: 1mm 3mm; align-self: flex-start; }
+div.carta p { font-size: 17pt; line-height: 1.3; margin: 0; }
+div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
+/* Pòsters */
+.poster { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 12mm; }
+.poster h1 { font-size: 52pt; line-height: 1.15; margin: 0; }
+.poster p { font-size: 24pt; margin: 0; }
+.boto-imprimir { position: fixed; right: 16px; top: 16px; font: 600 18px sans-serif; padding: 12px 18px; border-radius: 10px; border: 2px solid #000; background: #fff; cursor: pointer; }
+
+.xi svg.carta, .xi svg.bloc { width: auto; max-width: 100%; height: 11mm; }
+.xi svg.peca { width: auto; max-width: 100%; height: 26mm; }
+.xc.blocs { display: flex; flex-wrap: wrap; }
+.xi.bloc { padding: 1.5mm 2mm; }
+.xuleta-a5 { height: 128mm; }
+.dib svg { width: 100%; height: 100%; }
+.carta .sol { font-size: 10pt; color: #333; }
+.targeta-compte { border: 1px dashed #000; border-radius: 3mm; padding: 6mm 7mm; height: 62mm; display: flex; flex-direction: column; gap: 4mm; }
+.targeta-compte p { font-size: 13pt; margin: 0; }
+.passos li { font-size: 13pt; margin: 2.5mm 0; line-height: 1.35; }
+</style>
+</head>
+<body>
+<button class="boto-imprimir no-imprimir" onclick="window.print()">Imprimeix (mida real, 100 %)</button>
+<section class="full">
+<h1>S6 · La parada classifica · Guió del mestre</h1>
+  <p><b>Eina:</b> la mateixa parada Snack Stand de la S5 (si s'ha desmuntat, es torna a muntar). <b>Equips:</b> 3 kits. Cadascú té la seva parella de colors.</p>
+  <p><b>La missió (surt al Chromebook):</b> «Millora la teva parada: cada color fa una cosa diferent.»</p>
+  <h2>Migdia (30 min)</h2>
+  <ul class="check"><li>Parades de la S5 dins les capses. Si s'han desmuntat: 10 min de muntatge amb l'app</li><li>Hubs carregats; tauletes amb l'app SPIKE</li><li>Tiquets de color: vermell, groc, verd i <b>lila</b> (o un altre color que ningú programa)</li><li>Xuletes (pàgina 5) en color</li><li>Tauler: <b>Grup → S6 → Obre la sessió</b></li></ul>
+  <h2>Minut a minut</h2>
+  <table>
+    <tr><th style="width:24mm">Hora</th><th>Què passa</th><th style="width:40mm">Pantalla</th></tr>
+    <tr><td>14:55–15:03</td><td>Desplegament. <b>Represa</b> (una frase, a la pàgina 4 de la sessió anterior).</td><td>Projecció</td></tr>
+    <tr><td>15:03–15:08</td><td>Entrar a RoboMón (codi de classe i PIN de dibuixos).</td><td>Chromebook</td></tr>
+    <tr><td>15:08–15:18</td><td><b>Demostració.</b> Amb la xuleta projectada: 1) un bloc del sensor per a cada color; 2) amb el vermell el motor gira cap a un costat, amb el groc cap a l'altre; 3) pregunta: «I si li ensenyo el lila?» (no ho provem: ho diran ells a la predicció).</td><td>Projecció (xuleta)</td></tr>
+    <tr><td>15:18–16:12</td><td><b>Treball.</b> L'app els porta pas a pas: 1) <b>predicció</b>: què farà amb un color no programat; 2) parada a punt; 3) N1: dos colors, dos sentits; 4) N2: provar el color no programat i explicar-ho → «Ja ho puc ensenyar»; 5) N3: un tercer color amb una altra acció.</td><td>Robot / pantalla</td></tr>
+    <tr><td>16:12–16:22</td><td>Al tauler: <b>Targeta de sortida</b>. Responen 2 preguntes.</td><td>Chromebook</td></tr>
+    <tr><td>16:22–16:28</td><td>Marge. <b>Tanca la sessió</b>.</td><td>—</td></tr>
+    <tr><td>16:28–16:40</td><td>Recollida. Ara sí: parades desmuntades i peces a la capsa.</td><td>—</td></tr>
+  </table>
+<div class="peu">S6 · La parada classifica · RECURS · 1</div>
+</section>
+<section class="full">
+<h1>Targeta de demostració</h1>
+  <p>Quan un nen és a «Volen ensenyar-ho»: mira-ho i fes-li <b>les dues preguntes, sempre les mateixes</b>. 30–45 segons. Un clic al mòbil.</p>
+  <div class="caixa"><h2 style="margin-top:0">Nivell 2 · Les dues preguntes</h2>
+    <p style="font-size:15pt; margin: 2mm 0;"><b>1.</b> «Ensenya'm els dos colors: cada un gira cap a un costat?»</p>
+    <p style="font-size:15pt; margin: 2mm 0;"><b>2.</b> «I amb un color que no has programat, què passa? Per què?»</p></div>
+  <table>
+    <tr><th style="width:58mm">Botó al mòbil</th><th>Quan el prems</th><th style="width:30mm">Nota</th></tr>
+    <tr><td><b>N2 · Funciona i ho explica</b></td><td>Cada color fa girar cap a un costat <b>i</b> explica que amb un color no programat no fa res perquè no hi ha cap bloc per a aquell color.</td><td>8<br>(8,5 si abans havia dit «no me n'he sortit»)</td></tr>
+    <tr><td><b>N2 · No funciona, però sap per què</b></td><td>Encara fa sempre el mateix, però <b>sap per què</b>: els dos blocs tenen el mateix color, o un no està enganxat.</td><td>7,5</td></tr>
+    <tr><td><b>Encara no</b></td><td>Ni funciona ni sap per què. Una pista i tornarà a la cua. <b>No treu punts.</b></td><td>—</td></tr>
+    <tr><td><b>N1 no és cert</b></td><td>Havia marcat que cada color girava cap a un costat i no és així.</td><td>torna a 0</td></tr>
+  </table>
+  <div class="caixa"><h2 style="margin-top:0">Nivell 3</h2><p>Un tercer color fa una altra cosa (so o motor més ràpid). <b>N3 · Fet i ho explica</b> (10) si diu quin bloc ha afegit. <b>N3 · Fet</b> (9) si només funciona.</p></div>
+  <h2>Les variants (cadascú la seva, la diu l'app)</h2><ul><li><b>A</b> · Vermell i groc</li><li><b>B</b> · Groc i verd</li><li><b>C</b> · Verd i vermell</li></ul>
+  <h2>Regles que cal dir en veu alta (una vegada)</h2>
+  <ul><li><b>Cadascú la seva missió.</b> La del company no et serveix.</li><li><b>Qui ajuda parla, no toca.</b> Mans al darrere.</li><li><b>Dir «no me n'he sortit» està bé:</b> et dona una pista i, si cal, vinc jo.</li></ul>
+<div class="peu">S6 · La parada classifica · RECURS · 2</div>
+</section>
+<section class="full">
+<h1>Solucionari</h1>
+  <h2>Predicció (abans de provar)</h2><p>«Abans de provar: si ensenyes un color que NO has programat, què farà la parada?» · Opcions: No farà res · Servirà igual · No ho sé. <b>No puntua l'encert:</b> compta haver-ho pensat abans.</p>
+  <h2>Solucions</h2>
+  <table><tr><td style="width:50mm"><b>Predicció</b></td><td>Normalment <b>no farà res</b>: només reacciona als colors que té programats. No puntua l'encert.</td></tr><tr><td style="width:50mm"><b>N1</b></td><td>Un bloc del sensor per color; el motor, en un sentit amb el primer i en l'altre amb el segon.</td></tr><tr><td style="width:50mm"><b>N3</b></td><td>Un tercer bloc del sensor amb un so o el motor més ràpid.</td></tr></table>
+  <h2>Targeta de sortida (es corregeix sola)</h2>
+  <table><tr><th style="width:90mm">Pregunta</th><th>Correcta</th></tr><tr><td>«Ensenyes un tiquet lila i la parada no fa res. Per què?»</td><td><b>No hi ha cap bloc per al lila</b> · Diagnòstic: +1 a qui no arriba a N1.</td></tr><tr><td>«Què fa que la parada triï què ha de fer?»</td><td><b>El color que veu el sensor</b></td></tr></table>
+  <h2>Cartes de repte: solucions</h2>
+  <table><tr><td style="width:40mm">Tres colors</td><td>Un altre bloc del sensor + bloc de so.</td></tr><tr><td style="width:40mm">Més ràpid</td><td>Canviar la velocitat en aquell bloc.</td></tr><tr><td style="width:40mm">Més voltes</td><td>Canviar el nombre de voltes o el temps.</td></tr><tr><td style="width:40mm">Llums</td><td>Bloc de llum dins de cada color.</td></tr><tr><td style="width:40mm">Res de res</td><td>Un bloc per al lila amb un so.</td></tr><tr><td style="width:40mm">Ordre</td><td>Bloc d'esperar abans del motor.</td></tr></table>
+<div class="peu">S6 · La parada classifica · RECURS · 3</div>
+</section>
+<section class="full">
+<h1>Errors típics, escala i represa</h1>
+  <h2>«No me n'he sortit»: on s'encallen i la pista que els dona l'app</h2>
+  <table><tr><th style="width:52mm">El nen tria…</th><th>Pista</th></tr><tr><td>Fa sempre el mateix</td><td>Cada color necessita el seu bloc del sensor. Mira que cada bloc tingui el color correcte.</td></tr><tr><td>No l'he sabut tornar a muntar</td><td>Instruccions de l'app, pas a pas. Compara cada pas amb el dibuix.</td></tr><tr><td>No es connecta</td><td>Prem el botó del hub fins que faci llum. A l'app, prem «connectar» i acosta la tauleta.</td></tr><tr><td>No sé què he de fer</td><td>Fes que el primer color mogui el motor cap a un costat. Després copia el bloc i canvia el color i el sentit.</td></tr></table>
+  
+  <h2>Escala de nota de la sessió</h2>
+  <table>
+    <tr><td>Present, sense cap registre · encallat honest (+1 diagnòstic encertat)</td><td style="width:22mm">2 · 3 · 4</td></tr>
+    <tr><td>N1 (+1 si ha fet la predicció)</td><td>5 · 6</td></tr>
+    <tr><td>N2 · no funciona però sap per què · funciona i ho explica · ha fallat i ho ha arreglat</td><td>7,5 · 8 · 8,5</td></tr>
+    <tr><td>N3 · fet · fet i explicat</td><td>9 · 10</td></tr>
+  </table>
+  <p class="caixa" style="font-size:12pt;"><b>Represa de la sessió següent:</b> «Fins ara heu programat robots. Avui programareu a la pantalla: un vehicle a Scratch.»</p>
+<div class="peu">S6 · La parada classifica · RECURS · 4</div>
+</section>
+<section class="full">
+<div data-xuleta="spike"></div><div data-xuleta="spike"></div>
+<div class="peu">S6 · La parada classifica · RECURS · 5 · imprimir EN COLOR</div>
+</section>
+<section class="full" style="padding: 14mm 15mm;"><div class="cartes"><div class="carta"><span class="t">Repte extra · Tres colors</span><p>Afegeix un tercer color que faci sonar un so.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Més ràpid</span><p>Amb un dels colors, el motor gira més ràpid.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Més voltes</span><p>Amb un color, el motor fa dues voltes.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Llums</span><p>Cada color encén el hub d'un color diferent.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Res de res</span><p>Fes que amb el lila soni un avís: «Aquest no el conec!».</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Ordre</span><p>Fes que esperi 1 segon abans de girar.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div></div><div class="peu">S6 · La parada classifica · RECURS · 6</div></section>
+
+<script>
+/*@@IL@@*/
+</script>
+<script>
+/* Xuletes en color amb els mateixos dibuixos que l'app */
+function itemSVG(i) {
+  if (i.codi) return codiSVG(i.codi);
+  if (i.bloc) return blocSVG(i.bloc, i.text);
+  if (i.peca) return pecaSVG(i.peca);
+  if (i.carta) return cartaSVG(i.carta, i.tipus);
+  return '';
+}
+document.querySelectorAll('[data-xuleta]').forEach(el => {
+  const x = XULETES[el.dataset.xuleta];
+  el.outerHTML = '<div class="xuleta-a5"><h2>' + x.titol + '</h2>' + x.grups.map(g => {
+    const blocs = g.items.every(i => i.bloc);
+    return '<div class="xg"><h3>' + g.grup + '</h3><div class="xc' + (blocs ? ' blocs' : '') + '">' +
+      g.items.map(i => '<div class="xi' + (i.bloc ? ' bloc' : '') + '">' + (i.nom ? '<span>' + i.nom + '</span>' : '') + itemSVG(i) + '</div>').join('') + '</div></div>';
+  }).join('') + '<p class="regla"><b>' + x.regla + '</b></p></div>';
+});
+</script>
+</body>
+</html>

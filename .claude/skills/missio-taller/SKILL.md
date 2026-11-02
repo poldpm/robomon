@@ -58,5 +58,5 @@ Una missió és un conjunt de files de la pestanya `MISSIONS` (columnes: `sessio
 1. Actualitza `sembraMissions_()` si és la llavor, o dona a en Pol les files per enganxar.
 2. `node eines/construeix.mjs && node proves/proves.mjs` → tot verd.
 3. Mira les captures de la missió nova a 1366×625 (sense scroll, botons ≥ 2 cm).
-4. Fes el RECURS de la sessió a `materials/SN-…-RECURS/` (guió minut a minut, targeta de demostració amb les 2 preguntes fixes, solucionari, cartes de repte extra) i el PDF amb `node eines/pdf-materials.mjs`.
+4. Fes el RECURS de la sessió a `materials/SN-…-RECURS/` (de la S3 a la S9: afegeix les dades a `eines/genera-materials.mjs` i executa'l) (guió minut a minut, targeta de demostració amb les 2 preguntes fixes, solucionari, cartes de repte extra) i el PDF amb `node eines/pdf-materials.mjs`.
 5. Commit + push.

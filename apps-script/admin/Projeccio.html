@@ -596,9 +596,10 @@ function pinta(p) {
   $('n1').textContent = p.nivells.n1 || '';
   $('n2').textContent = p.nivells.n2 || '';
   $('n3').textContent = p.nivells.n3 || '';
-  $('cos-treball').classList.toggle('amb-xuleta', !!p.xuleta);
-  $('panell-xuleta').hidden = !p.xuleta;
-  $('panell-xuleta').innerHTML = p.xuleta ? xuletaHTML(p.xuleta) : '';
+  const xu = XULETES[p.xuleta] ? p.xuleta : '';   /* S9: «variant» = cada alumne la seva; no es projecta */
+  $('cos-treball').classList.toggle('amb-xuleta', !!xu);
+  $('panell-xuleta').hidden = !xu;
+  $('panell-xuleta').innerHTML = xu ? xuletaHTML(xu) : '';
   ['1', '2', '3'].forEach(k => { const im = (p.imatges || {})['n' + k]; $('il' + k).innerHTML = dibuix(im); });
   $('far-text').textContent = p.fita.assolida ? 'El far del grup és encès! ✓' : 'El far del grup: ' + p.fita.ambN2 + ' de ' + p.fita.objectiu + ' amb nivell 2';
   $('far-metre').style.width = Math.min(100, Math.round(p.fita.ambN2 / Math.max(1, p.fita.objectiu) * 100)) + '%';

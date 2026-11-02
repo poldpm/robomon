@@ -37,7 +37,7 @@ p.getRange(fila0, 1, NOMS.length, 8).setValues(NOMS.map((n, i) => ['', correu(i)
 mon.crida('admin', 'generaIds', [], MESTRE);
 const ids = p.getDataRange().getValues().slice(1).map(f => f[0]);
 ok(ids.filter(x => /^A0\d\d$/.test(x)).length === 18 && ids.includes('A001') && ids.includes('A018'), 'IDs A001–A018 generats i 6 alumnes de prova A901–A906');
-ok(mon.full.getSheetByName('MISSIONS').getLastRow() === 1 + 8 * 18 + 2, 'MISSIONS sembrada una sola vegada (S1–S8 i l\'esborrany de la S9)');
+ok(mon.full.getSheetByName('MISSIONS').getLastRow() === 1 + 8 * 18 + 20, 'MISSIONS sembrada una sola vegada (S1–S9)');
 ok(mon.full.getSheetByName('CALENDARI').getLastRow() === 1 + 45, 'CALENDARI: 5 grups × 9 sessions');
 
 console.log('\n2 · Seguretat');
@@ -404,7 +404,7 @@ ok(pinB('A005', 'sol-lluna-estrella').motiu === 'massa-intents', 'Després de 5 
 ok(pinB('A999', 'sol-lluna-estrella').motiu === 'pin' && pinB('A005x', 'sol-lluna-estrella').motiu === 'pin', 'Alumne inexistent i PIN equivocat donen la mateixa resposta');
 ok(mon.crida('mon', 'api', ['llistaNoms', { codi: codiAra }, null], '').dades.noms.every(x => !('tePin' in x)), 'La llista de noms no diu qui té PIN');
 
-console.log('\n16 · Les missions noves (S2–S8): de la calibració al nivell 2, xuleta i projecció');
+console.log('\n16 · Les missions noves (S2–S9): de la calibració al nivell 2, xuleta i projecció');
 const NOVES = {
   S2: { xuleta: 9, eina: /Scottie/ },
   S3: { xuleta: 9, eina: /Ozobot/ },
@@ -412,7 +412,8 @@ const NOVES = {
   S5: { xuleta: 4, eina: /SPIKE/ },
   S6: { xuleta: 4, eina: /SPIKE/ },
   S7: { xuleta: 8, eina: /Scratch/ },
-  S8: { xuleta: 8, eina: /Scratch/ }
+  S8: { xuleta: 8, eina: /Scratch/ },
+  S9: { xuleta: 9, eina: /totes|Missió|eines/i }
 };
 const oblida = () => ['config', 'missions', 'mon'].forEach(k => mon.projectes.mon.oblidaCache_(k));
 for (const [ses, esp] of Object.entries(NOVES)) {
@@ -436,7 +437,11 @@ for (const [ses, esp] of Object.entries(NOVES)) {
   await pg.waitForTimeout(200);
   await revisa(pg, `71-${s}-n1`, REVISA_MON);
   await pg.clic('#b-si');
-  if (ses !== 'S6' && ses !== 'S4') {
+  if (ses === 'S9') {
+    const eq = mon.full.getSheetByName('EQUIPS').getDataRange().getValues().find(f => f[1] === 'A007' && f[3] === 'S9');
+    ok(eq && eq[5] === 'scottie' && eq[4] === 'Scottie Go!', 'S9: a la Gal·la (té el segell d\'Ozobot) li toca la primera eina que li falta: Scottie Go!');
+  }
+  if (ses !== 'S6' && ses !== 'S4' && ses !== 'S9') {
     await pg.waitForSelector('#m-cos .tria');
     await revisa(pg, `72-${s}-pla`, REVISA_MON);
     ok((await pg.evaluate(() => [...document.querySelectorAll('#m-cos .tria')].filter(t => t.querySelector('svg, img')).length)) === 3, ses + ': les 3 opcions del pla tenen dibuix');
@@ -468,7 +473,8 @@ for (const [ses, esp] of Object.entries(NOVES)) {
   await proj.reload();
   await proj.waitForSelector('#treball', { state: 'visible' });
   await revisa(proj, `79-${s}-projeccio`, { lletraMin: 18 });
-  ok(esp.eina.test(await proj.textContent('#sub')) && await proj.isVisible('#panell-xuleta .xuleta'), ses + ': la projecció mostra l\'eina i la xuleta');
+  if (ses === 'S9') ok(!(await proj.isVisible('#panell-xuleta')), 'S9: la projecció no mostra cap xuleta (cadascú té la seva eina)');
+  else ok(esp.eina.test(await proj.textContent('#sub')) && await proj.isVisible('#panell-xuleta .xuleta'), ses + ': la projecció mostra l\'eina i la xuleta');
   await pg.context().close();
 }
 

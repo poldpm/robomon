@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<title>S4 · Arriba a la marca · RECURS (mestre)</title>
+<!-- RECURS generat per eines/genera-materials.mjs a partir de la llavor de missions. No l'editis a mà: canvia el generador. -->
+<style>
+/*@@FONTS@@*/
+@page { size: A4; margin: 0; }
+@page apaisat { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Lexend", "Atkinson Hyperlegible", Verdana, "Segoe UI", Arial, sans-serif; color: #000; background: #e9ecef; }
+b, strong, h1, h2, h3, th { font-weight: 600; }
+.full { width: 210mm; height: 297mm; padding: 14mm 15mm; margin: 8mm auto; background: #fff; position: relative; overflow: hidden; page-break-after: always; break-after: page; }
+.full.apaisat { page: apaisat; width: 297mm; height: 210mm; padding: 0; }
+@media print { body { background: #fff; } .full { margin: 0; } .no-imprimir { display: none; } }
+h1 { font-size: 21pt; margin: 0 0 4mm; }
+h2 { font-size: 14pt; margin: 5mm 0 2mm; }
+p, li, td, th { font-size: 10.5pt; line-height: 1.32; }
+.peu { position: absolute; bottom: 8mm; right: 15mm; font-size: 8.5pt; color: #444; }
+table { border-collapse: collapse; width: 100%; }
+td, th { border: 1px solid #000; padding: 1.6mm 2.6mm; vertical-align: top; text-align: left; }
+th { background: #eee; }
+.caixa { border: 1.5px solid #000; border-radius: 4mm; padding: 3mm 4mm; margin: 3mm 0; }
+.check li { list-style: none; margin-left: -6mm; }
+.check li::before { content: "☐  "; font-size: 12pt; }
+.codi-txt { font-family: inherit; font-weight: 600; letter-spacing: .5px; white-space: nowrap; }
+/* Xuleta en color */
+.xuleta-a5 { height: 133mm; border: 1px dashed #888; border-radius: 3mm; padding: 6mm 7mm; margin-bottom: 4mm; display: flex; flex-direction: column; gap: 2.5mm; }
+.xuleta-a5 h2 { margin: 0; font-size: 15pt; }
+.xg h3 { margin: 0 0 1.5mm; font-size: 11pt; color: #333; }
+.xc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm 3mm; }
+.xi { border: 0.4mm solid #bbb; border-radius: 2mm; padding: 1.5mm 2mm; display: flex; flex-direction: column; align-items: center; gap: 1mm; }
+.xi span { font-size: 10.5pt; font-weight: 600; }
+.xi svg { width: 100%; height: 11mm; }
+.regla { font-size: 9.5pt; margin: auto 0 0; }
+/* Cartes */
+.cartes { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 86mm); }
+div.carta { border: 1px dashed #000; padding: 8mm; display: flex; flex-direction: column; gap: 4mm; overflow: hidden; }
+div.carta .t { font-size: 12pt; font-weight: 600; border: 1.5px solid #000; border-radius: 3mm; padding: 1mm 3mm; align-self: flex-start; }
+div.carta p { font-size: 17pt; line-height: 1.3; margin: 0; }
+div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
+/* Pòsters */
+.poster { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 12mm; }
+.poster h1 { font-size: 52pt; line-height: 1.15; margin: 0; }
+.poster p { font-size: 24pt; margin: 0; }
+.boto-imprimir { position: fixed; right: 16px; top: 16px; font: 600 18px sans-serif; padding: 12px 18px; border-radius: 10px; border: 2px solid #000; background: #fff; cursor: pointer; }
+
+.xi svg.carta, .xi svg.bloc { width: auto; max-width: 100%; height: 11mm; }
+.xi svg.peca { width: auto; max-width: 100%; height: 26mm; }
+.xc.blocs { display: flex; flex-wrap: wrap; }
+.xi.bloc { padding: 1.5mm 2mm; }
+.xuleta-a5 { height: 128mm; }
+.dib svg { width: 100%; height: 100%; }
+.carta .sol { font-size: 10pt; color: #333; }
+.targeta-compte { border: 1px dashed #000; border-radius: 3mm; padding: 6mm 7mm; height: 62mm; display: flex; flex-direction: column; gap: 4mm; }
+.targeta-compte p { font-size: 13pt; margin: 0; }
+.passos li { font-size: 13pt; margin: 2.5mm 0; line-height: 1.35; }
+</style>
+</head>
+<body>
+<button class="boto-imprimir no-imprimir" onclick="window.print()">Imprimeix (mida real, 100 %)</button>
+<section class="full">
+<h1>S4 · Arriba a la marca · Guió del mestre</h1>
+  <p><b>Eina:</b> Dash amb l'app <b>Blockly</b> (Chromebook: code.makewonder.com → «Play with Dash and Dot»; o tauleta). <b>Sense pinça.</b> <b>Equips:</b> 3 Dash. Cadascú té la seva marca: 40, 70 o 90 cm.</p>
+  <p><b>La missió (surt al Chromebook):</b> «Programa el Dash perquè s'aturi just a la teva marca.»</p>
+  <h2>Migdia (30 min)</h2>
+  <ul class="check"><li>3 Dash carregats (60–90 min de càrrega). Posa'ls nom a l'app perquè cada equip trobi el seu</li><li>Blockly obert a 3 aparells, un per Dash</li><li>Per a cada Dash, a terra amb cinta: <b>línia de sortida</b> i <b>marques a 40, 70 i 90 cm</b> (mesurades des de la línia)</li><li>Una cinta mètrica per Dash</li><li><b>Regla de mesura:</b> el <b>davant del Dash</b> toca la línia de sortida; mirem on queda el davant</li><li>Xuletes de blocs (pàgina 5) en color, una per equip</li><li>Prova un Dash: When Start + Forward 50. Comprova on s'atura al vostre terra</li><li>Tauler: <b>Grup → S4 → Obre la sessió</b></li></ul>
+  <h2>Minut a minut</h2>
+  <table>
+    <tr><th style="width:24mm">Hora</th><th>Què passa</th><th style="width:40mm">Pantalla</th></tr>
+    <tr><td>14:55–15:03</td><td>Desplegament. <b>Represa</b> (una frase, a la pàgina 4 de la sessió anterior).</td><td>Projecció</td></tr>
+    <tr><td>15:03–15:08</td><td>Entrar a RoboMón (codi de classe i PIN de dibuixos).</td><td>Chromebook</td></tr>
+    <tr><td>15:08–15:18</td><td><b>Demostració.</b> Amb la xuleta projectada: 1) connecto el Dash; 2) When Start i, enganxat a sota, Forward 50; 3) el davant a la línia, prem Start, i mesurem: 50 cm. Pregunta: «I si la marca és a 70?»</td><td>Projecció (xuleta)</td></tr>
+    <tr><td>15:18–16:12</td><td><b>Treball.</b> L'app els porta pas a pas: 1) <b>predicció</b>: on s'aturarà amb Forward 50; 2) Dash connectat; 3) N1: Forward 50 i mirar on s'atura; 4) N2: el número de la seva marca → «Ja ho puc ensenyar»; 5) N3: anar a la marca, mitja volta i tornar.</td><td>Robot / pantalla</td></tr>
+    <tr><td>16:12–16:22</td><td>Al tauler: <b>Targeta de sortida</b>. Responen 2 preguntes.</td><td>Chromebook</td></tr>
+    <tr><td>16:22–16:28</td><td>Marge. <b>Tanca la sessió</b>.</td><td>—</td></tr>
+    <tr><td>16:28–16:40</td><td>Recollida. Dash apagats i a carregar. La cinta de terra es pot deixar per al grup següent.</td><td>—</td></tr>
+  </table>
+<div class="peu">S4 · Arriba a la marca · RECURS · 1</div>
+</section>
+<section class="full">
+<h1>Targeta de demostració</h1>
+  <p>Quan un nen és a «Volen ensenyar-ho»: mira-ho i fes-li <b>les dues preguntes, sempre les mateixes</b>. 30–45 segons. Un clic al mòbil.</p>
+  <div class="caixa"><h2 style="margin-top:0">Nivell 2 · Les dues preguntes</h2>
+    <p style="font-size:15pt; margin: 2mm 0;"><b>1.</b> «Posa'l a la sortida i prem Start: s'atura a la teva marca?»</p>
+    <p style="font-size:15pt; margin: 2mm 0;"><b>2.</b> «Quin número has posat? Com l'has trobat?»</p></div>
+  <table>
+    <tr><th style="width:58mm">Botó al mòbil</th><th>Quan el prems</th><th style="width:30mm">Nota</th></tr>
+    <tr><td><b>N2 · Funciona i ho explica</b></td><td>S'atura a la seva marca (±3 cm) <b>i</b> explica que el número són centímetres i com l'ha ajustat.</td><td>8<br>(8,5 si abans havia dit «no me n'he sortit»)</td></tr>
+    <tr><td><b>N2 · No funciona, però sap per què</b></td><td>Es passa o no arriba, però <b>sap què ha de canviar</b>: «hi falten 10 cm, posaré 10 més».</td><td>7,5</td></tr>
+    <tr><td><b>Encara no</b></td><td>Ni funciona ni sap per què. Una pista i tornarà a la cua. <b>No treu punts.</b></td><td>—</td></tr>
+    <tr><td><b>N1 no és cert</b></td><td>Havia marcat que el Dash avançava i s'aturava i no és així.</td><td>torna a 0</td></tr>
+  </table>
+  <div class="caixa"><h2 style="margin-top:0">Nivell 3</h2><p>Va a la marca, fa mitja volta (Turn Right 180) i torna. <b>N3 · Fet i ho explica</b> (10) si diu per què 180. <b>N3 · Fet</b> (9) si només funciona.</p></div>
+  <h2>Les variants (cadascú la seva, la diu l'app)</h2><ul><li><b>A</b> · Marca a 40 cm</li><li><b>B</b> · Marca a 70 cm</li><li><b>C</b> · Marca a 90 cm</li></ul>
+  <h2>Regles que cal dir en veu alta (una vegada)</h2>
+  <ul><li><b>Cadascú la seva missió.</b> La del company no et serveix.</li><li><b>Qui ajuda parla, no toca.</b> Mans al darrere.</li><li><b>Dir «no me n'he sortit» està bé:</b> et dona una pista i, si cal, vinc jo.</li></ul>
+<div class="peu">S4 · Arriba a la marca · RECURS · 2</div>
+</section>
+<section class="full">
+<h1>Solucionari</h1>
+  <h2>Predicció (abans de provar)</h2><p>«Abans de provar: amb «Forward 50», on s'aturarà el Dash?» · Opcions: Abans de la meva marca · Just a la meva marca · Després de la meva marca. <b>No puntua l'encert:</b> compta haver-ho pensat abans.</p>
+  <h2>Solucions</h2>
+  <table><tr><td style="width:50mm"><b>Predicció amb Forward 50</b></td><td>A (40 cm): després de la marca · B i C (70 i 90 cm): abans. No puntua l'encert.</td></tr><tr><td style="width:50mm"><b>A · Marca a 40 cm</b></td><td>When Start · Forward 40</td></tr><tr><td style="width:50mm"><b>B · Marca a 70 cm</b></td><td>When Start · Forward 70</td></tr><tr><td style="width:50mm"><b>C · Marca a 90 cm</b></td><td>When Start · Forward 90</td></tr><tr><td style="width:50mm"><b>Nivell 3 (anar i tornar)</b></td><td>Forward (la seva distància) · Turn Right 180 · Forward (la mateixa)</td></tr><tr><td style="width:50mm"><b>Nota</b></td><td>Al vostre terra pot sortir uns centímetres diferent: el que compta és que ajusti el número mesurant.</td></tr></table>
+  <h2>Targeta de sortida (es corregeix sola)</h2>
+  <table><tr><th style="width:90mm">Pregunta</th><th>Correcta</th></tr><tr><td>«El Dash s'atura 10 cm abans de la marca. Què has de canviar?»</td><td><b>Posar 10 més al número de Forward</b> · Diagnòstic: +1 a qui no arriba a N1.</td></tr><tr><td>«Quin bloc fa que el Dash faci mitja volta?»</td><td><b>Turn Right 180</b></td></tr></table>
+  <h2>Cartes de repte: solucions</h2>
+  <table><tr><td style="width:40mm">Quadrat</td><td>Repeat 4 times: Forward 30 · Turn Right 90</td></tr><tr><td style="width:40mm">Espera</td><td>Forward · Wait For 2 seconds · Turn Right 180 · Forward</td></tr><tr><td style="width:40mm">Forma de L</td><td>Forward 50 · Turn Left 90 · Forward 30</td></tr><tr><td style="width:40mm">Triangle</td><td>Repeat 3 times: Forward 40 · Turn Right 120</td></tr><tr><td style="width:40mm">Sense girar</td><td>Forward · Backward (el mateix número)</td></tr><tr><td style="width:40mm">Ziga-zaga</td><td>Repeat 3 times: Forward 20 · Turn Right 90 · Forward 20 · Turn Left 90</td></tr></table>
+<div class="peu">S4 · Arriba a la marca · RECURS · 3</div>
+</section>
+<section class="full">
+<h1>Errors típics, escala i represa</h1>
+  <h2>«No me n'he sortit»: on s'encallen i la pista que els dona l'app</h2>
+  <table><tr><th style="width:52mm">El nen tria…</th><th>Pista</th></tr><tr><td>No es connecta</td><td>Encén el Dash amb el botó de dalt. Al Blockly, toca el robot i tria el teu Dash pel nom. Només una tauleta per Dash.</td></tr><tr><td>Premo Start i no fa res</td><td>El primer bloc ha d'anar enganxat just a sota de «When Start». Si està solt, no fa res.</td></tr><tr><td>Es passa o no arriba</td><td>Mesura amb la cinta quants centímetres falten o sobren. Si es passa, posa un número més petit. Si no arriba, més gran.</td></tr><tr><td>No sé què he de fer</td><td>Primer «When Start». A sota, «Forward» amb un número: són centímetres. Prem Start.</td></tr></table>
+  
+  <h2>Escala de nota de la sessió</h2>
+  <table>
+    <tr><td>Present, sense cap registre · encallat honest (+1 diagnòstic encertat)</td><td style="width:22mm">2 · 3 · 4</td></tr>
+    <tr><td>N1 (+1 si ha fet la predicció)</td><td>5 · 6</td></tr>
+    <tr><td>N2 · no funciona però sap per què · funciona i ho explica · ha fallat i ho ha arreglat</td><td>7,5 · 8 · 8,5</td></tr>
+    <tr><td>N3 · fet · fet i explicat</td><td>9 · 10</td></tr>
+  </table>
+  <p class="caixa" style="font-size:12pt;"><b>Represa de la sessió següent:</b> «Ara ja sabeu fer moure robots. Avui en muntareu un vosaltres: una parada que serveix quan veu un color.»</p>
+<div class="peu">S4 · Arriba a la marca · RECURS · 4</div>
+</section>
+<section class="full">
+<div data-xuleta="dash"></div><div data-xuleta="dash"></div>
+<div class="peu">S4 · Arriba a la marca · RECURS · 5 · imprimir EN COLOR</div>
+</section>
+<section class="full" style="padding: 14mm 15mm;"><div class="cartes"><div class="carta"><span class="t">Repte extra · Quadrat</span><p>El Dash fa un quadrat de 30 cm i torna a la sortida.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Espera</span><p>El Dash va a la teva marca, espera 2 segons i torna.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Forma de L</span><p>El Dash avança 50 cm, gira a l'esquerra i avança 30 cm.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Triangle</span><p>El Dash fa un triangle de 40 cm de costat.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Sense girar</span><p>El Dash va a la marca i torna enrere sense girar-se.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Ziga-zaga</span><p>El Dash fa ziga-zaga: 20 cm, dreta, 20 cm, esquerra… tres vegades.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div></div><div class="peu">S4 · Arriba a la marca · RECURS · 6</div></section>
+
+<script>
+/*@@IL@@*/
+</script>
+<script>
+/* Xuletes en color amb els mateixos dibuixos que l'app */
+function itemSVG(i) {
+  if (i.codi) return codiSVG(i.codi);
+  if (i.bloc) return blocSVG(i.bloc, i.text);
+  if (i.peca) return pecaSVG(i.peca);
+  if (i.carta) return cartaSVG(i.carta, i.tipus);
+  return '';
+}
+document.querySelectorAll('[data-xuleta]').forEach(el => {
+  const x = XULETES[el.dataset.xuleta];
+  el.outerHTML = '<div class="xuleta-a5"><h2>' + x.titol + '</h2>' + x.grups.map(g => {
+    const blocs = g.items.every(i => i.bloc);
+    return '<div class="xg"><h3>' + g.grup + '</h3><div class="xc' + (blocs ? ' blocs' : '') + '">' +
+      g.items.map(i => '<div class="xi' + (i.bloc ? ' bloc' : '') + '">' + (i.nom ? '<span>' + i.nom + '</span>' : '') + itemSVG(i) + '</div>').join('') + '</div></div>';
+  }).join('') + '<p class="regla"><b>' + x.regla + '</b></p></div>';
+});
+</script>
+</body>
+</html>

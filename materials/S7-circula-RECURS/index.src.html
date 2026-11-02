@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<title>S7 · Circula · RECURS (mestre)</title>
+<!-- RECURS generat per eines/genera-materials.mjs a partir de la llavor de missions. No l'editis a mà: canvia el generador. -->
+<style>
+/*@@FONTS@@*/
+@page { size: A4; margin: 0; }
+@page apaisat { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Lexend", "Atkinson Hyperlegible", Verdana, "Segoe UI", Arial, sans-serif; color: #000; background: #e9ecef; }
+b, strong, h1, h2, h3, th { font-weight: 600; }
+.full { width: 210mm; height: 297mm; padding: 14mm 15mm; margin: 8mm auto; background: #fff; position: relative; overflow: hidden; page-break-after: always; break-after: page; }
+.full.apaisat { page: apaisat; width: 297mm; height: 210mm; padding: 0; }
+@media print { body { background: #fff; } .full { margin: 0; } .no-imprimir { display: none; } }
+h1 { font-size: 21pt; margin: 0 0 4mm; }
+h2 { font-size: 14pt; margin: 5mm 0 2mm; }
+p, li, td, th { font-size: 10.5pt; line-height: 1.32; }
+.peu { position: absolute; bottom: 8mm; right: 15mm; font-size: 8.5pt; color: #444; }
+table { border-collapse: collapse; width: 100%; }
+td, th { border: 1px solid #000; padding: 1.6mm 2.6mm; vertical-align: top; text-align: left; }
+th { background: #eee; }
+.caixa { border: 1.5px solid #000; border-radius: 4mm; padding: 3mm 4mm; margin: 3mm 0; }
+.check li { list-style: none; margin-left: -6mm; }
+.check li::before { content: "☐  "; font-size: 12pt; }
+.codi-txt { font-family: inherit; font-weight: 600; letter-spacing: .5px; white-space: nowrap; }
+/* Xuleta en color */
+.xuleta-a5 { height: 133mm; border: 1px dashed #888; border-radius: 3mm; padding: 6mm 7mm; margin-bottom: 4mm; display: flex; flex-direction: column; gap: 2.5mm; }
+.xuleta-a5 h2 { margin: 0; font-size: 15pt; }
+.xg h3 { margin: 0 0 1.5mm; font-size: 11pt; color: #333; }
+.xc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm 3mm; }
+.xi { border: 0.4mm solid #bbb; border-radius: 2mm; padding: 1.5mm 2mm; display: flex; flex-direction: column; align-items: center; gap: 1mm; }
+.xi span { font-size: 10.5pt; font-weight: 600; }
+.xi svg { width: 100%; height: 11mm; }
+.regla { font-size: 9.5pt; margin: auto 0 0; }
+/* Cartes */
+.cartes { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 86mm); }
+div.carta { border: 1px dashed #000; padding: 8mm; display: flex; flex-direction: column; gap: 4mm; overflow: hidden; }
+div.carta .t { font-size: 12pt; font-weight: 600; border: 1.5px solid #000; border-radius: 3mm; padding: 1mm 3mm; align-self: flex-start; }
+div.carta p { font-size: 17pt; line-height: 1.3; margin: 0; }
+div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
+/* Pòsters */
+.poster { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 12mm; }
+.poster h1 { font-size: 52pt; line-height: 1.15; margin: 0; }
+.poster p { font-size: 24pt; margin: 0; }
+.boto-imprimir { position: fixed; right: 16px; top: 16px; font: 600 18px sans-serif; padding: 12px 18px; border-radius: 10px; border: 2px solid #000; background: #fff; cursor: pointer; }
+
+.xi svg.carta, .xi svg.bloc { width: auto; max-width: 100%; height: 11mm; }
+.xi svg.peca { width: auto; max-width: 100%; height: 26mm; }
+.xc.blocs { display: flex; flex-wrap: wrap; }
+.xi.bloc { padding: 1.5mm 2mm; }
+.xuleta-a5 { height: 128mm; }
+.dib svg { width: 100%; height: 100%; }
+.carta .sol { font-size: 10pt; color: #333; }
+.targeta-compte { border: 1px dashed #000; border-radius: 3mm; padding: 6mm 7mm; height: 62mm; display: flex; flex-direction: column; gap: 4mm; }
+.targeta-compte p { font-size: 13pt; margin: 0; }
+.passos li { font-size: 13pt; margin: 2.5mm 0; line-height: 1.35; }
+</style>
+</head>
+<body>
+<button class="boto-imprimir no-imprimir" onclick="window.print()">Imprimeix (mida real, 100 %)</button>
+<section class="full">
+<h1>S7 · Circula · Guió del mestre</h1>
+  <p><b>Eina:</b> Scratch al Chromebook, en català. <b>Avui es creen els comptes, amb tu.</b> Cadascú fa el seu projecte. Cadascú té el seu color d'obstacle.</p>
+  <p><b>La missió (surt al Chromebook):</b> «Fes un vehicle que es mogui amb les fletxes i torni a la sortida si toca el teu color.»</p>
+  <h2>Migdia (30 min)</h2>
+  <ul class="check"><li>Decideix com seran els usuaris de Scratch (sense nom ni cognoms complets) i apunta'ls. Si l'escola té compte de professor, crea'ls des d'allà</li><li>Targetes del compte (pàgina 7), una per alumne, per guardar a classe</li><li>Projecta la pàgina «Com entrar a Scratch» (pàgina 6) o deixa-la impresa a cada taula</li><li>Xuletes de blocs (pàgina 5) en color</li><li>Tauler: <b>Grup → S7 → Obre la sessió</b></li></ul>
+  <h2>Minut a minut</h2>
+  <table>
+    <tr><th style="width:24mm">Hora</th><th>Què passa</th><th style="width:40mm">Pantalla</th></tr>
+    <tr><td>14:55–15:03</td><td>Desplegament. <b>Represa</b> (una frase, a la pàgina 4 de la sessió anterior).</td><td>Projecció</td></tr>
+    <tr><td>15:03–15:08</td><td>Entrar a RoboMón (codi de classe i PIN de dibuixos).</td><td>Chromebook</td></tr>
+    <tr><td>15:08–15:18</td><td><b>Demostració.</b> Amb la xuleta projectada: 1) «quan la tecla fletxa dreta es premi» + «suma 10 a x»; 2) dibuixo la carretera i l'obstacle; 3) «quan la bandera es cliqui» → «per sempre» → «si tocant el color … llavors» → «ves a x: y:».</td><td>Projecció (xuleta)</td></tr>
+    <tr><td>15:18–16:12</td><td><b>Treball.</b> L'app els porta pas a pas: 1) entrar al compte i projecte nou; 2) N1: carretera i vehicle amb fletxes; 3) <b>pla</b>: quin bloc el farà tornar; 4) N2: torna si toca el seu color → «Ja ho puc ensenyar»; 5) N3: meta amb «Has arribat!».</td><td>Robot / pantalla</td></tr>
+    <tr><td>16:12–16:22</td><td>Al tauler: <b>Targeta de sortida</b>. Responen 2 preguntes.</td><td>Chromebook</td></tr>
+    <tr><td>16:22–16:28</td><td>Marge. <b>Tanca la sessió</b>.</td><td>—</td></tr>
+    <tr><td>16:28–16:40</td><td>Recollida. <b>Desa ara</b> (Fitxer → Desa ara) i tancar la sessió de Scratch. La S8 continua aquest projecte.</td><td>—</td></tr>
+  </table>
+<div class="peu">S7 · Circula · RECURS · 1</div>
+</section>
+<section class="full">
+<h1>Targeta de demostració</h1>
+  <p>Quan un nen és a «Volen ensenyar-ho»: mira-ho i fes-li <b>les dues preguntes, sempre les mateixes</b>. 30–45 segons. Un clic al mòbil.</p>
+  <div class="caixa"><h2 style="margin-top:0">Nivell 2 · Les dues preguntes</h2>
+    <p style="font-size:15pt; margin: 2mm 0;"><b>1.</b> «Mou el vehicle i fes-lo tocar el teu color: torna a la sortida?»</p>
+    <p style="font-size:15pt; margin: 2mm 0;"><b>2.</b> «Què fa la tecla? I què fa el «si … llavors»?»</p></div>
+  <table>
+    <tr><th style="width:58mm">Botó al mòbil</th><th>Quan el prems</th><th style="width:30mm">Nota</th></tr>
+    <tr><td><b>N2 · Funciona i ho explica</b></td><td>Torna en tocar el seu color <b>i</b> explica que la tecla mou quan la prems i la condició es mira tota l'estona (dins de «per sempre»).</td><td>8<br>(8,5 si abans havia dit «no me n'he sortit»)</td></tr>
+    <tr><td><b>N2 · No funciona, però sap per què</b></td><td>No torna, però <b>sap per què</b>: falta «per sempre», el color no és exacte (comptagotes), està fora de la bandera.</td><td>7,5</td></tr>
+    <tr><td><b>Encara no</b></td><td>Ni funciona ni sap per què. Una pista i tornarà a la cua. <b>No treu punts.</b></td><td>—</td></tr>
+    <tr><td><b>N1 no és cert</b></td><td>Havia marcat que el vehicle es movia amb les fletxes i no és així.</td><td>torna a 0</td></tr>
+  </table>
+  <div class="caixa"><h2 style="margin-top:0">Nivell 3</h2><p>Hi ha una meta i diu «Has arribat!». <b>N3 · Fet i ho explica</b> (10) si diu quin bloc ho detecta. <b>N3 · Fet</b> (9) si només funciona.</p></div>
+  <h2>Les variants (cadascú la seva, la diu l'app)</h2><ul><li><b>A</b> · Obstacle vermell</li><li><b>B</b> · Obstacle blau</li><li><b>C</b> · Obstacle lila</li></ul>
+  <h2>Regles que cal dir en veu alta (una vegada)</h2>
+  <ul><li><b>Cadascú la seva missió.</b> La del company no et serveix.</li><li><b>Qui ajuda parla, no toca.</b> Mans al darrere.</li><li><b>Dir «no me n'he sortit» està bé:</b> et dona una pista i, si cal, vinc jo.</li></ul>
+<div class="peu">S7 · Circula · RECURS · 2</div>
+</section>
+<section class="full">
+<h1>Solucionari</h1>
+  <h2>Pla (abans del nivell 2)</h2><p>«Abans de programar: quin bloc farà tornar el vehicle quan toqui el teu color?» · Opcions: si … llavors · quan la tecla es premi · suma 10 a x. <b>No puntua l'encert:</b> compta haver-ho pensat abans.</p>
+  <h2>Solucions</h2>
+  <table><tr><td style="width:50mm"><b>Pla</b></td><td>«si … llavors» (amb «tocant el color …?» a dins). No puntua l'encert.</td></tr><tr><td style="width:50mm"><b>Moure's</b></td><td>«quan la tecla fletxa dreta es premi» → «suma 10 a x» (i igual amb les altres fletxes)</td></tr><tr><td style="width:50mm"><b>Tornar</b></td><td>«quan la bandera es cliqui» → «per sempre» → «si tocant el color [el seu]? llavors» → «ves a x: (sortida) y: (sortida)»</td></tr><tr><td style="width:50mm"><b>N3</b></td><td>Dins del mateix «per sempre»: «si tocant el color [meta]? llavors» → «digues Has arribat! durant 2 segons»</td></tr></table>
+  <h2>Targeta de sortida (es corregeix sola)</h2>
+  <table><tr><th style="width:90mm">Pregunta</th><th>Correcta</th></tr><tr><td>«El vehicle toca el vermell i no torna. Mira el programa. Per què falla?»</td><td><b>Falta «per sempre»: la condició només es mira una vegada</b> · Diagnòstic: +1 a qui no arriba a N1.</td></tr><tr><td>«Quin bloc fa que passi alguna cosa quan prems una tecla?»</td><td><b>quan la tecla es premi</b></td></tr></table>
+  <h2>Cartes de repte: solucions</h2>
+  <table><tr><td style="width:40mm">Dos obstacles</td><td>Un altre «si tocant el color … llavors» dins de «per sempre».</td></tr><tr><td style="width:40mm">Amunt i avall</td><td>«quan la tecla fletxa amunt es premi» → «suma 10 a y» (avall: -10).</td></tr><tr><td style="width:40mm">Ai!</td><td>«digues Ai! durant 1 segons» abans de «ves a».</td></tr><tr><td style="width:40mm">Més ràpid</td><td>«suma 20 a x» en lloc de 10.</td></tr><tr><td style="width:40mm">Començar bé</td><td>«ves a x: y:» just sota la bandera.</td></tr><tr><td style="width:40mm">Meta</td><td>«digues …» i després «atura tot».</td></tr></table>
+<div class="peu">S7 · Circula · RECURS · 3</div>
+</section>
+<section class="full">
+<h1>Errors típics, escala i represa</h1>
+  <h2>«No me n'he sortit»: on s'encallen i la pista que els dona l'app</h2>
+  <table><tr><th style="width:52mm">El nen tria…</th><th>Pista</th></tr><tr><td>No es mou</td><td>Cada fletxa necessita el seu bloc «quan la tecla … es premi» amb «suma 10 a x» (o a y) a sota.</td></tr><tr><td>No torna a la sortida</td><td>La condició ha d'anar dins de «per sempre», sota la bandera. Tria el color exacte amb el comptagotes.</td></tr><tr><td>No puc entrar a Scratch</td><td>Avisa el mestre: et dirà el teu usuari i la contrasenya.</td></tr><tr><td>No sé què he de fer</td><td>Primer, que el vehicle es mogui amb una fletxa. Mira la xuleta («Codis»).</td></tr></table>
+  
+  <h2>Escala de nota de la sessió</h2>
+  <table>
+    <tr><td>Present, sense cap registre · encallat honest (+1 diagnòstic encertat)</td><td style="width:22mm">2 · 3 · 4</td></tr>
+    <tr><td>N1 (+1 si ha fet el pla)</td><td>5 · 6</td></tr>
+    <tr><td>N2 · no funciona però sap per què · funciona i ho explica · ha fallat i ho ha arreglat</td><td>7,5 · 8 · 8,5</td></tr>
+    <tr><td>N3 · fet · fet i explicat</td><td>9 · 10</td></tr>
+  </table>
+  <p class="caixa" style="font-size:12pt;"><b>Represa de la sessió següent:</b> «Obriu el vehicle de la setmana passada (Les Meves Coses). Avui li posareu un marcador.»</p>
+<div class="peu">S7 · Circula · RECURS · 4</div>
+</section>
+<section class="full">
+<div data-xuleta="scratch-s7"></div><div data-xuleta="scratch-s7"></div>
+<div class="peu">S7 · Circula · RECURS · 5 · imprimir EN COLOR</div>
+</section>
+<section class="full">
+<h1>Com entrar a Scratch</h1>
+      <ol class="passos">
+        <li>Obre el navegador i escriu <b>scratch.mit.edu</b>.</li>
+        <li>A dalt a la dreta, prem <b>«Inicia la sessió»</b>.</li>
+        <li>Escriu el teu <b>usuari</b> i la teva <b>contrasenya</b> (són a la teva targeta). La <b>@</b> no cal: l'usuari no en porta.</li>
+        <li>Prem <b>«Crea»</b> per fer un projecte nou.</li>
+        <li>Per tornar-lo a trobar: <b>«Les Meves Coses»</b> (a dalt).</li>
+        <li>En acabar: <b>Fitxer → «Desa ara»</b>.</li>
+      </ol>
+      <div class="caixa"><p><b>Per al mestre:</b> els comptes es creen el primer dia, amb tu («Uneix-te a l'Scratch» o des d'un compte de professor si l'escola en té). Usuari sense nom ni cognoms complets. Les targetes es queden a classe.</p></div>
+<div class="peu">S7 · Circula · RECURS · 6</div>
+</section>
+<section class="full">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:6mm;"><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div></div>
+<div class="peu">S7 · Circula · RECURS · 7</div>
+</section>
+<section class="full" style="padding: 14mm 15mm;"><div class="cartes"><div class="carta"><span class="t">Repte extra · Dos obstacles</span><p>Posa un segon obstacle d'un altre color. També el fa tornar.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Amunt i avall</span><p>El vehicle també es mou amb les fletxes amunt i avall.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Ai!</span><p>Quan toca l'obstacle, diu «Ai!» abans de tornar.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Més ràpid</span><p>Fes que el vehicle vagi el doble de ràpid.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Començar bé</span><p>Quan cliques la bandera, el vehicle va a la sortida.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Meta</span><p>Quan arriba a la meta, tot s'atura.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div></div><div class="peu">S7 · Circula · RECURS · 8</div></section>
+
+<script>
+/*@@IL@@*/
+</script>
+<script>
+/* Xuletes en color amb els mateixos dibuixos que l'app */
+function itemSVG(i) {
+  if (i.codi) return codiSVG(i.codi);
+  if (i.bloc) return blocSVG(i.bloc, i.text);
+  if (i.peca) return pecaSVG(i.peca);
+  if (i.carta) return cartaSVG(i.carta, i.tipus);
+  return '';
+}
+document.querySelectorAll('[data-xuleta]').forEach(el => {
+  const x = XULETES[el.dataset.xuleta];
+  el.outerHTML = '<div class="xuleta-a5"><h2>' + x.titol + '</h2>' + x.grups.map(g => {
+    const blocs = g.items.every(i => i.bloc);
+    return '<div class="xg"><h3>' + g.grup + '</h3><div class="xc' + (blocs ? ' blocs' : '') + '">' +
+      g.items.map(i => '<div class="xi' + (i.bloc ? ' bloc' : '') + '">' + (i.nom ? '<span>' + i.nom + '</span>' : '') + itemSVG(i) + '</div>').join('') + '</div></div>';
+  }).join('') + '<p class="regla"><b>' + x.regla + '</b></p></div>';
+});
+</script>
+</body>
+</html>

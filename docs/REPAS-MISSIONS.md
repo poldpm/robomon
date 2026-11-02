@@ -2,7 +2,8 @@
 
 > **2 de novembre de 2026 · taller renovat.** Ja tenen missió completa (publicada): **S1**, **S2 Programa amb cartes** (Scottie Go! a la tauleta; cartes de la foto d'en Pol, **sense SWITCH TO**), **S3 El teu circuit** (Ozobot, full blanc, cruïlla i codis de direcció), **S5 Munta i modifica** (SPIKE Essential, parada *Snack Stand*), **S6 La parada classifica** (la mateixa parada millorada: cada color fa una cosa), **S7 Circula** i **S8 El marcador** (Scratch: el marcador és del vehicle de la S7). Cada una amb xuleta pròpia (botó «Codis» i projecció).
 > **S4 Arriba a la marca** (Dash amb Blockly, sense pinça; blocs de la guia oficial «Blockly app introduction», 2024).
-> **Pendent:** S9 (personal, segons el carnet).
+> **S9 Missió final**: personal. L'app dona a cadascú la primera eina que no té al carnet (nivell 2), amb la seva xuleta; qui les té totes, repte final.
+> **Material imprimible** de totes les sessions a `materials/`. De la S3 a la S9 es genera amb `node eines/genera-materials.mjs` a partir de la llavor de missions.
 > Els esbossos de sota són anteriors a la renovació: valen les lliçons, no les activitats antigues.
 
 ---

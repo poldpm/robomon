@@ -140,6 +140,7 @@ Fet l'1 de novembre de 2026: funciona (versió 41d00a8 instal·lada).
 node eines/construeix.mjs          # genera apps-script/*/*.html i pla-b/ a partir de src/
 node proves/proves.mjs             # simula una sessió sencera amb 18 alumnes (≈ 2 min)
 node proves/simulador.mjs          # servidor local: http://localhost:8787/admin?usuari=mestre@escola.cat
+node eines/genera-materials.mjs     # material de la S3 a la S9 (a partir de les missions)
 node eines/pdf-materials.mjs materials/S1-primers-codis-RECURS
 ```
 

@@ -938,8 +938,7 @@ function mostra(id) {
   $('capcal').hidden = !ambCapcal;
   $('capcal').classList.toggle('sobre-mapa', id === 'p-mapa');
   $('boto-mapa').hidden = ['p-missio', 'p-encallat', 'p-pista'].indexOf(id) < 0;
-  const mx = S.estat && S.estat.avui && S.estat.avui.missio;
-  $('boto-codis').hidden = !(mx && mx.xuleta) || ['p-missio', 'p-encallat', 'p-pista'].indexOf(id) < 0;
+  $('boto-codis').hidden = !xuletaAvui() || ['p-missio', 'p-encallat', 'p-pista'].indexOf(id) < 0;
   if (ambCapcal && S.estat) {
     $('capcal-avatar').innerHTML = avatarHTML(S.estat.alumne.avatar);
     $('capcal-nom').textContent = S.estat.alumne.nom;
@@ -1007,12 +1006,20 @@ function triaHTML(o) {
   const d = dibuix(o.imatge);
   return `<button class="tria${d ? '' : ' nomes-text'}" data-v="${esc(o.clau)}">${d ? `<span class="dibuix">${d}</span>` : ''}<span class="etiqueta">${esc(o.text)}</span></button>`;
 }
+/* A la S9 la xuleta depèn de l'eina de cada alumne (variant = eina que li falta al carnet). */
+const XULETA_EINA = { scottie: 'scottie', ozobot: 'ozobot-cruilla', dash: 'dash', spike: 'spike', scratch: 'scratch-s7' };
+function xuletaAvui() {
+  const a = S.estat && S.estat.avui;
+  if (!a || !a.missio || !a.missio.xuleta) return '';
+  const x = a.missio.xuleta === 'variant' ? (XULETA_EINA[a.variant] || '') : a.missio.xuleta;
+  return XULETES[x] ? x : '';
+}
 function obreXuleta() {
-  const m = S.estat.avui && S.estat.avui.missio;
-  if (!m || !m.xuleta) return;
-  $('modal-xuleta-cos').innerHTML = xuletaHTML(m.xuleta);
-  $('modal-xuleta-titol').textContent = titolXuleta(m.xuleta);
-  $('modal-xuleta').setAttribute('aria-label', titolXuleta(m.xuleta));
+  const x = xuletaAvui();
+  if (!x) return;
+  $('modal-xuleta-cos').innerHTML = xuletaHTML(x);
+  $('modal-xuleta-titol').textContent = titolXuleta(x);
+  $('modal-xuleta').setAttribute('aria-label', titolXuleta(x));
   $('modal-xuleta').hidden = false;
 }
 function tancaModal() { $('modal-xuleta').hidden = true; }
@@ -1055,7 +1062,9 @@ function pintaMissio() {
 
   const pas = pasActual();
   const preg = $('m-pregunta'), cos = $('m-cos'), bot = $('m-botons');
-  const il = (clau) => dibuix(clau) ? `<div class="il">${dibuix(clau)}</div>` : '';
+  /* «eina» = el dibuix de l'eina de l'alumne (S9: la variant és l'eina) */
+  const resol = clau => clau === 'eina' ? (SEGELLS[a.variant] ? SEGELLS[a.variant][1] : '') : dibuix(clau);
+  const il = (clau) => resol(clau) ? `<div class="il">${resol(clau)}</div>` : '';
   if (pas === 'abans') {
     preg.textContent = m.abans.text;
     cos.innerHTML = `<div class="graella" style="grid-template-columns: repeat(${m.abans.opcions.length}, 1fr); height:100%;">` +

@@ -109,6 +109,24 @@ function objecte_(dades, fila, i) {
   return o;
 }
 
+/** Carnet d'eines d'un alumne: una eina hi és si té nivell 2 en alguna sessió d'aquella eina. */
+function carnetDe_(id, progres) {
+  var carnet = {};
+  ORDRE_EINES.forEach(function (e) { carnet[e] = false; });
+  progres.forEach(function (p) {
+    if (String(p.id_alumne) !== String(id)) return;
+    var ses = SESSIONS[String(p.sessio)];
+    if (ses && carnet.hasOwnProperty(ses.eina) && estatEfectiu_(p).nivell >= 2) carnet[ses.eina] = true;
+  });
+  return carnet;
+}
+
+/** S9: la primera eina (en l'ordre del taller) que encara no és al carnet; si les té totes, «repte». */
+function einaPerMissioFinal_(carnet) {
+  for (var i = 0; i < ORDRE_EINES.length; i++) if (!carnet[ORDRE_EINES[i]]) return ORDRE_EINES[i];
+  return 'repte';
+}
+
 function objectes_(nom) {
   var d = llegeix_(nom);
   return d.files.map(function (f, i) { return objecte_(d, f, i); });

@@ -407,10 +407,35 @@ function missionsPerDefecte_() {
     ['S8', 'variant', 'B', 17, 'Compta els cops que toques el teu color', '', '', '', P],
     ['S8', 'variant', 'C', 18, 'Compta les arribades a la meta', '', '', '', P]
   ];
-  ['S9'].forEach(function (s) {
-    f[s] = [[s, 'missio', 'titol', 1, SESSIONS[s].nom, '', '', '', E],
-            [s, 'missio', 'frase', 2, 'Pendent de dissenyar.', '', '', '', E]];
-  });
+  f.S9 = [
+    ['S9', 'missio',  'titol',  1, 'Missió final', '', '', '', P],
+    ['S9', 'missio',  'frase',  2, 'Torna a l\'eina que encara no tens al carnet i aconsegueix-ne el segell.', '', '', '', P],
+    ['S9', 'missio',  'xuleta', 3, 'variant', '', '', '', P],
+    ['S9', 'control', 'c0',     4, 'Tens la teva eina a punt: encesa, connectada, calibrada o oberta?', 'eina', '', '', P],
+    ['S9', 'nivell',  'n1',     5, 'Fes el primer pas de la teva missió (mira «La teva» i la xuleta, al botó «Codis»).', 'eina', '', '', P],
+    ['S9', 'control', 'n1',     6, 'La teva eina fa el primer pas?', 'eina', '', '', P],
+    ['S9', 'nivell',  'n2',     8, 'Acaba la teva missió. Ensenya-ho i explica com ho has fet.', 'mestre', '', '', P],
+    ['S9', 'nivell',  'n3',     9, 'Fes-la més difícil: agafa una carta de repte de la teva eina.', 'carta', '', '', P],
+    ['S9', 'encallat', 'eina',  10, 'No recordo com funciona', 'e-nose',
+      'Obre «Codis»: hi ha la xuleta de la teva eina. Mira el primer pas.', 'e-nose', P],
+    ['S9', 'encallat', 'apunt', 11, 'No s\'encén o no es connecta', 'mestre',
+      'Fes-ho com el primer dia: botó d\'encendre, connectar a l\'app i provar-ho. Si no va, demana ajuda.', 'mestre', P],
+    ['S9', 'encallat', 'falla', 12, 'Ho he provat i no funciona', 'e-perd',
+      'Mira què fa i on s\'equivoca. Canvia una sola cosa i torna-ho a provar.', 'e-perd', P],
+    ['S9', 'encallat', 'nose',  13, 'No sé què he de fer', 'e-nose',
+      'Llegeix «La teva»: és la teva missió. El primer pas és fer moure l\'eina una mica.', 'mestre', P],
+    ['S9', 'sortida', 'diag',   14, 'El robot no fa el que volies. Què fas primer?', '',
+      'a|Miro què fa i on s\'equivoca|;b|Ho esborro tot i torno a començar|;c|Ho deixo i faig una altra cosa|', 'a', P],
+    ['S9', 'sortida', 'eina',   15, 'Quin grup d\'ordres fa REPETIR en totes les eines?', '',
+      'a|REPEAT, Repeat i «per sempre»|;b|STEP, Forward i «suma 10 a x»|;c|BEGIN, When Start i la bandera|', 'a', P],
+    ['S9', 'variant', 'scottie', 16, 'Scottie Go! · Un repte amb 3 estrelles fent servir un número', '', '', '', P],
+    ['S9', 'variant', 'ozobot',  17, 'Ozobot · A la cruïlla, l\'Ozobot gira a la dreta', '', '', '', P],
+    ['S9', 'variant', 'dash',    18, 'Dash · El Dash s\'atura just a 60 cm', '', '', '', P],
+    ['S9', 'variant', 'spike',   19, 'SPIKE · La parada serveix només amb el groc', '', '', '', P],
+    ['S9', 'variant', 'scratch', 20, 'Scratch · El vehicle torna a la sortida si toca el vermell', '', '', '', P],
+    ['S9', 'variant', 'repte',   21, 'Repte final · Fes que dues eines treballin juntes (per exemple, el Dash porta l\'Ozobot)', '', '', '', P]
+  ];
+
   return f;
 }
 
@@ -570,7 +595,14 @@ function creaEquipsSiCal_(grup, sessio, forca) {
   var m = missioDeSessio_(sessio, true);
   var lletres = m && Object.keys(m.variants).length ? Object.keys(m.variants).sort() : ['A', 'B', 'C'];
   var files = [];
-  if (!unitats) {
+  if (sessio === 'S9') {
+    /* Missió final personal: a cadascú, l'eina que encara no té al carnet */
+    var progres = objectes_('PROGRES');
+    alumnes.forEach(function (a) {
+      var eina = einaPerMissioFinal_(carnetDe_(a.id_alumne, progres));
+      files.push([clauProgres_(a.id_alumne, sessio), String(a.id_alumne), grup, sessio, EINES[eina] || 'Repte final', eina]);
+    });
+  } else if (!unitats) {
     alumnes.forEach(function (a, i) {
       files.push([clauProgres_(a.id_alumne, sessio), String(a.id_alumne), grup, sessio, '', lletres[i % lletres.length]]);
     });
