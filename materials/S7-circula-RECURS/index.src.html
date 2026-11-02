@@ -45,15 +45,22 @@ div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
 .poster h1 { font-size: 52pt; line-height: 1.15; margin: 0; }
 .poster p { font-size: 24pt; margin: 0; }
 .boto-imprimir { position: fixed; right: 16px; top: 16px; font: 600 18px sans-serif; padding: 12px 18px; border-radius: 10px; border: 2px solid #000; background: #fff; cursor: pointer; }
+/* Fulls dels alumnes amb la capçalera oficial: més compactes perquè hi càpiguen */
+.full[data-capcalera] .xuleta-a5 { height: auto; padding: 4mm 6mm; gap: 1.6mm; margin-bottom: 4mm; }
+.full[data-capcalera] .xi svg { height: 8.5mm; }
+.full[data-capcalera] .cartes { grid-template-rows: repeat(3, 72mm); }
+/*@@ESCOLA_CSS@@*/
 
 .xi svg.carta, .xi svg.bloc { width: auto; max-width: 100%; height: 11mm; }
 .xi svg.peca { width: auto; max-width: 100%; height: 26mm; }
 .xc.blocs { display: flex; flex-wrap: wrap; }
 .xi.bloc { padding: 1.5mm 2mm; }
 .xuleta-a5 { height: 128mm; }
+.full[data-capcalera] .xuleta-a5 { height: auto; }
+.full[data-capcalera] .xi svg.peca { height: 18mm; }
 .dib svg { width: 100%; height: 100%; }
 .carta .sol { font-size: 10pt; color: #333; }
-.targeta-compte { border: 1px dashed #000; border-radius: 3mm; padding: 6mm 7mm; height: 62mm; display: flex; flex-direction: column; gap: 4mm; }
+.targeta-compte { border: 1px dashed #000; border-radius: 3mm; padding: 5mm 7mm; height: 50mm; display: flex; flex-direction: column; gap: 4mm; }
 .targeta-compte p { font-size: 13pt; margin: 0; }
 .passos li { font-size: 13pt; margin: 2.5mm 0; line-height: 1.35; }
 </style>
@@ -124,13 +131,12 @@ div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
   <p class="caixa" style="font-size:12pt;"><b>Represa de la sessió següent:</b> «Obriu el vehicle de la setmana passada (Les Meves Coses). Avui li posareu un marcador.»</p>
 <div class="peu">S7 · Circula · RECURS · 4</div>
 </section>
-<section class="full">
+<section class="full" data-capcalera="Blocs de Scratch">
 <div data-xuleta="scratch-s7"></div><div data-xuleta="scratch-s7"></div>
 <div class="peu">S7 · Circula · RECURS · 5 · imprimir EN COLOR</div>
 </section>
-<section class="full">
-<h1>Com entrar a Scratch</h1>
-      <ol class="passos">
+<section class="full" data-capcalera="Com entrar a Scratch">
+<ol class="passos">
         <li>Obre el navegador i escriu <b>scratch.mit.edu</b>.</li>
         <li>A dalt a la dreta, prem <b>«Inicia la sessió»</b>.</li>
         <li>Escriu el teu <b>usuari</b> i la teva <b>contrasenya</b> (són a la teva targeta). La <b>@</b> no cal: l'usuari no en porta.</li>
@@ -141,14 +147,17 @@ div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
       <div class="caixa"><p><b>Per al mestre:</b> els comptes es creen el primer dia, amb tu («Uneix-te a l'Scratch» o des d'un compte de professor si l'escola en té). Usuari sense nom ni cognoms complets. Les targetes es queden a classe.</p></div>
 <div class="peu">S7 · Circula · RECURS · 6</div>
 </section>
-<section class="full">
+<section class="full" data-capcalera="El meu compte de Scratch">
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:6mm;"><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div><div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div></div>
 <div class="peu">S7 · Circula · RECURS · 7</div>
 </section>
-<section class="full" style="padding: 14mm 15mm;"><div class="cartes"><div class="carta"><span class="t">Repte extra · Dos obstacles</span><p>Posa un segon obstacle d'un altre color. També el fa tornar.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Amunt i avall</span><p>El vehicle també es mou amb les fletxes amunt i avall.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Ai!</span><p>Quan toca l'obstacle, diu «Ai!» abans de tornar.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Més ràpid</span><p>Fes que el vehicle vagi el doble de ràpid.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Començar bé</span><p>Quan cliques la bandera, el vehicle va a la sortida.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Meta</span><p>Quan arriba a la meta, tot s'atura.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div></div><div class="peu">S7 · Circula · RECURS · 8</div></section>
+<section class="full" style="padding: 14mm 15mm;" data-capcalera="Cartes de repte"><div class="cartes"><div class="carta"><span class="t">Repte extra · Dos obstacles</span><p>Posa un segon obstacle d'un altre color. També el fa tornar.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Amunt i avall</span><p>El vehicle també es mou amb les fletxes amunt i avall.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Ai!</span><p>Quan toca l'obstacle, diu «Ai!» abans de tornar.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Més ràpid</span><p>Fes que el vehicle vagi el doble de ràpid.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Començar bé</span><p>Quan cliques la bandera, el vehicle va a la sortida.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Meta</span><p>Quan arriba a la meta, tot s'atura.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div></div><div class="peu">S7 · Circula · RECURS · 8</div></section>
 
 <script>
 /*@@IL@@*/
+</script>
+<script>
+/*@@ESCOLA@@*/
 </script>
 <script>
 /* Xuletes en color amb els mateixos dibuixos que l'app */
@@ -167,6 +176,7 @@ document.querySelectorAll('[data-xuleta]').forEach(el => {
       g.items.map(i => '<div class="xi' + (i.bloc ? ' bloc' : '') + '">' + (i.nom ? '<span>' + i.nom + '</span>' : '') + itemSVG(i) + '</div>').join('') + '</div></div>';
   }).join('') + '<p class="regla"><b>' + x.regla + '</b></p></div>';
 });
+posaCapcaleres();
 </script>
 </body>
 </html>

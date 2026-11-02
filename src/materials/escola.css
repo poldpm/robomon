@@ -1,0 +1,19 @@
+/* Capçalera oficial de l'escola (Plantilla fitxes · Vedruna Escorial Vic) per als fulls dels alumnes.
+   Nunito, caixa «Nom i Cognoms · Data» i caixa «logo · TÍTOL · Curs». La icona de RoboMón, a dalt a la dreta del contingut. */
+body { font-family: "Nunito", "Lexend", Verdana, Arial, sans-serif; }
+.cap-escola { position: relative; display: flex; flex-direction: column; gap: 3.5mm; margin-bottom: 15mm; font-family: "Nunito", Arial, sans-serif; color: #000; }
+.cap-escola .cap-nom { border: 0.3mm solid #000; border-bottom-width: 0.6mm; height: 9.5mm; display: flex; align-items: center; padding: 0 2.5mm; font-weight: 700; font-size: 12pt; }
+.cap-escola .cap-nom .cap-data { margin-left: auto; width: 38mm; }
+.cap-escola .cap-titol { border: 0.3mm solid #000; height: 16.5mm; display: grid; grid-template-columns: 34mm 1fr 34mm; align-items: center; padding: 0 2.5mm; }
+.cap-escola .cap-titol img { height: 10.5mm; width: auto; display: block; }
+.cap-escola .cap-t { text-align: center; font-weight: 700; font-size: 20pt; line-height: 1.1; }
+.cap-escola .cap-curs { align-self: end; padding-bottom: 2.2mm; font-weight: 700; font-size: 12pt; padding-left: 6mm; }
+.cap-escola .segell-robomon { position: absolute; right: 0; top: calc(100% + 1.5mm); width: 11mm; height: 14mm; }
+.cap-escola .segell-robomon svg { width: 100%; height: 100%; display: block; }
+/* Apaïsat (fulls de camí i circuit): les dues caixes en una sola fila */
+.cap-escola.apaisat { flex-direction: row; gap: 3mm; margin: 0; position: absolute; left: 12mm; right: 12mm; top: 7mm; }
+.cap-escola.apaisat .cap-nom { flex: 1 1 52%; height: 13mm; border-bottom-width: 0.3mm; }
+.cap-escola.apaisat .cap-titol { flex: 1 1 48%; height: 13mm; grid-template-columns: 26mm 1fr 18mm; }
+.cap-escola.apaisat .cap-titol img { height: 8.5mm; }
+.cap-escola.apaisat .cap-t { font-size: 16pt; }
+.cap-escola.apaisat .cap-curs { padding-bottom: 1.6mm; padding-left: 2mm; }

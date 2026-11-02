@@ -46,6 +46,14 @@ th { background: #eee; }
 .poster h1 { font-size: 52pt; line-height: 1.15; margin: 0; }
 .poster p { font-size: 24pt; margin: 0; }
 .boto-imprimir { position: fixed; right: 16px; top: 16px; font: 600 18px sans-serif; padding: 12px 18px; border-radius: 10px; border: 2px solid #000; background: #fff; cursor: pointer; }
+/* Fulls dels alumnes amb la capçalera oficial: més compactes perquè hi càpiguen */
+.full[data-capcalera] .xuleta-a5 { height: auto; padding: 4mm 6mm; gap: 1.6mm; margin-bottom: 4mm; }
+.full[data-capcalera] .xi svg { height: 7.5mm; }
+.full[data-capcalera] .xi { padding: 1mm 2mm; gap: 0.6mm; }
+.full[data-capcalera] .xg h3 { margin-bottom: 1mm; }
+.full[data-capcalera] .xc { gap: 1.5mm 3mm; }
+.full[data-capcalera] .cartes { grid-template-rows: repeat(3, 72mm); }
+/*@@ESCOLA_CSS@@*/
 </style>
 </head>
 <body>
@@ -180,13 +188,13 @@ th { background: #eee; }
 </section>
 
 <!-- 5 · FULL DEL CAMÍ (A4 apaïsat, mida real) -->
-<section class="full apaisat" id="full-cami"></section>
+<section class="full apaisat" id="full-cami" data-capcalera="El camí de l'Ozobot" data-apaisat></section>
 
 <!-- 6 · XULETES EN COLOR (2 per full) -->
-<section class="full" id="full-xuletes"></section>
+<section class="full" id="full-xuletes" data-capcalera="Codis de l'Ozobot"></section>
 
 <!-- 7 · CARTES DE REPTE -->
-<section class="full" style="padding: 14mm 15mm;"><div class="cartes" id="cartes"></div></section>
+<section class="full" style="padding: 14mm 15mm;" data-capcalera="Cartes de repte"><div class="cartes" id="cartes"></div></section>
 
 <!-- 8–9 · PÒSTERS -->
 <section class="full poster">
@@ -198,6 +206,9 @@ th { background: #eee; }
   <p>Et dona una pista. I si cal, ve el mestre.</p>
 </section>
 
+<script>
+/*@@ESCOLA@@*/
+</script>
 <script>
 /* ---------- Codis oficials (Ozobot Evo, Rev 12-23) ---------- */
 const COL = { K: '#141414', R: '#ec2027', G: '#49b749', B: '#1183c6' };   /* colors oficials Ozobot Evo */
@@ -225,10 +236,8 @@ document.getElementById('full-xuletes').innerHTML = xuleta() + xuleta() + '<div 
   const r = (y2 - y1) / 2;           // radi de les corbes
   const caselles = [ { n: 1, x: 92, y: y1 }, { n: 2, x: 167, y: y1 }, { n: 3, x: 112, y: y3 } ];   /* inici de cada casella (4 × 5 mm) */
   let s = `<svg viewBox="0 0 297 210" width="297mm" height="210mm" xmlns="http://www.w3.org/2000/svg" font-family="Lexend, Verdana, sans-serif">`;
-  s += `<text x="70" y="18" font-size="5">Nom: ______________________________</text>`;
-  s += `<text x="283" y="16" font-size="4.2" text-anchor="end" font-weight="600">RoboMón · S1 · Primers codis</text>`;
   // cercle de calibratge
-  s += `<circle cx="34" cy="36" r="20" fill="#000"/><text x="34" y="62" font-size="3.6" text-anchor="middle">Calibra aquí</text>`;
+  s += `<circle cx="34" cy="44" r="20" fill="#000"/><text x="34" y="70" font-size="3.6" text-anchor="middle">Calibra aquí</text>`;
   // recorregut (amb forats a les caselles)
   const tram = (xi, xf, y) => `<path d="M${xi} ${y} H${xf}" stroke="#000" stroke-width="${L}" fill="none"/>`;
   const forats = { [y1]: [], [y3]: [] };
@@ -251,7 +260,7 @@ document.getElementById('full-xuletes').innerHTML = xuleta() + xuleta() + '<div 
   s += `<g font-size="3.6"><text x="14" y="195">1 · Calibra l'Ozobot al cercle negre: botó fins a llum blanca. Ha d'acabar fent llum verda.</text>`;
   s += `<text x="14" y="200">2 · Pinta el codi a la casella: colors enganxats, en el sentit de la fletxa.   3 · Posa'l a SORTIDA.</text>`;
   s += `<text x="14" y="205">Si una casella és buida, l'Ozobot hi arriba i fa mitja volta: és normal. Si el codi té 3 colors, el 4t quadrat va de negre.</text></g>`;
-  s += `<text x="283" y="23" font-size="2.8" text-anchor="end" fill="#666">Imprimir a mida real (100 %). Línia 5 mm · caselles 4 × 5 mm</text>`;
+  s += `<text x="283" y="30" font-size="2.8" text-anchor="end" fill="#666">Imprimir a mida real (100 %). Línia 5 mm · caselles 4 × 5 mm</text>`;
   document.getElementById('full-cami').innerHTML = s + '</svg>';
 })();
 
@@ -267,6 +276,7 @@ const CARTES = [
 document.getElementById('cartes').innerHTML = CARTES.map(([t, p]) =>
   `<div class="carta"><span class="t">Repte extra · ${t}</span><p>${p}</p><p class="nota">Busca el codi a la xuleta. Pinta'l a la casella 3.</p></div>`).join('');
 document.querySelectorAll('.full').forEach((f, i) => { if (!f.querySelector('.peu') && !f.classList.contains('apaisat')) f.insertAdjacentHTML('beforeend', `<div class="peu">S1 · Primers codis · RECURS · ${i + 1}</div>`); });
+posaCapcaleres();
 </script>
 </body>
 </html>

@@ -45,15 +45,22 @@ div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
 .poster h1 { font-size: 52pt; line-height: 1.15; margin: 0; }
 .poster p { font-size: 24pt; margin: 0; }
 .boto-imprimir { position: fixed; right: 16px; top: 16px; font: 600 18px sans-serif; padding: 12px 18px; border-radius: 10px; border: 2px solid #000; background: #fff; cursor: pointer; }
+/* Fulls dels alumnes amb la capçalera oficial: més compactes perquè hi càpiguen */
+.full[data-capcalera] .xuleta-a5 { height: auto; padding: 4mm 6mm; gap: 1.6mm; margin-bottom: 4mm; }
+.full[data-capcalera] .xi svg { height: 8.5mm; }
+.full[data-capcalera] .cartes { grid-template-rows: repeat(3, 72mm); }
+/*@@ESCOLA_CSS@@*/
 
 .xi svg.carta, .xi svg.bloc { width: auto; max-width: 100%; height: 11mm; }
 .xi svg.peca { width: auto; max-width: 100%; height: 26mm; }
 .xc.blocs { display: flex; flex-wrap: wrap; }
 .xi.bloc { padding: 1.5mm 2mm; }
 .xuleta-a5 { height: 128mm; }
+.full[data-capcalera] .xuleta-a5 { height: auto; }
+.full[data-capcalera] .xi svg.peca { height: 18mm; }
 .dib svg { width: 100%; height: 100%; }
 .carta .sol { font-size: 10pt; color: #333; }
-.targeta-compte { border: 1px dashed #000; border-radius: 3mm; padding: 6mm 7mm; height: 62mm; display: flex; flex-direction: column; gap: 4mm; }
+.targeta-compte { border: 1px dashed #000; border-radius: 3mm; padding: 5mm 7mm; height: 50mm; display: flex; flex-direction: column; gap: 4mm; }
 .targeta-compte p { font-size: 13pt; margin: 0; }
 .passos li { font-size: 13pt; margin: 2.5mm 0; line-height: 1.35; }
 </style>
@@ -124,14 +131,17 @@ div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
   <p class="caixa" style="font-size:12pt;"><b>Represa de la sessió següent:</b> «Fins ara heu programat robots. Avui programareu a la pantalla: un vehicle a Scratch.»</p>
 <div class="peu">S6 · La parada classifica · RECURS · 4</div>
 </section>
-<section class="full">
+<section class="full" data-capcalera="Peces del SPIKE">
 <div data-xuleta="spike"></div><div data-xuleta="spike"></div>
 <div class="peu">S6 · La parada classifica · RECURS · 5 · imprimir EN COLOR</div>
 </section>
-<section class="full" style="padding: 14mm 15mm;"><div class="cartes"><div class="carta"><span class="t">Repte extra · Tres colors</span><p>Afegeix un tercer color que faci sonar un so.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Més ràpid</span><p>Amb un dels colors, el motor gira més ràpid.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Més voltes</span><p>Amb un color, el motor fa dues voltes.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Llums</span><p>Cada color encén el hub d'un color diferent.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Res de res</span><p>Fes que amb el lila soni un avís: «Aquest no el conec!».</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Ordre</span><p>Fes que esperi 1 segon abans de girar.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div></div><div class="peu">S6 · La parada classifica · RECURS · 6</div></section>
+<section class="full" style="padding: 14mm 15mm;" data-capcalera="Cartes de repte"><div class="cartes"><div class="carta"><span class="t">Repte extra · Tres colors</span><p>Afegeix un tercer color que faci sonar un so.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Més ràpid</span><p>Amb un dels colors, el motor gira més ràpid.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Més voltes</span><p>Amb un color, el motor fa dues voltes.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Llums</span><p>Cada color encén el hub d'un color diferent.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Res de res</span><p>Fes que amb el lila soni un avís: «Aquest no el conec!».</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div><div class="carta"><span class="t">Repte extra · Ordre</span><p>Fes que esperi 1 segon abans de girar.</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div></div><div class="peu">S6 · La parada classifica · RECURS · 6</div></section>
 
 <script>
 /*@@IL@@*/
+</script>
+<script>
+/*@@ESCOLA@@*/
 </script>
 <script>
 /* Xuletes en color amb els mateixos dibuixos que l'app */
@@ -150,6 +160,7 @@ document.querySelectorAll('[data-xuleta]').forEach(el => {
       g.items.map(i => '<div class="xi' + (i.bloc ? ' bloc' : '') + '">' + (i.nom ? '<span>' + i.nom + '</span>' : '') + itemSVG(i) + '</div>').join('') + '</div></div>';
   }).join('') + '<p class="regla"><b>' + x.regla + '</b></p></div>';
 });
+posaCapcaleres();
 </script>
 </body>
 </html>

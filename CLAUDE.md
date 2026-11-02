@@ -14,3 +14,4 @@
 - **Mai** recuperar res de residus, 3 R, reciclatge ni contenidors. El món (l'Arxipèlag) és només decoració.
 - En Pol decideix si té temps per fer una cosa. No proposis versions reduïdes «per falta de temps».
 - Per redactar o revisar una missió (S2–S9): skill `missio-taller`.
+- **Fulls impresos dels alumnes** (xuletes, cartes de repte, fulls de camí/circuit, targetes): norma de l'escola (skill `maquetacio-escorial`): capçalera oficial (Nom i Cognoms · Data · logo Vedruna · TÍTOL · Curs) amb `data-capcalera`, Nunito, número a baix a la dreta, blanc i negre tret que el color faci falta (codis, blocs). Icona de RoboMón en negre a dalt a la dreta del contingut. Els fulls del mestre, en Nunito sense capçalera.

@@ -223,14 +223,16 @@ const CSS = S1.slice(S1.indexOf('<style>'), S1.indexOf('</style>'))
 .xc.blocs { display: flex; flex-wrap: wrap; }
 .xi.bloc { padding: 1.5mm 2mm; }
 .xuleta-a5 { height: 128mm; }
+.full[data-capcalera] .xuleta-a5 { height: auto; }
+.full[data-capcalera] .xi svg.peca { height: 18mm; }
 .dib svg { width: 100%; height: 100%; }
 .carta .sol { font-size: 10pt; color: #333; }
-.targeta-compte { border: 1px dashed #000; border-radius: 3mm; padding: 6mm 7mm; height: 62mm; display: flex; flex-direction: column; gap: 4mm; }
+.targeta-compte { border: 1px dashed #000; border-radius: 3mm; padding: 5mm 7mm; height: 50mm; display: flex; flex-direction: column; gap: 4mm; }
 .targeta-compte p { font-size: 13pt; margin: 0; }
 .passos li { font-size: 13pt; margin: 2.5mm 0; line-height: 1.35; }
 `;
 
-function pagina(peu, cos, classe = 'full') { return `<section class="${classe}">\n${cos}\n<div class="peu">${peu}</div>\n</section>\n`; }
+function pagina(peu, cos, classe = 'full', capcalera = '') { return `<section class="${classe}"${capcalera ? ` data-capcalera="${esc(capcalera)}"` : ''}>\n${cos}\n<div class="peu">${peu}</div>\n</section>\n`; }
 
 function genera(s) {
   const d = D[s], m = missio(s), nom = ctx.SESSIONS[s].nom;
@@ -302,27 +304,24 @@ function genera(s) {
   /* Xuletes en color */
   if (d.totesXuletes) {
     const ids = ['scottie', 'ozobot-cruilla', 'dash', 'spike', 'scratch-s7', 'scratch-s8'];
-    for (let i = 0; i < ids.length; i += 2) html += pagina(peu(p++) + ' · imprimir EN COLOR', `<div data-xuleta="${ids[i]}"></div><div data-xuleta="${ids[i + 1]}"></div>`);
+    for (let i = 0; i < ids.length; i += 2) html += pagina(peu(p++) + ' · imprimir EN COLOR', `<div data-xuleta="${ids[i]}"></div><div data-xuleta="${ids[i + 1]}"></div>`, 'full', 'Xuletes de les eines');
   } else {
     const x = { S3: 'ozobot-cruilla', S4: 'dash', S5: 'spike', S6: 'spike', S7: 'scratch-s7', S8: 'scratch-s8' }[s];
-    html += pagina(peu(p++) + ' · imprimir EN COLOR', `<div data-xuleta="${x}"></div><div data-xuleta="${x}"></div>`);
+    html += pagina(peu(p++) + ' · imprimir EN COLOR', `<div data-xuleta="${x}"></div><div data-xuleta="${x}"></div>`, 'full', { S3: 'Codis de l\'Ozobot', S4: 'Blocs del Dash', S5: 'Peces del SPIKE', S6: 'Peces del SPIKE', S7: 'Blocs de Scratch', S8: 'Blocs de Scratch' }[s]);
   }
 
   /* Pàgines pròpies */
   if (d.extra === 'circuit') {
-    html += `<section class="full apaisat"><svg viewBox="0 0 297 210" width="297mm" height="210mm" font-family="Lexend, Verdana, sans-serif">
-      <text x="70" y="18" font-size="5">Nom: ______________________________</text>
-      <text x="283" y="16" font-size="4.2" text-anchor="end" font-weight="600">RoboMón · S3 · El teu circuit</text>
-      <circle cx="34" cy="36" r="20" fill="#000"/><text x="34" y="62" font-size="3.6" text-anchor="middle">Calibra aquí</text>
-      <path d="M200 30 H260" stroke="#000" stroke-width="5"/><text x="230" y="44" font-size="3.4" text-anchor="middle">Així de gruixuda: 5 mm</text>
+    html += `<section class="full apaisat" data-capcalera="El teu circuit" data-apaisat><svg viewBox="0 0 297 210" width="297mm" height="210mm" font-family="Nunito, Verdana, sans-serif">
+      <circle cx="34" cy="46" r="20" fill="#000"/><text x="34" y="72" font-size="3.6" text-anchor="middle">Calibra aquí</text>
+      <path d="M220 34 H270" stroke="#000" stroke-width="5"/><text x="245" y="44" font-size="3.4" text-anchor="middle">Així de gruixuda: 5 mm</text>
       <g font-size="3.6"><text x="14" y="195">1 · Dibuixa un circuit amb una cruïlla en forma de T: línia de 5 mm, angles rectes, sense forats.</text>
       <text x="14" y="200">2 · Posa la teva meta al final d'un dels camins. 3 · Pinta el codi de direcció a uns 3 cm ABANS de la cruïlla, en el sentit de la marxa.</text>
       <text x="14" y="205">Sense codi, a la cruïlla l'Ozobot tria a l'atzar. Codis lluny de les corbes.</text></g></svg></section>\n`;
     p++;
   }
   if (d.extra === 'scratch') {
-    html += pagina(peu(p++), `<h1>Com entrar a Scratch</h1>
-      <ol class="passos">
+    html += pagina(peu(p++), `<ol class="passos">
         <li>Obre el navegador i escriu <b>scratch.mit.edu</b>.</li>
         <li>A dalt a la dreta, prem <b>«Inicia la sessió»</b>.</li>
         <li>Escriu el teu <b>usuari</b> i la teva <b>contrasenya</b> (són a la teva targeta). La <b>@</b> no cal: l'usuari no en porta.</li>
@@ -330,12 +329,12 @@ function genera(s) {
         <li>Per tornar-lo a trobar: <b>«Les Meves Coses»</b> (a dalt).</li>
         <li>En acabar: <b>Fitxer → «Desa ara»</b>.</li>
       </ol>
-      <div class="caixa"><p><b>Per al mestre:</b> els comptes es creen el primer dia, amb tu («Uneix-te a l'Scratch» o des d'un compte de professor si l'escola en té). Usuari sense nom ni cognoms complets. Les targetes es queden a classe.</p></div>`);
-    html += pagina(peu(p++), `<div style="display:grid; grid-template-columns:1fr 1fr; gap:6mm;">${Array.from({ length: 8 }, () => `<div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div>`).join('')}</div>`);
+      <div class="caixa"><p><b>Per al mestre:</b> els comptes es creen el primer dia, amb tu («Uneix-te a l'Scratch» o des d'un compte de professor si l'escola en té). Usuari sense nom ni cognoms complets. Les targetes es queden a classe.</p></div>`, 'full', 'Com entrar a Scratch');
+    html += pagina(peu(p++), `<div style="display:grid; grid-template-columns:1fr 1fr; gap:6mm;">${Array.from({ length: 8 }, () => `<div class="targeta-compte"><p><b>El meu compte de Scratch</b></p><p>Usuari: ______________________</p><p>Contrasenya: _________________</p><p style="font-size:10pt">Es queda a classe. No la deixis a ningú.</p></div>`).join('')}</div>`, 'full', 'El meu compte de Scratch');
   }
 
   /* Cartes de repte */
-  html += `<section class="full" style="padding: 14mm 15mm;"><div class="cartes">${d.reptes.map(([t, enunciat]) =>
+  html += `<section class="full" style="padding: 14mm 15mm;" data-capcalera="Cartes de repte"><div class="cartes">${d.reptes.map(([t, enunciat]) =>
     `<div class="carta"><span class="t">Repte extra · ${esc(t)}</span><p>${esc(enunciat)}</p><p class="nota">Mira la xuleta. Quan funcioni, ensenya-ho.</p></div>`).join('')}</div><div class="peu">${peu(p++)}</div></section>\n`;
 
   const font = `<!DOCTYPE html>
@@ -351,6 +350,9 @@ ${CSS}</style>
 ${html}
 <script>
 /*@@IL@@*/
+</script>
+<script>
+/*@@ESCOLA@@*/
 </script>
 <script>
 /* Xuletes en color amb els mateixos dibuixos que l'app */
@@ -369,6 +371,7 @@ document.querySelectorAll('[data-xuleta]').forEach(el => {
       g.items.map(i => '<div class="xi' + (i.bloc ? ' bloc' : '') + '">' + (i.nom ? '<span>' + i.nom + '</span>' : '') + itemSVG(i) + '</div>').join('') + '</div></div>';
   }).join('') + '<p class="regla"><b>' + x.regla + '</b></p></div>';
 });
+posaCapcaleres();
 </script>
 </body>
 </html>

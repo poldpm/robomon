@@ -22,6 +22,13 @@ const imgObj = filtre => '{' + IMATGES.filter(f => filtre(f.replace('.webp', '')
 const IL = `const IMG = ${imgObj(() => true)};\n` + IL_SRC;
 const ESCENES = ['ozo-cami', 'ozo-arriba', 'mestre', 'carta', 'e-encen', 'e-nose', 'ozo-boto', 'ozo-calibra'];
 const MARCA = llegeix('src/marca/robomon-icona.svg').trim().replace(/ width="512" height="512"/, '');
+/* Materials imprimibles: Nunito (norma de l'escola) + Lexend (dibuixos de l'app), capçalera oficial i icona */
+const FONTS_MAT = FONTS + '\n' + [400, 700].map(w => `@font-face { font-family: "Nunito"; font-style: normal; font-weight: ${w}; font-display: swap;
+  src: url(data:font/woff2;base64,${b64(`src/fonts/Nunito-${w}.woff2`)}) format("woff2"); }`).join('\n');
+/* Al paper, en blanc i negre (norma de l'escola: es fotocopia) */
+const SIMBOL = llegeix('src/marca/robomon-simbol.svg').trim().replace(/ width="\d+" height="\d+"/, '').replace(/#1f6f78/gi, '#000').replace(/#d9a441/gi, '#000');
+const ESCOLA = `const LOGO_ESCOLA = "data:image/png;base64,${b64('src/marca/escola-logo.png')}";\nconst SIMBOL_ROBOMON = ${JSON.stringify(SIMBOL)};\n` + llegeix('src/materials/escola.js');
+const ESCOLA_CSS = llegeix('src/materials/escola.css');
 const IL_MAT = `const IMG = ${imgObj(() => false)};\n` + IL_SRC;   /* materials: només esquemes vectorials */
 const IL_PROJ = `const IMG = ${imgObj(k => k === 'mapa' || ESCENES.includes(k))};\n` + IL_SRC;
 
@@ -67,7 +74,11 @@ for (const [nom, t] of Object.entries(sortides)) escriu(nom, t);
 for (const carpeta of readdirSync(join(ARREL, 'materials'))) {
   const src = join('materials', carpeta, 'index.src.html');
   try { readFileSync(join(ARREL, src)); } catch (e) { continue; }
-  escriu(join('materials', carpeta, 'index.html'), munta(src, llegeix(src).includes("/*@@IL@@*/") ? { FONTS, IL: IL_MAT } : { FONTS }));
+  const t = llegeix(src), subs = { FONTS: FONTS_MAT };
+  if (t.includes('/*@@IL@@*/')) subs.IL = IL_MAT;
+  if (t.includes('/*@@ESCOLA@@*/')) subs.ESCOLA = ESCOLA;
+  if (t.includes('/*@@ESCOLA_CSS@@*/')) subs.ESCOLA_CSS = ESCOLA_CSS;
+  escriu(join('materials', carpeta, 'index.html'), munta(src, subs));
   console.log(`✓ materials/${carpeta}/index.html`);
 }
 copyFileSync(join(ARREL, 'apps-script/comu/Comu.gs'), join(ARREL, 'apps-script/mon/Comu.gs'));
