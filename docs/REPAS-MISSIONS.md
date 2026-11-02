@@ -9,7 +9,7 @@
 | # | Lliçó | Com s'aplica a cada missió |
 |---|---|---|
 | 1 | **La consigna s'ha d'entendre sense el material al davant.** «Un camí de SORTIDA a la teva lletra» no s'entenia. | Cada nivell diu **què fa el nen amb les mans** i **què ha de veure** («Pinta… Posa… L'Ozobot va més a poc a poc?»). |
-| 2 | **L'eina és el contingut.** Un Ozobot sense codis no ensenya res. | Cada missió fa servir **allò que fa especial l'eina**: codis (Ozobot), cartes i repetició (Scottie), distància i pinça (Dash), sensor i motor (SPIKE), esdeveniments i variables (Scratch). |
+| 2 | **L'eina és el contingut.** Un Ozobot sense codis no ensenya res. | Cada missió fa servir **allò que fa especial l'eina**: codis (Ozobot), cartes i repetició (Scottie), distància i girs (Dash), sensor i motor (SPIKE), esdeveniments i variables (Scratch). |
 | 3 | **Una xuleta sempre a mà, i projectada.** Robot nou = no se'l saben. | Cada sessió té la seva **xuleta** (projecció + botó al Chromebook + paper a la taula). |
 | 4 | **La projecció ha de servir per treballar**, no per decorar. | Projecció = xuleta gran + els 3 nivells. A la S1, també **«Com entrar»** (correu i @). |
 | 5 | **El primer pas amb un robot nou és el muntatge o el calibratge, i pot fallar.** | `control c0` a cada sessió amb robot: «Està calibrat / encès / connectat / muntat?» amb «No me n'he sortit». |
@@ -35,11 +35,11 @@
 - **Cal reetiquetar:** les missions antigues «cap a la via E» → **caselles numerades**.
 - **Necessito:** `S3-ozo-trace-*` i el **taulell A3** de `MATERIALS-IMPRIMIR` (on són els buits i les cruïlles), per comprovar-lo amb les normes oficials (codis a 2,5 cm de les cruïlles, etc.).
 
-## S4 · Dash Cargo (Dash + pinça, Blockly)
+## S4 · Dash Cargo (Dash, Blockly · **sense pinça**, decisió d'en Pol 2/11/2026)
 
 - **Per als nens:** primer cop amb el Dash i amb Blockly. Risc gran: **connectar el Dash** (Bluetooth) amb 6 nens per robot.
-- **Missió (esbós):** c0 «El Dash està connectat a la tauleta/Chromebook?» · **predicció** (variable real): «Quantes caselles hi ha fins a la marca?» (1 casella = 10 cm) · N1 el Dash arriba a la marca · N2 porta la càrrega a **la seva distància** (50, 60 o 20 cm) i explica l'ajust · N3 recorregut amb gir.
-- **Xuleta:** els blocs de Blockly que fareu servir (avançar X cm, girar, pinça), **amb la captura real dels blocs**.
+- **Missió (esbós):** c0 «El Dash està connectat a la tauleta/Chromebook?» · **predicció** (variable real): «Quantes caselles hi ha fins a la marca?» (1 casella = 10 cm) · N1 el Dash arriba a la marca · N2 el Dash s'atura **exactament a la seva distància** (50, 60 o 20 cm) i explica l'ajust · N3 recorregut amb gir (anar i tornar, o esquivar un obstacle).
+- **Xuleta:** els blocs de Blockly que fareu servir (avançar X cm, girar), **amb la captura real dels blocs**.
 - **Necessito:** `S4-dash-cargo-*`, el **pla del circuit** de `MATERIALS-IMPRIMIR` i saber **amb quin aparell** programen el Dash (Chromebook amb l'app Blockly o tauleta).
 
 ## S5 · SPIKE Sort 1 (LEGO SPIKE Essential)

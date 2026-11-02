@@ -300,7 +300,7 @@ sessió i la fita de grup. Així no hi ha risc de projectar el tauler per error.
 | 1 | Ozobot (línia lliure) | El teu camí, dibuixat per tu | Recorre el teu camí de punta a punta | Ho ensenya i diu què ha canviat quan ha fallat | Predicció: agafarà aquesta corba? |
 | 2 | Scottie Go! | Nivell diferent per nen | Resol un nivell | Resol el seu nivell amb un pla previ i explica la repetició | Pla |
 | 3 | Ozobot (codis) | Casella d'arribada diferent (1–4) | Arriba a la seva casella | Diu quin codi ha fallat i com ho ha arreglat | Pla (quins codis a cada buit) |
-| 4 | Dash | Distància diferent | El Dash arriba a la marca | Porta la càrrega a la seva distància i explica l'ajust | Predicció: quantes caselles? |
+| 4 | Dash | Distància diferent | El Dash arriba a la marca | S'atura exactament a la seva distància i explica l'ajust (sense pinça) | Predicció: quantes caselles? |
 | 5 | SPIKE 1 | Funció diferent | Control 0 (muntat) + el programa fa una cosa | Assenyala sensor, actuador, programa | — |
 | 6 | SPIKE 2 *(elàstica)* | Color diferent | La condició funciona | Explica el cas imprevist | Predicció: què farà amb el color que no has programat? |
 | 7 | Scratch | Tecla / personatge diferent | L'esdeveniment funciona | La condició funciona i ho explica | Pla |

@@ -39,7 +39,7 @@ Una missió és un conjunt de files de la pestanya `MISSIONS` (columnes: `sessio
 ## Lliçons de la S1 (en Pol, 1/11/2026) — aplica-les sempre
 
 - La consigna diu **què fan les mans i què han de veure**; s'ha d'entendre sense el material al davant.
-- La missió fa servir **el que fa especial l'eina** (codis, cartes i repetició, distància i pinça, sensor i motor, esdeveniments i variables).
+- La missió fa servir **el que fa especial l'eina** (codis, cartes i repetició, distància i girs (Dash sense pinça), sensor i motor, esdeveniments i variables).
 - Cada sessió té **xuleta** (`missio · xuleta`): projectada, botó «Codis» al Chromebook i paper a la taula. Contingut de **fonts oficials** o dels materials d'en Pol, mai de memòria.
 - `control c0` per al primer pas amb el robot (calibrar, encendre, connectar, muntar).
 - Si el pla és per al nivell 2, `abans` amb clau **`pla-n2`** (surt just abans del N2).
