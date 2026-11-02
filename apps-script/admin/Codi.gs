@@ -218,6 +218,33 @@ function missionsPerDefecte_() {
     ['S1', 'variant', 'B',        16, 'Ziga-zaga', '', '', '', P],
     ['S1', 'variant', 'C',        17, 'Turbo', '', '', '', P]
   ];
+  f.S2 = [
+    ['S2', 'missio',  'titol',  1, 'Programa amb cartes', '', '', '', P],
+    ['S2', 'missio',  'frase',  2, 'Fes el programa amb cartes, escaneja\'l amb la tauleta i porta el Scottie on toca.', '', '', '', P],
+    ['S2', 'missio',  'xuleta', 3, 'scottie', '', '', '', P],
+    ['S2', 'control', 'c0',     4, 'Tens l\'app Scottie Go! oberta al repte que toca i les cartes a la taula?', 'scottie-tauleta', '', '', P],
+    ['S2', 'nivell',  'n1',     5, 'Fes el programa del repte amb cartes: BEGIN a dalt i END a baix. Escaneja\'l amb la tauleta.', 'scottie-programa', '', '', P],
+    ['S2', 'control', 'n1',     6, 'El Scottie arriba on havia d\'arribar?', 'scottie-programa', '', '', P],
+    ['S2', 'abans',   'pla-n2', 7, 'Abans de fer el teu repte: el Scottie ha d\'avançar 3 caselles. Quin programa és el més curt?', '',
+      'num|STEP i el número 3|prog:STEP+3;tres|STEP, STEP, STEP|prog:STEP/STEP/STEP;gira|TURN TO THE RIGHT i STEP|prog:TURN TO THE RIGHT/STEP', '', P],
+    ['S2', 'nivell',  'n2',     8, 'Fes el teu repte amb 3 estrelles: el programa més curt, amb números en lloc de cartes repetides. Ensenya-ho i explica què fa el número.', 'scottie-curt', '', '', P],
+    ['S2', 'nivell',  'n3',     9, 'Fes un repte on calgui REPEAT: repeteix un tros del programa i tanca\'l amb END IF / REPEAT.', 'carta:REPEAT|control', '', '', P],
+    ['S2', 'encallat', 'escaneja', 10, 'La tauleta no llegeix les cartes', 'scottie-tauleta',
+      'Cartes planes i en una columna, de BEGIN a END. Que surtin totes a la foto. Busca més llum i no facis ombra.', 'scottie-tauleta', P],
+    ['S2', 'encallat', 'gira',  11, 'Gira cap a l\'altre costat', 'scottie-gira',
+      'La dreta és la del Scottie. Posa\'t al seu lloc: cap on mira? Llavors, quina és la seva dreta?', 'scottie-gira', P],
+    ['S2', 'encallat', 'xoca',  12, 'No arriba o xoca', 'scottie-xoca',
+      'Compta les caselles amb el dit, pas a pas. Cada gir és una carta. Mira on s\'atura i canvia aquella carta.', 'scottie-xoca', P],
+    ['S2', 'encallat', 'nose',  13, 'No sé què he de fer', 'e-nose',
+      'BEGIN a dalt. Després una carta per cada moviment: STEP per avançar, TURN per girar. END a baix.', 'scottie-programa', P],
+    ['S2', 'sortida', 'diag',   14, 'El Scottie mira cap a tu. Poses TURN TO THE RIGHT i gira cap a la teva esquerra. Per què?', 'scottie-gira',
+      'a|Gira cap a la seva dreta, no cap a la teva|scottie-gira;b|La carta està mal impresa|carta:TURN TO THE RIGHT;c|La tauleta s\'ha equivocat|scottie-tauleta', 'a', P],
+    ['S2', 'sortida', 'eina',   15, 'Quin programa fa el mateix que STEP, STEP, STEP, STEP?', '',
+      'a|STEP i el número 4|prog:STEP+4;b|STEP i el número 3|prog:STEP+3;c|REPEAT i STEP|prog:REPEAT/STEP', 'a', P],
+    ['S2', 'variant', 'A', 16, 'Tu fas el programa del 1r repte', '', '', '', P],
+    ['S2', 'variant', 'B', 17, 'Tu fas el programa del 2n repte', '', '', '', P],
+    ['S2', 'variant', 'C', 18, 'Tu fas el programa del 3r repte', '', '', '', P]
+  ];
   f.S3 = [
     ['S3', 'missio',  'titol',  1, 'El teu circuit', '', '', '', P],
     ['S3', 'missio',  'frase',  2, 'Dibuixa un circuit amb una cruïlla. Fes que l\'Ozobot triï el camí que tu vols.', '', '', '', P],
@@ -353,7 +380,7 @@ function missionsPerDefecte_() {
     ['S8', 'variant', 'B', 17, 'Compta els cops que toques el teu color', '', '', '', P],
     ['S8', 'variant', 'C', 18, 'Compta les arribades a la meta', '', '', '', P]
   ];
-  ['S2', 'S4', 'S9'].forEach(function (s) {
+  ['S4', 'S9'].forEach(function (s) {
     f[s] = [[s, 'missio', 'titol', 1, SESSIONS[s].nom, '', '', '', E],
             [s, 'missio', 'frase', 2, 'Pendent de dissenyar.', '', '', '', E]];
   });

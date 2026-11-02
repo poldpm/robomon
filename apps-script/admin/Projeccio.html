@@ -59,6 +59,7 @@ svg { display: block; width: 100%; height: 100%; }
 .xuleta-nom { font-size: 2.6vh; font-weight: 600; }
 .xuleta-codi svg.codi { width: 100%; height: 5.6vh; }
 .xuleta-codis.blocs { display: flex; flex-wrap: wrap; }
+.xuleta-codi svg.carta { width: auto; height: 5.4vh; max-width: 100%; }
 .xuleta-bloc svg.bloc { width: auto; height: 7vh; max-width: 100%; }
 .xuleta-codi svg.peca { width: 100%; height: 10vh; }
 .panell-xuleta { overflow: hidden; }
@@ -276,6 +277,11 @@ const XULETES = {
     { grup: 'Velocitat', items: [{ nom: 'Lent', codi: 'RKR' }, { nom: 'Normal', codi: 'GKG' }, { nom: 'Turbo', codi: 'BGB' }] },
     { grup: 'Moviments', items: [{ nom: 'Pausa (3 s)', codi: 'RBR' }, { nom: 'Mitja volta', codi: 'BRB' }, { nom: 'Giravolt', codi: 'GRGR' }] }
   ], regla: 'Pinta el codi abans de la cruïlla, a uns 3 cm, en el sentit de la fletxa. Sense codi, a la cruïlla l\'Ozobot tria a l\'atzar.' },
+  scottie: { titol: 'Cartes del Scottie Go!', grups: [
+    { grup: 'Començar i acabar', items: [{ nom: 'Comença', carta: 'BEGIN', tipus: 'inici' }, { nom: 'Acaba', carta: 'END', tipus: 'inici' }, { nom: 'Agafa', carta: 'PICK UP' }] },
+    { grup: 'Moure\'s', items: [{ nom: 'Avança', carta: 'STEP' }, { nom: 'Gira a la dreta', carta: 'TURN TO THE RIGHT' }, { nom: 'Gira a l\'esquerra', carta: 'TURN TO THE LEFT' }] },
+    { grup: 'Números i repetir', items: [{ nom: 'Quantes vegades', carta: '3', tipus: 'num' }, { nom: 'Repeteix', carta: 'REPEAT', tipus: 'control' }, { nom: 'Fi de la repetició', carta: 'END IF / REPEAT', tipus: 'control' }] }
+  ], regla: 'El número va al costat de STEP o de REPEAT. La dreta del Scottie no sempre és la teva: mira cap on mira ell.' },
   spike: { titol: 'Peces del SPIKE', grups: [
     { grup: 'Les peces', items: [{ nom: 'Hub', peca: 'hub' }, { nom: 'Motor', peca: 'motor' }, { nom: 'Sensor de color', peca: 'sensor' }, { nom: 'Cable al port A o B', peca: 'port' }] }
   ], regla: 'Encén el hub amb el botó i connecta\'l a l\'app. Acosta molt el color al sensor.' },
@@ -333,6 +339,44 @@ function blocSVG(cat, text) {
   const w = x + 8;
   return `<svg viewBox="0 0 ${w} 36" aria-hidden="true" class="bloc"><rect x="1" y="1" width="${w - 2}" height="34" rx="8" fill="${col}" stroke="#00000026" stroke-width="1.5"/>${cos}</svg>`;
 }
+/** Cartes del Scottie Go! Edu (com les impreses: text en anglès, pestanya de color). */
+const COLORS_CARTA = { ordre: '#e2622b', num: '#b5452f', inici: '#6c4ea0', control: '#e98a1f' };
+function cartaSVG(text, tipus) {
+  tipus = tipus || 'ordre';
+  const col = COLORS_CARTA[tipus] || COLORS_CARTA.ordre;
+  if (tipus === 'num') {
+    return `<svg viewBox="0 0 44 36" aria-hidden="true" class="carta"><rect x="1" y="1" width="42" height="34" rx="4" fill="#ffffff" stroke="#00000033" stroke-width="1.2"/><rect x="1" y="1" width="11" height="34" rx="4" fill="${col}"/><text x="28" y="26" text-anchor="middle" font-size="20" font-weight="700" fill="#1c2733" font-family="Lexend, Verdana, sans-serif">${text}</text></svg>`;
+  }
+  const w = Math.max(90, text.length * 8.4 + 34);
+  if (tipus === 'inici') {
+    return `<svg viewBox="0 0 ${w} 36" aria-hidden="true" class="carta"><path d="M1 5 Q1 1 5 1 H${w - 5} Q${w - 1} 1 ${w - 1} 5 V27 L${w / 2} 35 L1 27 Z" fill="${col}"/><text x="${w / 2}" y="21" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff" font-family="Lexend, Verdana, sans-serif">${text}</text></svg>`;
+  }
+  return `<svg viewBox="0 0 ${w} 36" aria-hidden="true" class="carta"><rect x="1" y="1" width="${w - 2}" height="34" rx="4" fill="#ffffff" stroke="#00000033" stroke-width="1.2"/><rect x="1" y="1" width="20" height="34" rx="4" fill="${col}"/><text x="${(w + 20) / 2}" y="22.5" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1c2733" font-family="Lexend, Verdana, sans-serif">${text}</text></svg>`;
+}
+/** Un programa del Scottie: files de cartes, de dalt a baix. Cada fila: [[text, tipus], …]. */
+function programaScottie(files, x0, y0, alt) {
+  let s = '', y = y0;
+  files.forEach(fila => {
+    let x = x0;
+    fila.forEach(([t, tipus]) => {
+      const svg = cartaSVG(t, tipus);
+      const vb = svg.match(/viewBox="0 0 ([\d.]+) 36"/);
+      const w = alt * Number(vb ? vb[1] : 90) / 36;
+      s += svg.replace('<svg ', `<svg x="${x}" y="${y}" width="${w}" height="${alt}" `);
+      x += w + 1.5;
+    });
+    y += alt + 1.5;
+  });
+  return s;
+}
+/** Un programa curt com a dibuix: «STEP+3» (una fila) o «STEP/STEP/STEP» (files). */
+function progSVG(spec) {
+  const tipus = t => /^\d+$/.test(t) ? 'num' : (t === 'BEGIN' || t === 'END') ? 'inici' : /REPEAT/.test(t) ? 'control' : 'ordre';
+  const files = spec.split('/').map(f => f.split('+').map(t => [t.trim(), tipus(t.trim())]));
+  const amplada = files.map(f => f.reduce((a, [t, ti]) => { const m = cartaSVG(t, ti).match(/viewBox="0 0 ([\d.]+) 36"/); return a + Number(m[1]) + 1.5; }, 0));
+  const w = Math.max(...amplada), h = files.length * 37.5;
+  return `<svg viewBox="0 0 ${w} ${h}" aria-hidden="true" class="prog">${programaScottie(files, 0, 0, 36)}</svg>`;
+}
 /** Peces del SPIKE Essential en esquema (sense marca ni foto). */
 function pecaSVG(tipus) {
   const v = 'stroke="#1f2328" stroke-width="2.2" stroke-linejoin="round"';
@@ -352,6 +396,7 @@ function xuletaHTML(id) {
   const item = i => {
     if (i.codi) return `<div class="xuleta-codi"><span class="xuleta-nom">${i.nom}</span>${codiSVG(i.codi)}</div>`;
     if (i.bloc) return `<div class="xuleta-codi xuleta-bloc">${blocSVG(i.bloc, i.text)}</div>`;
+    if (i.carta) return `<div class="xuleta-codi"><span class="xuleta-nom">${i.nom}</span>${cartaSVG(i.carta, i.tipus)}</div>`;
     if (i.peca) return `<div class="xuleta-codi"><span class="xuleta-nom">${i.nom}</span>${pecaSVG(i.peca)}</div>`;
     return '';
   };
@@ -388,6 +433,8 @@ Object.assign(IL, {
 function dibuix(k) {
   if (!k) return '';
   if (k.indexOf('codi:') === 0) return codiSVG(k.slice(5));
+  if (k.indexOf('prog:') === 0) return progSVG(k.slice(5));
+  if (k.indexOf('carta:') === 0) { const p = k.slice(6).split('|'); return cartaSVG(p[0], p[1] || ''); }
   if (k.indexOf('bloc:') === 0) { const p = k.slice(5).split('|'); return blocSVG(p[0], p[1] || ''); }
   if (k.indexOf('peca:') === 0) return pecaSVG(k.slice(5));
   return IL[k] || '';
@@ -438,6 +485,31 @@ Object.assign(IL, {
     <g transform="translate(4 32) scale(0.55)">${pecaSVG('sensor').replace(/^<svg[^>]*>|<\/svg>$/g, '').replace(/<path d="M64 35 H86"[^>]*\/><rect x="86"[^>]*\/>/, '')}</g>
     <rect x="76" y="40" width="16" height="12" rx="2" fill="#1183c6" stroke="${TINTA}" stroke-width="1"/>
     <path d="M44 51 H72" stroke="${TINTA}" stroke-width="1" stroke-dasharray="2 2"/><text x="58" y="47" text-anchor="middle" font-size="6" fill="${TINTA}" font-family="Lexend, Verdana, sans-serif">lluny</text></svg>`,
+  'scottie-programa': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    ${programaScottie([[['BEGIN', 'inici']], [['STEP'], ['3', 'num']], [['TURN TO THE RIGHT']], [['STEP'], ['2', 'num']], [['END', 'inici']]], 14, 10, 14.5)}</svg>`,
+  'scottie-tauleta': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    <rect x="22" y="6" width="56" height="34" rx="4" fill="#2b3440"/><rect x="25" y="9" width="50" height="28" rx="2" fill="#dfe8ef"/><circle cx="50" cy="7.6" r="0.9" fill="#9aa3ad"/>
+    <path d="M30 40 L18 56 M70 40 L82 56" stroke="#5b6470" stroke-width="0.9" stroke-dasharray="2.5 2"/>
+    <rect x="16" y="56" width="68" height="40" rx="2" fill="#ffffff" stroke="${TINTA}" stroke-width="1"/>
+    ${programaScottie([[['BEGIN', 'inici']], [['STEP'], ['2', 'num']], [['END', 'inici']]], 30, 59, 10.5)}</svg>`,
+  'scottie-curt': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    ${programaScottie([[['STEP']], [['STEP']], [['STEP']]], 6, 26, 13)}
+    <text x="51" y="51" text-anchor="middle" font-size="12" font-weight="700" fill="${TINTA}" font-family="Lexend, Verdana, sans-serif">=</text>
+    ${programaScottie([[['STEP'], ['3', 'num']]], 58, 39, 13)}</svg>`,
+  'scottie-gira': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    <rect x="16" y="9" width="68" height="82" rx="2.5" fill="#ffffff" stroke="${TINTA}" stroke-width="1.4"/>
+    <path d="M16 36 H84 M16 63 H84 M38.7 9 V91 M61.3 9 V91" stroke="#c9ced6" stroke-width="0.9"/>
+    <g transform="translate(50 49.5)"><circle r="9" fill="#ffffff" stroke="${TINTA}" stroke-width="1.2"/><path d="M-4 3 L0 9 L4 3 Z" fill="${TINTA}"/></g>
+    <path d="M40 58 Q30 64 27 74" fill="none" stroke="#2c7650" stroke-width="2.2" stroke-linecap="round"/><path d="M23 71 L27 77 L31 71" fill="none" stroke="#2c7650" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="27" y="86" text-anchor="middle" font-size="6" font-weight="700" fill="#2c7650" font-family="Lexend, Verdana, sans-serif">la seva dreta</text>
+    <text x="50" y="20" text-anchor="middle" font-size="6" font-weight="600" fill="${TINTA}" font-family="Lexend, Verdana, sans-serif">mira cap a tu</text></svg>`,
+  'scottie-xoca': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    <rect x="16" y="9" width="68" height="82" rx="2.5" fill="#ffffff" stroke="${TINTA}" stroke-width="1.4"/>
+    <path d="M16 36 H84 M16 63 H84 M38.7 9 V91 M61.3 9 V91" stroke="#c9ced6" stroke-width="0.9"/>
+    <path d="M27 77 V50 H50" fill="none" stroke="#1183c6" stroke-width="2" stroke-dasharray="3 2.5"/>
+    <path d="M64 41 Q66 34 72 35 Q79 34 80 41 Q81 48 74 50 Q66 51 64 45 Z" fill="#9aa3ad" stroke="${TINTA}" stroke-width="1"/>
+    <g transform="translate(55 49.5)"><circle r="7" fill="#ffffff" stroke="${TINTA}" stroke-width="1.2"/><path d="M3 -3.5 L8 0 L3 3.5 Z" fill="${TINTA}"/></g>
+    <text x="72" y="62" text-anchor="middle" font-size="9" font-weight="700" fill="#ec2027" font-family="Lexend, Verdana, sans-serif">!</text></svg>`,
   'scratch-vehicle': escenaScratch(''),
   'scratch-marcador': escenaScratch(`<rect x="12" y="18" width="30" height="10" rx="2" fill="#ffffff" stroke="#9aa3ad" stroke-width="0.8"/><text x="15" y="25.5" font-size="5.5" fill="${TINTA}" font-family="Lexend, Verdana, sans-serif">punts</text><rect x="31" y="19.5" width="9" height="7" rx="2" fill="#ff8c1a"/><text x="35.5" y="25" text-anchor="middle" font-size="5.5" font-weight="600" fill="#fff" font-family="Lexend, Verdana, sans-serif">3</text>`),
   'scratch-sense-persempre': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
