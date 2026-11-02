@@ -37,7 +37,7 @@ p.getRange(fila0, 1, NOMS.length, 8).setValues(NOMS.map((n, i) => ['', correu(i)
 mon.crida('admin', 'generaIds', [], MESTRE);
 const ids = p.getDataRange().getValues().slice(1).map(f => f[0]);
 ok(ids.filter(x => /^A0\d\d$/.test(x)).length === 18 && ids.includes('A001') && ids.includes('A018'), 'IDs A001–A018 generats i 6 alumnes de prova A901–A906');
-ok(mon.full.getSheetByName('MISSIONS').getLastRow() === 1 + 18 + 16, 'MISSIONS sembrada una sola vegada (S1 + esborranys)');
+ok(mon.full.getSheetByName('MISSIONS').getLastRow() === 1 + 6 * 18 + 3 * 2, 'MISSIONS sembrada una sola vegada (S1, S3, S5–S8 i esborranys)');
 ok(mon.full.getSheetByName('CALENDARI').getLastRow() === 1 + 45, 'CALENDARI: 5 grups × 9 sessions');
 
 console.log('\n2 · Seguretat');
@@ -403,6 +403,72 @@ for (let k = 0; k < 5; k++) pinB('A005', 'nuvol-flor-poma');
 ok(pinB('A005', 'sol-lluna-estrella').motiu === 'massa-intents', 'Després de 5 PIN equivocats, ni el bo entra (1 hora)');
 ok(pinB('A999', 'sol-lluna-estrella').motiu === 'pin' && pinB('A005x', 'sol-lluna-estrella').motiu === 'pin', 'Alumne inexistent i PIN equivocat donen la mateixa resposta');
 ok(mon.crida('mon', 'api', ['llistaNoms', { codi: codiAra }, null], '').dades.noms.every(x => !('tePin' in x)), 'La llista de noms no diu qui té PIN');
+
+console.log('\n16 · Les missions noves (S3, S5–S8): de la calibració al nivell 2, xuleta i projecció');
+const NOVES = {
+  S3: { xuleta: 9, eina: /Ozobot/ },
+  S5: { xuleta: 4, eina: /SPIKE/ },
+  S6: { xuleta: 4, eina: /SPIKE/ },
+  S7: { xuleta: 8, eina: /Scratch/ },
+  S8: { xuleta: 8, eina: /Scratch/ }
+};
+const oblida = () => ['config', 'missions', 'mon'].forEach(k => mon.projectes.mon.oblidaCache_(k));
+for (const [ses, esp] of Object.entries(NOVES)) {
+  const o = admin('obreSessio', { grup: 'G2', sessio: ses });
+  ok(o.ok && o.dades.oberta.sessio === ses, ses + ': sessió oberta');
+  oblida();
+  const pg = await obreAlumne(6);
+  await espera(pg, '#p-mapa');
+  await pg.clic('#boto-missio');
+  await espera(pg, '#p-missio');
+  const s = ses.toLowerCase();
+  if (ses === 'S6') {
+    await pg.waitForSelector('#m-cos .tria');
+    await revisa(pg, `70-${s}-prediccio`, REVISA_MON);
+    await pg.clic('#m-cos .tria >> nth=0');
+  }
+  await pg.waitForSelector('#b-si');
+  await revisa(pg, `70-${s}-c0`, REVISA_MON);
+  await pg.clic('#b-si');
+  await pg.waitForFunction(() => /Nivell 1/.test(document.getElementById('m-pregunta').textContent) || document.querySelector('#m-pregunta'));
+  await pg.waitForTimeout(200);
+  await revisa(pg, `71-${s}-n1`, REVISA_MON);
+  await pg.clic('#b-si');
+  if (ses !== 'S6') {
+    await pg.waitForSelector('#m-cos .tria');
+    await revisa(pg, `72-${s}-pla`, REVISA_MON);
+    ok((await pg.evaluate(() => document.querySelectorAll('#m-cos .tria svg, #m-cos .tria img').length)) === 3, ses + ': les 3 opcions del pla tenen dibuix');
+    await pg.clic('#m-cos .tria >> nth=0');
+  }
+  await pg.waitForSelector('#b-demo');
+  await revisa(pg, `73-${s}-n2`, REVISA_MON);
+  await pg.click('#boto-codis');
+  await espera(pg, '#modal-xuleta');
+  await revisa(pg, `74-${s}-xuleta`, REVISA_MON);
+  const nItems = await pg.evaluate(() => document.querySelectorAll('#modal-xuleta .xuleta-codi, #modal-xuleta .xuleta-item').length);
+  ok(nItems === esp.xuleta, `${ses}: la xuleta té ${esp.xuleta} elements (${nItems})`);
+  await pg.click('#modal-tanca');
+  await pg.clic('#b-no');
+  await espera(pg, '#p-encallat');
+  await revisa(pg, `75-${s}-encallat`, REVISA_MON);
+  await pg.clic('#encallat-graella .tria >> nth=0');
+  await espera(pg, '#p-pista');
+  await revisa(pg, `76-${s}-pista`, REVISA_MON);
+  admin('canviaEstat', { grup: 'G2', sessio: ses, estat: 'sortida' });
+  oblida();
+  await pg.reload();
+  await espera(pg, '#p-sortida', 40000);
+  await revisa(pg, `77-${s}-sortida-diag`, REVISA_MON);
+  await pg.clic('#sortida-cos .tria[data-v="a"]');
+  await pg.waitForTimeout(200);
+  await revisa(pg, `78-${s}-sortida-eina`, REVISA_MON);
+  admin('canviaEstat', { grup: 'G2', sessio: ses, estat: 'oberta' });
+  await proj.reload();
+  await proj.waitForSelector('#treball', { state: 'visible' });
+  await revisa(proj, `79-${s}-projeccio`, { lletraMin: 18 });
+  ok(esp.eina.test(await proj.textContent('#sub')) && await proj.isVisible('#panell-xuleta .xuleta'), ses + ': la projecció mostra l\'eina i la xuleta');
+  await pg.context().close();
+}
 
 await nav.close();
 srv.close();

@@ -57,7 +57,10 @@ svg { display: block; width: 100%; height: 100%; }
 .xuleta-codis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8vh 1vw; }
 .xuleta-codi { display: flex; flex-direction: column; align-items: center; gap: 0.4vh; padding: 0.3vh 0.6vw; border-radius: 1.6vh; box-shadow: inset 0 0 0 1px var(--vora); }
 .xuleta-nom { font-size: 2.6vh; font-weight: 600; }
-.xuleta-codi svg.codi { width: 100%; height: 7vh; }
+.xuleta-codi svg.codi { width: 100%; height: 5.6vh; }
+.xuleta-codis.blocs { display: flex; flex-wrap: wrap; }
+.xuleta-bloc svg.bloc { width: auto; height: 7vh; max-width: 100%; }
+.xuleta-codi svg.peca { width: 100%; height: 10vh; }
 .panell-xuleta { overflow: hidden; }
 .xuleta-regla { margin: auto 0 0; font-size: 2.4vh; font-weight: 600; color: var(--tinta); }
 .entrar { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2.4vh; min-height: 0; }
@@ -258,14 +261,37 @@ function illaHTML(i, estat) {
    ============================================================ */
 /* Colors oficials de la guia Ozobot Evo: blau #1183C6, vermell #EC2027, verd #49B749 */
 const COLORS_CODI = { K: ['#141414', 'Negre', 'Ng'], R: ['#ec2027', 'Vermell', 'Vm'], G: ['#49b749', 'Verd', 'Vd'], B: ['#1183c6', 'Blau', 'Bl'] };
-const CODIS_OZOBOT = {
-  ozobot: [
-    { grup: 'Velocitat', codis: [
-      ['Lent', 'RKR'], ['Normal', 'GKG'], ['Ràpid', 'BKB'], ['Turbo', 'BGB'], ['Nitro (3 s)', 'BGR']] },
-    { grup: 'Moviments', codis: [
-      ['Pausa (3 s)', 'RBR'], ['Mitja volta', 'BRB'], ['Tornado', 'RGRG'], ['Ziga-zaga', 'BKGR'], ['Giravolt', 'GRGR'], ['Camina enrere', 'RGKB']] }
-  ]
+/* ============================================================
+   XULETES (projecció, botó «Codis» del Chromebook i paper)
+   Cada element és {nom, codi} (Ozobot), {bloc, text} (Scratch) o {nom, peca} (SPIKE).
+   Fonts: Ozobot Evo Color Code Chart (rev. 12-23) · Scratch scratch-l10n (ca) · LEGO SPIKE Essential.
+   ============================================================ */
+const XULETES = {
+  ozobot: { titol: 'Codis de l\'Ozobot', grups: [
+    { grup: 'Velocitat', items: [{ nom: 'Lent', codi: 'RKR' }, { nom: 'Normal', codi: 'GKG' }, { nom: 'Ràpid', codi: 'BKB' }, { nom: 'Turbo', codi: 'BGB' }, { nom: 'Nitro (3 s)', codi: 'BGR' }] },
+    { grup: 'Moviments', items: [{ nom: 'Pausa (3 s)', codi: 'RBR' }, { nom: 'Mitja volta', codi: 'BRB' }, { nom: 'Tornado', codi: 'RGRG' }, { nom: 'Ziga-zaga', codi: 'BKGR' }, { nom: 'Giravolt', codi: 'GRGR' }, { nom: 'Camina enrere', codi: 'RGKB' }] }
+  ], regla: 'Quadrats enganxats, sense blanc entremig. Pinta\'ls en el sentit de la fletxa.' },
+  'ozobot-cruilla': { titol: 'Codis de l\'Ozobot · cruïlles', grups: [
+    { grup: 'A la cruïlla', items: [{ nom: 'Gira a l\'esquerra', codi: 'GKR' }, { nom: 'Recte', codi: 'BKR' }, { nom: 'Gira a la dreta', codi: 'BRG' }] },
+    { grup: 'Velocitat', items: [{ nom: 'Lent', codi: 'RKR' }, { nom: 'Normal', codi: 'GKG' }, { nom: 'Turbo', codi: 'BGB' }] },
+    { grup: 'Moviments', items: [{ nom: 'Pausa (3 s)', codi: 'RBR' }, { nom: 'Mitja volta', codi: 'BRB' }, { nom: 'Giravolt', codi: 'GRGR' }] }
+  ], regla: 'Pinta el codi abans de la cruïlla, a uns 3 cm, en el sentit de la fletxa. Sense codi, a la cruïlla l\'Ozobot tria a l\'atzar.' },
+  spike: { titol: 'Peces del SPIKE', grups: [
+    { grup: 'Les peces', items: [{ nom: 'Hub', peca: 'hub' }, { nom: 'Motor', peca: 'motor' }, { nom: 'Sensor de color', peca: 'sensor' }, { nom: 'Cable al port A o B', peca: 'port' }] }
+  ], regla: 'Encén el hub amb el botó i connecta\'l a l\'app. Acosta molt el color al sensor.' },
+  'scratch-s7': { titol: 'Blocs de Scratch', grups: [
+    { grup: 'Esdeveniments', items: [{ bloc: 'events', text: 'quan la {bandera} es cliqui' }, { bloc: 'events', text: 'quan la tecla [fletxa dreta] es premi' }] },
+    { grup: 'Moviment', items: [{ bloc: 'motion', text: 'suma [10] a x' }, { bloc: 'motion', text: 'suma [10] a y' }, { bloc: 'motion', text: 'ves a x: [0] y: [0]' }] },
+    { grup: 'Control i sensors', items: [{ bloc: 'control', text: 'per sempre' }, { bloc: 'control', text: 'si ⟨ ⟩ llavors' }, { bloc: 'sensing', text: 'tocant el color [ ]?' }] }
+  ], regla: 'La condició va dins de «per sempre», i tot sota «quan la bandera es cliqui».' },
+  'scratch-s8': { titol: 'Blocs de Scratch · variables', grups: [
+    { grup: 'Variables', items: [{ bloc: 'variables', text: 'Crea una variable' }, { bloc: 'variables', text: 'assigna a [punts] el valor [0]' }, { bloc: 'variables', text: 'augmenta [punts] en [1]' }] },
+    { grup: 'Ja els coneixes', items: [{ bloc: 'events', text: 'quan la {bandera} es cliqui' }, { bloc: 'control', text: 'si ⟨ ⟩ llavors' }, { bloc: 'sensing', text: 'tocant el color [ ]?' }] },
+    { grup: 'Per al rècord', items: [{ bloc: 'operators', text: '⟨ [punts] = [5] ⟩' }, { bloc: 'looks', text: 'digues [Rècord!] durant [2] segons' }] }
+  ], regla: '«assigna … el valor 0» va just sota la bandera. «augmenta … en 1» va dins del «si … llavors».' }
 };
+/* Compatibilitat amb el codi de la S1 */
+const CODIS_OZOBOT = { ozobot: XULETES.ozobot.grups.map(g => ({ grup: g.grup, codis: g.items.map(i => [i.nom, i.codi]) })) };
 /** Tira d'un codi: línia negra, quadrats de colors amb la inicial a dins, i fletxa del sentit de marxa. */
 function codiSVG(seq, ambFletxa = true) {
   const n = seq.length, q = 14, marge = 16, w = marge * 2 + n * q, h = ambFletxa ? 30 : 20;
@@ -282,14 +308,57 @@ function codiSVG(seq, ambFletxa = true) {
   return s + '</svg>';
 }
 const nomColors = seq => seq.split('').map(c => (COLORS_CODI[c] || COLORS_CODI.K)[1]).join(' · ');
+/* Colors oficials de les categories de Scratch 3; text fosc perquè es llegeixi bé */
+const COLORS_SCRATCH = { events: '#ffbf00', motion: '#4c97ff', control: '#ffab19', sensing: '#5cb1d6', variables: '#ff8c1a', operators: '#59c059', looks: '#9966ff' };
+/** Un bloc de Scratch: rectangle de color, text fosc i els [valors] en requadres blancs. */
+function blocSVG(cat, text) {
+  const col = COLORS_SCRATCH[cat] || '#ccc';
+  const parts = text.split(/(\[[^\]]*\]|\{bandera\})/).filter(Boolean);
+  let x = 10, cos = '';
+  const amplada = t => t.length * 7.2 + 4;
+  parts.forEach(p => {
+    if (p === '{bandera}') {
+      cos += `<g transform="translate(${x} 9)"><path d="M2 0 V18" stroke="#2c6e2f" stroke-width="2"/><path d="M3 1 Q9 -2 15 2 Q20 5 25 1 V11 Q20 15 15 12 Q9 8 3 11 Z" fill="#4cbf56" stroke="#2c6e2f" stroke-width="1.4"/></g>`;
+      x += 30;
+    } else if (p[0] === '[') {
+      const t = p.slice(1, -1), w = Math.max(22, amplada(t) + 8);
+      cos += `<rect x="${x}" y="7" width="${w}" height="22" rx="11" fill="#ffffff" stroke="#00000033"/>`;
+      cos += `<text x="${x + w / 2}" y="22.5" text-anchor="middle" font-size="12.5" fill="#1c2733" font-family="Lexend, Verdana, sans-serif">${t}</text>`;
+      x += w + 6;
+    } else if (p.trim()) {
+      cos += `<text x="${x}" y="22.5" font-size="13" font-weight="600" fill="#1c2733" font-family="Lexend, Verdana, sans-serif">${p.trim()}</text>`;
+      x += amplada(p.trim()) + 4;
+    }
+  });
+  const w = x + 8;
+  return `<svg viewBox="0 0 ${w} 36" aria-hidden="true" class="bloc"><rect x="1" y="1" width="${w - 2}" height="34" rx="8" fill="${col}" stroke="#00000026" stroke-width="1.5"/>${cos}</svg>`;
+}
+/** Peces del SPIKE Essential en esquema (sense marca ni foto). */
+function pecaSVG(tipus) {
+  const v = 'stroke="#1f2328" stroke-width="2.2" stroke-linejoin="round"';
+  const t = (x, y, txt) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="7" font-weight="600" fill="#1f2328" font-family="Lexend, Verdana, sans-serif">${txt}</text>`;
+  const peces = {
+    hub: `<rect x="22" y="10" width="56" height="44" rx="8" fill="#ffffff" ${v}/><circle cx="50" cy="32" r="7" fill="#f2c94c" ${v}/><rect x="28" y="50" width="12" height="8" rx="2" fill="#5b6470"/><rect x="60" y="50" width="12" height="8" rx="2" fill="#5b6470"/>` + t(34, 67, 'A') + t(66, 67, 'B'),
+    motor: `<rect x="20" y="18" width="48" height="34" rx="9" fill="#ffffff" ${v}/><circle cx="72" cy="35" r="11" fill="#e9ecef" ${v}/><path d="M66 35 H78 M72 29 V41" stroke="#1f2328" stroke-width="3" stroke-linecap="round"/><path d="M20 35 H8" stroke="#5b6470" stroke-width="3"/>`,
+    sensor: `<rect x="30" y="20" width="34" height="30" rx="7" fill="#ffffff" ${v}/><circle cx="47" cy="35" r="8" fill="#1f2328"/><circle cx="47" cy="35" r="3.5" fill="#7fd1ff"/><path d="M64 35 H86" stroke="#e0302f" stroke-width="2.5" stroke-dasharray="4 3"/><rect x="86" y="27" width="8" height="16" rx="2" fill="#e0302f"/><path d="M30 35 H10" stroke="#5b6470" stroke-width="3"/>`,
+    port: `<rect x="12" y="20" width="30" height="30" rx="6" fill="#ffffff" ${v}/><rect x="36" y="29" width="8" height="12" rx="2" fill="#5b6470"/><path d="M44 35 C 58 35, 58 20, 72 20" fill="none" stroke="#5b6470" stroke-width="3"/><rect x="72" y="14" width="18" height="12" rx="3" fill="#ffffff" ${v}/>` + t(27, 62, 'A · B')
+  };
+  return `<svg viewBox="0 0 100 70" aria-hidden="true" class="peca"><rect width="100" height="70" rx="8" fill="#f3eee4"/>${peces[tipus] || ''}</svg>`;
+}
 /** La xuleta sencera (projecció, Chromebook i paper). */
 function xuletaHTML(id) {
-  const grups = CODIS_OZOBOT[id];
-  if (!grups) return '';
-  return `<div class="xuleta">${grups.map(g => `<section class="xuleta-grup"><h3>${g.grup}</h3><div class="xuleta-codis">${g.codis.map(([nom, seq]) =>
-    `<div class="xuleta-codi"><span class="xuleta-nom">${nom}</span>${codiSVG(seq)}</div>`).join('')}</div></section>`).join('')}
-    <p class="xuleta-regla">Quadrats enganxats, sense blanc entremig. Pinta'ls en el sentit de la fletxa.</p></div>`;
+  const x = XULETES[id];
+  if (!x) return '';
+  const item = i => {
+    if (i.codi) return `<div class="xuleta-codi"><span class="xuleta-nom">${i.nom}</span>${codiSVG(i.codi)}</div>`;
+    if (i.bloc) return `<div class="xuleta-codi xuleta-bloc">${blocSVG(i.bloc, i.text)}</div>`;
+    if (i.peca) return `<div class="xuleta-codi"><span class="xuleta-nom">${i.nom}</span>${pecaSVG(i.peca)}</div>`;
+    return '';
+  };
+  return `<div class="xuleta">${x.grups.map(g => `<section class="xuleta-grup"><h3>${g.grup}</h3><div class="xuleta-codis${g.items.every(i => i.bloc) ? ' blocs' : ''}">${g.items.map(item).join('')}</div></section>`).join('')}
+    <p class="xuleta-regla">${x.regla}</p></div>`;
 }
+function titolXuleta(id) { return (XULETES[id] || {}).titol || 'Xuleta'; }
 
 /* Esquemes de la S1 (codis) */
 function tramCodi(seq, opts = {}) {
@@ -319,8 +388,63 @@ Object.assign(IL, {
 function dibuix(k) {
   if (!k) return '';
   if (k.indexOf('codi:') === 0) return codiSVG(k.slice(5));
+  if (k.indexOf('bloc:') === 0) { const p = k.slice(5).split('|'); return blocSVG(p[0], p[1] || ''); }
+  if (k.indexOf('peca:') === 0) return pecaSVG(k.slice(5));
   return IL[k] || '';
 }
+
+/* ---------- Esquemes de la S3 (cruïlles), S5–S6 (SPIKE) i S7–S8 (Scratch) ---------- */
+function cruilla(codi, ambMetes) {
+  let s = marcador('M50 86 V44') + marcador('M24 44 H76') + marcador('M50 44 V16');
+  if (codi) {
+    const q = 5;
+    codi.split('').forEach((c, i) => { s += `<rect x="47.5" y="${72 - i * q}" width="5" height="${q}" fill="${(COLORS_CODI[c] || COLORS_CODI.K)[0]}"/>`; });
+  }
+  s += robot(50, 82, 0.6);
+  if (ambMetes) {
+    const meta = (x, y, t) => `<g transform="translate(${x} ${y})"><path d="M0 0 V-11" stroke="${TINTA}" stroke-width="1.4"/><path d="M0 -11 L8 -8.5 L0 -6Z" fill="#d9a441" stroke="${TINTA}" stroke-width="1"/><text x="0" y="8" text-anchor="middle" font-size="6" font-weight="600" fill="${TINTA}" font-family="Lexend, Verdana, sans-serif">${t}</text></g>`;
+    s += meta(22, 40, 'E') + meta(50, 14, 'R') + meta(78, 40, 'D');
+  }
+  return esquema(s);
+}
+function escenaScratch(extra) {
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    <rect x="8" y="14" width="84" height="64" rx="3" fill="#ffffff" stroke="${TINTA}" stroke-width="1.4"/>
+    <rect x="8" y="38" width="84" height="18" fill="#c9ced6"/><path d="M12 47 H88" stroke="#ffffff" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <rect x="62" y="36" width="9" height="22" fill="#ec2027"/>
+    <g transform="translate(20 42)"><rect x="0" y="0" width="16" height="9" rx="2.5" fill="#4c97ff" stroke="${TINTA}" stroke-width="1"/><circle cx="4" cy="10" r="2.2" fill="${TINTA}"/><circle cx="12" cy="10" r="2.2" fill="${TINTA}"/></g>
+    <g transform="translate(84 40)"><path d="M0 0 V16" stroke="${TINTA}" stroke-width="1.2"/><path d="M0 0 L7 2.5 L0 5Z" fill="#49b749"/></g>${extra || ''}</svg>`;
+}
+function pilaBlocs(blocs) {
+  /* blocs: [[cat, text, sagnat]] → una pila de blocs, un sota l'altre */
+  let y = 0, s = '';
+  blocs.forEach(([cat, text, sag]) => {
+    const b = blocSVG(cat, text).replace('<svg ', `<svg x="${(sag || 0) * 14}" y="${y}" width="${Math.min(100 - (sag || 0) * 14, 8 + text.length * 2.2)}" height="10" preserveAspectRatio="xMinYMid meet" `);
+    s += b; y += 11;
+  });
+  return s;
+}
+Object.assign(IL, {
+  'ozo-cruilla': cruilla('', true),
+  'ozo-cruilla-codi': cruilla('GKR', true),
+  'ozo-cruilla-revers': cruilla('RKG', false),
+  'spike-parada': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    <g transform="translate(6 16) scale(0.5)">${pecaSVG('hub').replace(/^<svg[^>]*>|<\/svg>$/g, '')}</g>
+    <g transform="translate(46 16) scale(0.5)">${pecaSVG('motor').replace(/^<svg[^>]*>|<\/svg>$/g, '')}</g>
+    <g transform="translate(26 56) scale(0.5)">${pecaSVG('sensor').replace(/^<svg[^>]*>|<\/svg>$/g, '')}</g>
+    <rect x="70" y="62" width="16" height="10" rx="2" fill="#1183c6" stroke="${TINTA}" stroke-width="1"/>
+    <text x="78" y="82" text-anchor="middle" font-size="6" font-weight="600" fill="${TINTA}" font-family="Lexend, Verdana, sans-serif">tiquet</text></svg>`,
+  'spike-tiquet-lluny': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    <g transform="translate(4 32) scale(0.55)">${pecaSVG('sensor').replace(/^<svg[^>]*>|<\/svg>$/g, '').replace(/<path d="M64 35 H86"[^>]*\/><rect x="86"[^>]*\/>/, '')}</g>
+    <rect x="76" y="40" width="16" height="12" rx="2" fill="#1183c6" stroke="${TINTA}" stroke-width="1"/>
+    <path d="M44 51 H72" stroke="${TINTA}" stroke-width="1" stroke-dasharray="2 2"/><text x="58" y="47" text-anchor="middle" font-size="6" fill="${TINTA}" font-family="Lexend, Verdana, sans-serif">lluny</text></svg>`,
+  'scratch-vehicle': escenaScratch(''),
+  'scratch-marcador': escenaScratch(`<rect x="12" y="18" width="30" height="10" rx="2" fill="#ffffff" stroke="#9aa3ad" stroke-width="0.8"/><text x="15" y="25.5" font-size="5.5" fill="${TINTA}" font-family="Lexend, Verdana, sans-serif">punts</text><rect x="31" y="19.5" width="9" height="7" rx="2" fill="#ff8c1a"/><text x="35.5" y="25" text-anchor="middle" font-size="5.5" font-weight="600" fill="#fff" font-family="Lexend, Verdana, sans-serif">3</text>`),
+  'scratch-sense-persempre': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    <g transform="translate(8 26)">${pilaBlocs([['events', 'quan la {bandera} es cliqui', 0], ['control', 'si ⟨ tocant el color [vermell]? ⟩ llavors', 0], ['motion', 'ves a x: [0] y: [0]', 1]])}</g></svg>`,
+  'scratch-sense-zero': `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="6" fill="#f3eee4"/>
+    <g transform="translate(8 26)">${pilaBlocs([['events', 'quan la {bandera} es cliqui', 0], ['control', 'per sempre', 0], ['control', 'si ⟨ tocant el color [verd]? ⟩ llavors', 1], ['variables', 'augmenta [punts] en [1]', 2]])}</g></svg>`
+});
 
 </script>
 <script>

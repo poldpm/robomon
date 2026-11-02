@@ -1,6 +1,8 @@
 # Repàs de les missions (S1–S9) · ulls de mestre i d'alumne
 
-> 1 de novembre de 2026. La S1 està repassada i aplicada. **S2–S9 encara no tenen contingut** (només el títol): per redactar-les em calen els fitxers `S2…S9-ACTIVITAT` i `-RECURS` del primer grup. Aquí hi ha, per a cada sessió, el que caldrà i el que necessito saber.
+> **2 de novembre de 2026 · taller renovat.** Ja tenen missió completa (publicada): **S1**, **S3 El teu circuit** (Ozobot, full blanc, cruïlla i codis de direcció), **S5 Munta i modifica** (SPIKE Essential, parada *Snack Stand*), **S6 La parada classifica** (la mateixa parada millorada: cada color fa una cosa), **S7 Circula** i **S8 El marcador** (Scratch: el marcador és del vehicle de la S7). Cada una amb xuleta pròpia (botó «Codis» i projecció).
+> **Pendents:** S2 (Scottie Go!: cal la foto de les cartes o la guia del mestre), S4 (Dash amb Blockly, sense pinça) i S9 (personal, segons el carnet).
+> Els esbossos de sota són anteriors a la renovació: valen les lliçons, no les activitats antigues.
 
 ---
 

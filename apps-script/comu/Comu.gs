@@ -39,10 +39,10 @@ var BLOC_MESTRE = { des_de: 'present_mestre', fins_a: 'actualitzat_mestre' };
 var SESSIONS = {
   S1: { zona: 'Z1', eina: 'ozobot',  unitats: 6, nom: 'Primers codis' },
   S2: { zona: 'Z2', eina: 'scottie', unitats: 6, nom: 'Code Table' },
-  S3: { zona: 'Z3', eina: 'ozobot',  unitats: 6, nom: 'Ozo-Trace' },
+  S3: { zona: 'Z3', eina: 'ozobot',  unitats: 6, nom: 'El teu circuit' },
   S4: { zona: 'Z4', eina: 'dash',    unitats: 3, nom: 'Dash Cargo' },
-  S5: { zona: 'Z5', eina: 'spike',   unitats: 3, nom: 'SPIKE Sort 1' },
-  S6: { zona: 'Z6', eina: 'spike',   unitats: 3, nom: 'SPIKE Sort 2' },
+  S5: { zona: 'Z5', eina: 'spike',   unitats: 3, nom: 'Munta i modifica' },
+  S6: { zona: 'Z6', eina: 'spike',   unitats: 3, nom: 'La parada classifica' },
   S7: { zona: 'Z7', eina: 'scratch', unitats: 0, nom: 'Circula' },
   S8: { zona: 'Z8', eina: 'scratch', unitats: 0, nom: 'El marcador' },
   S9: { zona: 'Z9', eina: 'totes',   unitats: 0, nom: 'Missió final' }
@@ -217,12 +217,12 @@ function analitzaJson_(text, perDefecte) {
   try { return JSON.parse(text); } catch (e) { return perDefecte; }
 }
 
-/** opcions al full: "a|La línia té un forat|ozo-forat;b|...". */
+/** opcions al full: "a|La línia té un forat|ozo-forat;b|...". La imatge pot dur «|» (bloc:cat|text). */
 function analitzaOpcions_(text) {
   if (!text) return [];
   return String(text).split(';').map(function (t) {
     var p = t.split('|');
-    return { clau: (p[0] || '').trim(), text: (p[1] || '').trim(), imatge: (p[2] || '').trim() };
+    return { clau: (p[0] || '').trim(), text: (p[1] || '').trim(), imatge: p.slice(2).join('|').trim() };
   }).filter(function (o) { return o.clau; });
 }
 

@@ -181,6 +181,10 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
 .xuleta-nom { font-size: 19px; font-weight: 600; white-space: nowrap; }
 .xuleta-codi svg.codi { width: 100%; height: auto; }
 .xuleta-regla { margin: 2px 0 0; font-size: 19px; color: var(--suau); }
+.xuleta-codis.blocs { display: flex; flex-wrap: wrap; }
+.xuleta-codi.xuleta-bloc { padding: 6px 8px; }
+.xuleta-bloc svg.bloc { width: auto; height: 50px; max-width: 100%; }
+.tria .dibuix svg.bloc, .il svg.bloc { width: auto; height: 58px; max-width: 100%; border-radius: 0; margin: auto 0; }
 .estat-xarxa { position: fixed; right: 16px; bottom: 12px; z-index: 6; background: var(--tinta); color: #fff; font-size: 19px; padding: 8px 14px; border-radius: 12px; }
 .benvinguda { background: linear-gradient(var(--boira), var(--paper)); }
 </style>
@@ -334,7 +338,7 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
 <div class="avis-illa" id="avis-illa" hidden></div>
 <div class="modal" id="modal-xuleta" hidden role="dialog" aria-label="Codis de colors">
   <div class="modal-caixa">
-    <div class="modal-cap"><h2>Codis de colors</h2><button class="boto clar petit" id="modal-tanca">Tanca</button></div>
+    <div class="modal-cap"><h2 id="modal-xuleta-titol">Codis de colors</h2><button class="boto clar petit" id="modal-tanca">Tanca</button></div>
     <div id="modal-xuleta-cos"></div>
   </div>
 </div>
@@ -537,6 +541,8 @@ function obreXuleta() {
   const m = S.estat.avui && S.estat.avui.missio;
   if (!m || !m.xuleta) return;
   $('modal-xuleta-cos').innerHTML = xuletaHTML(m.xuleta);
+  $('modal-xuleta-titol').textContent = titolXuleta(m.xuleta);
+  $('modal-xuleta').setAttribute('aria-label', titolXuleta(m.xuleta));
   $('modal-xuleta').hidden = false;
 }
 function tancaModal() { $('modal-xuleta').hidden = true; }
