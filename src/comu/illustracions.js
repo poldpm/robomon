@@ -247,10 +247,10 @@ function programaScottie(files, x0, y0, alt) {
   });
   return s;
 }
-/** Un programa curt com a dibuix: «STEP+3» (una fila) o «STEP/STEP/STEP» (files). */
+/** Un programa curt com a dibuix: «STEP+3» (una fila) o «STEP,STEP,STEP» (files). */
 function progSVG(spec) {
   const tipus = t => /^\d+$/.test(t) ? 'num' : (t === 'BEGIN' || t === 'END') ? 'inici' : /REPEAT/.test(t) ? 'control' : 'ordre';
-  const files = spec.split('/').map(f => f.split('+').map(t => [t.trim(), tipus(t.trim())]));
+  const files = spec.split(',').map(f => f.split('+').map(t => [t.trim(), tipus(t.trim())]));
   const amplada = files.map(f => f.reduce((a, [t, ti]) => { const m = cartaSVG(t, ti).match(/viewBox="0 0 ([\d.]+) 36"/); return a + Number(m[1]) + 1.5; }, 0));
   const w = Math.max(...amplada), h = files.length * 37.5;
   return `<svg viewBox="0 0 ${w} ${h}" aria-hidden="true" class="prog">${programaScottie(files, 0, 0, 36)}</svg>`;

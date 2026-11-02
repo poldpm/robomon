@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<title>S2 · Programa amb cartes · RECURS (mestre)</title>
+<!-- RECURS: va a «El meu material». No conté cap nom d'alumne.
+     Imprimir a mida real (100 %). Xuletes i cartes de repte, en color. -->
+<style>
+/*@@FONTS@@*/
+@page { size: A4; margin: 0; }
+@page apaisat { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Lexend", "Atkinson Hyperlegible", Verdana, "Segoe UI", Arial, sans-serif; color: #000; background: #e9ecef; }
+b, strong, h1, h2, h3, th { font-weight: 600; }
+.full { width: 210mm; height: 297mm; padding: 14mm 15mm; margin: 8mm auto; background: #fff; position: relative; overflow: hidden; page-break-after: always; break-after: page; }
+.full.apaisat { page: apaisat; width: 297mm; height: 210mm; padding: 0; }
+@media print { body { background: #fff; } .full { margin: 0; } .no-imprimir { display: none; } }
+h1 { font-size: 21pt; margin: 0 0 4mm; }
+h2 { font-size: 14pt; margin: 5mm 0 2mm; }
+p, li, td, th { font-size: 10.5pt; line-height: 1.32; }
+.peu { position: absolute; bottom: 8mm; right: 15mm; font-size: 8.5pt; color: #444; }
+table { border-collapse: collapse; width: 100%; }
+td, th { border: 1px solid #000; padding: 1.6mm 2.6mm; vertical-align: top; text-align: left; }
+th { background: #eee; }
+.caixa { border: 1.5px solid #000; border-radius: 4mm; padding: 3mm 4mm; margin: 3mm 0; }
+.check li { list-style: none; margin-left: -6mm; }
+.check li::before { content: "☐  "; font-size: 12pt; }
+.codi-txt { font-family: inherit; font-weight: 600; letter-spacing: .5px; white-space: nowrap; }
+/* Xuleta en color */
+.xuleta-a5 { height: 133mm; border: 1px dashed #888; border-radius: 3mm; padding: 6mm 7mm; margin-bottom: 4mm; display: flex; flex-direction: column; gap: 2.5mm; }
+.xuleta-a5 h2 { margin: 0; font-size: 15pt; }
+.xg h3 { margin: 0 0 1.5mm; font-size: 11pt; color: #333; }
+.xc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm 3mm; }
+.xi { border: 0.4mm solid #bbb; border-radius: 2mm; padding: 1.5mm 2mm; display: flex; flex-direction: column; align-items: center; gap: 1mm; }
+.xi span { font-size: 10.5pt; font-weight: 600; }
+.xi svg { width: 100%; height: 11mm; }
+.regla { font-size: 9.5pt; margin: auto 0 0; }
+/* Cartes */
+.cartes { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 86mm); }
+div.carta { border: 1px dashed #000; padding: 8mm; display: flex; flex-direction: column; gap: 4mm; overflow: hidden; }
+div.carta .t { font-size: 12pt; font-weight: 600; border: 1.5px solid #000; border-radius: 3mm; padding: 1mm 3mm; align-self: flex-start; }
+div.carta p { font-size: 17pt; line-height: 1.3; margin: 0; }
+div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
+/* Pòsters */
+.poster { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 12mm; }
+.poster h1 { font-size: 52pt; line-height: 1.15; margin: 0; }
+.poster p { font-size: 24pt; margin: 0; }
+.boto-imprimir { position: fixed; right: 16px; top: 16px; font: 600 18px sans-serif; padding: 12px 18px; border-radius: 10px; border: 2px solid #000; background: #fff; cursor: pointer; }
+.xi svg.carta { width: auto; max-width: 100%; height: 9mm; }
+.reixa svg { width: 100%; height: 100%; }
+#cartes1, #cartes2 { grid-template-columns: 1fr; }
+.carta-r { grid-template-columns: 1fr 70mm; padding: 7mm 9mm; }
+.reixa { align-self: center; height: 70mm; }
+.carta-r { border: 1px dashed #000; padding: 6mm 7mm; display: grid; grid-template-columns: 1fr 52mm; gap: 4mm; overflow: hidden; }
+.carta-r .t { font-size: 12pt; font-weight: 600; border: 1.5px solid #000; border-radius: 3mm; padding: 1mm 3mm; align-self: flex-start; }
+.carta-r p { font-size: 14pt; line-height: 1.3; margin: 0; }
+.carta-r .nota { font-size: 10pt; color: #333; }
+.carta-r .esq { display: flex; flex-direction: column; gap: 3mm; }
+.prog-sol svg { height: 7mm; width: auto; display: inline-block; vertical-align: middle; }
+</style>
+</head>
+<body>
+<button class="boto-imprimir no-imprimir" onclick="window.print()">Imprimeix (mida real, 100 %)</button>
+
+<!-- 1 · GUIÓ -->
+<section class="full">
+  <h1>S2 · Programa amb cartes · Guió del mestre</h1>
+  <p><b>Eina:</b> Scottie Go! Edu (app a la tauleta + cartes). <b>Equips:</b> 6 tauletes, equips de 3 que fa l'app.
+  A cada tauleta, <b>cada nen fa el programa d'un repte</b> (1r, 2n o 3r): li surt al Chromebook com a «La teva». Els altres dos miren i ajuden parlant.</p>
+  <h2>Migdia (30 min)</h2>
+  <ul class="check">
+    <li>6 tauletes carregades, amb l'app <b>Scottie Go! Edu</b> oberta i la llicència activada</li>
+    <li>A cada tauleta, l'app al <b>repte on vols que comencin</b> (el mateix a totes)</li>
+    <li>6 jocs de cartes. <b>Treu-ne les verdes «SWITCH TO»</b>: no les farem servir</li>
+    <li>Prova una tauleta: BEGIN, STEP i el 2, END en columna. Escaneja-ho. Mira on hi ha <b>reflexos</b> de llum a les taules i evita'ls</li>
+    <li>Xuletes de cartes (pàgina 5) <b>en color</b>: 3 fulls = 6 xuletes, una per taula</li>
+    <li>Cartes de repte (pàgines 6 i 7) en color, retallades, en un sobre</li>
+    <li>Tauler: <b>Grup → S2 → Obre la sessió</b>. Projecció ↗ a la Promethean: hi surten les cartes</li>
+  </ul>
+  <h2>Minut a minut</h2>
+  <table>
+    <tr><th style="width:24mm">Hora</th><th>Què passa</th><th style="width:44mm">Pantalla</th></tr>
+    <tr><td>14:55–15:03</td><td>Desplegament: tauleta, cartes i xuleta a cada taula. <b>Represa:</b> «La setmana passada vau donar ordres a l'Ozobot amb colors. Avui les ordres les donareu amb cartes.»</td><td>Projecció</td></tr>
+    <tr><td>15:03–15:08</td><td>Entrar a RoboMón (ja saben el seu PIN de dibuixos).</td><td>Chromebook</td></tr>
+    <tr><td>15:08–15:18</td><td><b>Demostració</b> amb la xuleta projectada: 1) BEGIN a dalt, END a baix, cartes en columna; 2) STEP i el número 3 = tres STEP; 3) la dreta és <b>la del Scottie</b>: posa't al seu lloc. Escanejo un programa i el veiem.</td><td>Projecció (cartes)</td></tr>
+    <tr><td>15:18–16:12</td><td><b>Treball.</b> L'app els porta pas a pas: 1) app oberta i cartes a punt; 2) N1: el programa del repte arriba on toca; 3) <b>pla</b>: quin programa és el més curt; 4) N2: el seu repte amb 3 estrelles → «Ja ho puc ensenyar»; 5) N3: carta de repte (REPEAT).</td><td>Tauleta (Chromebook ~4 min)</td></tr>
+    <tr><td>16:12–16:22</td><td>Al tauler: <b>Targeta de sortida</b>. Responen 2 preguntes.</td><td>Chromebook</td></tr>
+    <tr><td>16:22–16:28</td><td>Marge. <b>Tanca la sessió</b>.</td><td>—</td></tr>
+    <tr><td>16:28–16:40</td><td>Recollida: cartes comptades i ordenades per colors, tauletes a carregar.</td><td>—</td></tr>
+  </table>
+  <div class="peu">S2 · Programa amb cartes · RECURS · 1</div>
+</section>
+
+<!-- 2 · TARGETA DE DEMOSTRACIÓ -->
+<section class="full">
+  <h1>Targeta de demostració</h1>
+  <p>Quan un nen és a «Volen ensenyar-ho»: mira <b>la tauleta i les cartes</b> i fes-li <b>les dues preguntes, sempre les mateixes</b>. 30–45 segons. Un clic al mòbil.</p>
+  <div class="caixa">
+    <h2 style="margin-top:0">Nivell 2 · Les dues preguntes</h2>
+    <p style="font-size:15pt; margin: 2mm 0;"><b>1.</b> «Ensenya'm el teu repte. Té 3 estrelles?»</p>
+    <p style="font-size:15pt; margin: 2mm 0;"><b>2.</b> «Què fa aquest número? Quantes cartes t'has estalviat?»</p>
+  </div>
+  <table>
+    <tr><th style="width:58mm">Botó al mòbil</th><th>Quan el prems</th><th style="width:30mm">Nota</th></tr>
+    <tr><td><b>N2 · Funciona i ho explica</b></td><td>El seu repte arriba amb 3 estrelles <b>i</b> diu que el número fa repetir la carta (STEP i el 3 = tres passos).</td><td>8<br>(8,5 si abans havia dit «no me n'he sortit»)</td></tr>
+    <tr><td><b>N2 · No funciona, però sap per què</b></td><td>No té les 3 estrelles o no arriba, però <b>assenyala la carta</b> que falla: el gir a l'altre costat, un pas de més, cartes repetides.</td><td>7,5</td></tr>
+    <tr><td><b>Encara no</b></td><td>Ni funciona ni sap per què. Una pista i tornarà a la cua. <b>No treu punts.</b></td><td>—</td></tr>
+    <tr><td><b>N1 no és cert</b></td><td>Havia marcat que el Scottie arribava i no és així.</td><td>torna a 0</td></tr>
+  </table>
+  <div class="caixa">
+    <h2 style="margin-top:0">Nivell 3</h2>
+    <p>Ha fet una carta de repte: ha posat les cartes sobre la taula i ho comprova amb el dit sobre el dibuix. <b>N3 · Fet i ho explica</b> (10) si diu què es repeteix i quantes vegades. <b>N3 · Fet</b> (9) si només és correcte.</p>
+  </div>
+  <h2>Regles que cal dir en veu alta (una vegada)</h2>
+  <ul>
+    <li><b>Cadascú fa el programa del seu repte.</b> Els altres dos miren i ajuden parlant.</li>
+    <li><b>Qui ajuda parla, no toca.</b> Mans al darrere.</li>
+    <li><b>Dir «no me n'he sortit» està bé:</b> et dona una pista i, si cal, vinc jo.</li>
+  </ul>
+  <div class="peu">S2 · Programa amb cartes · RECURS · 2</div>
+</section>
+
+<!-- 3 · SOLUCIONARI I ESCALA -->
+<section class="full">
+  <h1>Solucionari</h1>
+  <h2>Pla (l'app el pregunta abans del nivell 2)</h2>
+  <p>«El Scottie ha d'avançar 3 caselles. Quin programa és el més curt?» → <b>STEP i el número 3</b>. El pla no puntua l'encert: el que compta és haver-lo fet abans.</p>
+  <h2>Targeta de sortida (es corregeix sola)</h2>
+  <table>
+    <tr><th style="width:90mm">Pregunta</th><th>Correcta</th></tr>
+    <tr><td>«El Scottie mira cap a tu. Poses TURN TO THE RIGHT i gira cap a la teva esquerra. Per què?»</td><td><b>Gira cap a la seva dreta, no cap a la teva.</b> Diagnòstic: suma +1 a qui no arriba a N1.</td></tr>
+    <tr><td>«Quin programa fa el mateix que STEP, STEP, STEP, STEP?»</td><td><b>STEP i el número 4</b></td></tr>
+  </table>
+  <h2>Cartes de repte (nivell 3): solucions</h2>
+  <table id="solucions"><tr><th style="width:36mm">Carta</th><th>Programa més curt</th></tr></table>
+  <div class="peu">S2 · Programa amb cartes · RECURS · 3</div>
+</section>
+
+<!-- 4 · ERRORS, ESCALA I REPRESA -->
+<section class="full">
+  <h1>Errors típics, escala i represa</h1>
+  <h2>Errors típics i pista que dona l'app</h2>
+  <table>
+    <tr><th style="width:44mm">El nen tria…</th><th>Pista</th><th style="width:52mm">Què sol passar</th></tr>
+    <tr><td>La tauleta no llegeix les cartes</td><td>Cartes planes i en una columna, de BEGIN a END. Totes a la foto. Més llum, sense ombra.</td><td>Reflexos, una carta tapada, falta BEGIN o END.</td></tr>
+    <tr><td>Gira cap a l'altre costat</td><td>La dreta és la del Scottie: posa't al seu lloc.</td><td>El Scottie mira cap avall o cap al nen.</td></tr>
+    <tr><td>No arriba o xoca</td><td>Compta les caselles amb el dit. Mira on s'atura i canvia aquella carta.</td><td>Un pas de més o de menys; s'oblida un gir.</td></tr>
+    <tr><td>No sé què he de fer</td><td>BEGIN, una carta per moviment, END.</td><td>Necessita la xuleta, no més text.</td></tr>
+  </table>
+  <h2>Escala de nota de la sessió</h2>
+  <table>
+    <tr><td>Present, sense cap registre · encallat honest (+1 diagnòstic encertat)</td><td style="width:22mm">2 · 3 · 4</td></tr>
+    <tr><td>N1 (+1 si ha fet el pla abans del nivell 2)</td><td>5 · 6</td></tr>
+    <tr><td>N2 · no funciona però sap per què · funciona i ho explica · ha fallat i ho ha arreglat</td><td>7,5 · 8 · 8,5</td></tr>
+    <tr><td>N3 · fet · fet i explicat</td><td>9 · 10</td></tr>
+  </table>
+  <p class="caixa" style="font-size:12pt;"><b>Represa de la S3:</b> «Ja sabeu donar ordres amb colors i amb cartes. Avui dibuixareu el vostre circuit i l'Ozobot haurà de triar camí.»</p>
+  <div class="peu">S2 · Programa amb cartes · RECURS · 4</div>
+</section>
+
+<!-- 4 · XULETES EN COLOR -->
+<section class="full" id="full-xuletes"></section>
+
+<!-- 5–6 · CARTES DE REPTE -->
+<section class="full" style="padding: 14mm 15mm;"><div class="cartes" id="cartes1"></div></section>
+<section class="full" style="padding: 14mm 15mm;"><div class="cartes" id="cartes2"></div></section>
+
+<script>
+/*@@IL@@*/
+</script>
+<script>
+/* ---------- Xuleta (les mateixes cartes que l'app) ---------- */
+const X = XULETES.scottie;
+const xuleta = () => `<div class="xuleta-a5"><h2>Cartes del Scottie Go!</h2>` + X.grups.map(g =>
+  `<div class="xg"><h3>${g.grup}</h3><div class="xc">${g.items.map(i => `<div class="xi"><span>${i.nom}</span>${cartaSVG(i.carta, i.tipus)}</div>`).join('')}</div></div>`).join('') +
+  `<p class="regla"><b>${X.regla}</b> BEGIN sempre a dalt i END a baix, totes les cartes en una columna.</p></div>`;
+document.getElementById('full-xuletes').innerHTML = xuleta() + xuleta() + '<div class="peu">S2 · Programa amb cartes · RECURS · 5 · imprimir EN COLOR</div>';
+
+/* ---------- Cartes de repte: el dibuix es calcula a partir de la solució ---------- */
+/* Programa: llista de passos. 'S' = un pas, 'R' = gira a la dreta, 'L' = gira a l'esquerra. Comença mirant amunt. */
+function camina(passos) {
+  let x = 0, y = 0, d = 0; const punts = [[0, 0]];
+  const DX = [0, 1, 0, -1], DY = [-1, 0, 1, 0];
+  passos.forEach(p => { if (p === 'R') d = (d + 1) % 4; else if (p === 'L') d = (d + 3) % 4; else { x += DX[d]; y += DY[d]; punts.push([x, y]); } });
+  return { punts, final: [x, y, d] };
+}
+function reixa(passos) {
+  const { punts, final } = camina(passos);
+  const xs = punts.map(p => p[0]), ys = punts.map(p => p[1]);
+  const x0 = Math.min(...xs) - 1, x1 = Math.max(...xs) + 1, y0 = Math.min(...ys) - 1, y1 = Math.max(...ys) + 1;
+  const n = Math.max(x1 - x0, y1 - y0) + 1, c = 100 / n;
+  const cx = x => (x - x0 + (n - (x1 - x0 + 1)) / 2 + 0.5) * c, cy = y => (y - y0 + (n - (y1 - y0 + 1)) / 2 + 0.5) * c;
+  let s = '<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" fill="#ffffff" stroke="#1c2733" stroke-width="0.8"/>';
+  for (let i = 1; i < n; i++) s += `<path d="M${i * c} 0 V100 M0 ${i * c} H100" stroke="#c9ced6" stroke-width="0.5"/>`;
+  s += `<polyline points="${punts.map(p => cx(p[0]) + ',' + cy(p[1])).join(' ')}" fill="none" stroke="#1183c6" stroke-width="${c * 0.14}" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="${c * 0.22} ${c * 0.16}"/>`;
+  const [fx, fy] = punts[punts.length - 1];
+  s += `<circle cx="${cx(fx)}" cy="${cy(fy)}" r="${c * 0.26}" fill="#49b749" stroke="#1c2733" stroke-width="0.6"/>`;
+  s += `<g transform="translate(${cx(0)} ${cy(0)})"><circle r="${c * 0.32}" fill="#ffffff" stroke="#1c2733" stroke-width="0.9"/><path d="M${-c * 0.14} ${c * 0.02} L0 ${-c * 0.24} L${c * 0.14} ${c * 0.02} Z" fill="#1c2733"/></g>`;
+  return s + '</svg>';
+}
+/* [títol, enunciat, passos del recorregut, solució més curta (format prog:, files separades per comes)] */
+const REPTES = [
+  ['Quadrat', 'El Scottie fa un quadrat i torna a la sortida.', 'SSRSSRSSRSSR', 'REPEAT+4,STEP+2,TURN TO THE RIGHT,END IF / REPEAT'],
+  ['Escala', 'El Scottie puja una escala de 3 graons.', 'SRSLSRSLSRSL', 'REPEAT+3,STEP,TURN TO THE RIGHT,STEP,TURN TO THE LEFT,END IF / REPEAT'],
+  ['Recte', 'El Scottie avança fins al cercle verd.', 'SSSSS', 'STEP+5'],
+  ['Rectangle', 'El Scottie fa un rectangle i torna a la sortida.', 'SSSRSRSSSRSR', 'REPEAT+2,STEP+3,TURN TO THE RIGHT,STEP,TURN TO THE RIGHT,END IF / REPEAT'],
+  ['Escala esquerra', 'El Scottie puja una escala cap a l\'esquerra.', 'SLSRSLSRSLSR', 'REPEAT+3,STEP,TURN TO THE LEFT,STEP,TURN TO THE RIGHT,END IF / REPEAT'],
+  ['Serp', 'El Scottie fa ziga-zaga fins al cercle verd.', 'SSRSRSSLSLSS', 'STEP+2,TURN TO THE RIGHT,STEP,TURN TO THE RIGHT,STEP+2,TURN TO THE LEFT,STEP,TURN TO THE LEFT,STEP+2']
+];
+const carta = ([t, p, passos]) => `<div class="carta-r"><div class="esq"><span class="t">Repte extra · ${t}</span><p>${p}</p>
+  <p class="nota">Comença al cercle blanc, mirant cap on diu la fletxa. Arriba al cercle verd.</p>
+  <p class="nota"><b>Fes-ho amb les MENYS cartes possibles.</b> Posa-les a la taula i comprova-ho amb el dit sobre el dibuix. Pots fer servir REPEAT.</p></div>
+  <div class="reixa">${reixa(passos.split(''))}</div></div>`;
+document.getElementById('cartes1').innerHTML = REPTES.slice(0, 3).map(carta).join('');
+document.getElementById('cartes2').innerHTML = REPTES.slice(3).map(carta).join('');
+document.getElementById('solucions').insertAdjacentHTML('beforeend', REPTES.map(([t, , , sol]) =>
+  `<tr><td>${t}</td><td class="prog-sol">${sol.split(',').map(f => progSVG(f)).join(' ')}</td></tr>`).join(''));
+
+/* Comprovació: la solució fa exactament el recorregut del dibuix */
+function expandeix(sol) {
+  const files = sol.split(','); const out = [];
+  const pas = f => { const [c, n] = f.split('+'); const k = c === 'STEP' ? 'S' : c === 'TURN TO THE RIGHT' ? 'R' : c === 'TURN TO THE LEFT' ? 'L' : ''; return Array(Number(n || 1)).fill(k).join(''); };
+  for (let i = 0; i < files.length; i++) {
+    if (files[i].indexOf('REPEAT+') === 0) { const n = Number(files[i].split('+')[1]); let cos = ''; i++; while (files[i] !== 'END IF / REPEAT') cos += pas(files[i++]); out.push(cos.repeat(n)); }
+    else out.push(pas(files[i]));
+  }
+  return out.join('');
+}
+window.ERRORS_REPTES = REPTES.filter(([t, , passos, sol]) => expandeix(sol) !== passos).map(r => r[0]);
+document.querySelectorAll('.full').forEach((f, i) => { if (!f.querySelector('.peu')) f.insertAdjacentHTML('beforeend', `<div class="peu">S2 · Programa amb cartes · RECURS · ${i + 1}</div>`); });
+</script>
+</body>
+</html>

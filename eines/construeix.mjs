@@ -21,6 +21,7 @@ const imgObj = filtre => '{' + IMATGES.filter(f => filtre(f.replace('.webp', '')
   `${JSON.stringify(f.replace('.webp', ''))}:"data:image/webp;base64,${b64('src/imatges/' + f)}"`).join(',\n') + '}';
 const IL = `const IMG = ${imgObj(() => true)};\n` + IL_SRC;
 const ESCENES = ['ozo-cami', 'ozo-arriba', 'mestre', 'carta', 'e-encen', 'e-nose', 'ozo-boto', 'ozo-calibra'];
+const IL_MAT = `const IMG = ${imgObj(() => false)};\n` + IL_SRC;   /* materials: només esquemes vectorials */
 const IL_PROJ = `const IMG = ${imgObj(k => k === 'mapa' || ESCENES.includes(k))};\n` + IL_SRC;
 
 function munta(src, subs) {
@@ -65,7 +66,7 @@ for (const [nom, t] of Object.entries(sortides)) escriu(nom, t);
 for (const carpeta of readdirSync(join(ARREL, 'materials'))) {
   const src = join('materials', carpeta, 'index.src.html');
   try { readFileSync(join(ARREL, src)); } catch (e) { continue; }
-  escriu(join('materials', carpeta, 'index.html'), munta(src, { FONTS }));
+  escriu(join('materials', carpeta, 'index.html'), munta(src, llegeix(src).includes("/*@@IL@@*/") ? { FONTS, IL: IL_MAT } : { FONTS }));
   console.log(`✓ materials/${carpeta}/index.html`);
 }
 copyFileSync(join(ARREL, 'apps-script/comu/Comu.gs'), join(ARREL, 'apps-script/mon/Comu.gs'));
