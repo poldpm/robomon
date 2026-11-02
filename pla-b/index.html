@@ -449,6 +449,12 @@ function avatarHTML(codi) {
   return img('avatar-' + (m ? Math.min(7, +m[1]) : 0), 'avatar-img');
 }
 
+/* ---------- Consignes personals ----------
+   Un text de missió pot dur «{teva:text general}». Al Chromebook es canvia per la variant de l'alumne
+   («Pinta el codi {teva:de la teva missió}» → «Pinta el codi TORNADO»); a la projecció i al paper, pel text general. */
+function personalitza(text, variant) {
+  return String(text == null ? '' : text).replace(/\{teva:([^}]*)\}/g, (_, general) => variant || general);
+}
 /* ---------- Carnet d'eines ---------- */
 const SEGELLS = {
   scottie: ['Scottie Go!', img('eina-scottie')], ozobot: ['Ozobot', img('eina-ozobot')], dash: ['Dash', img('eina-dash')],
@@ -877,7 +883,7 @@ function buidaCua() {
     S.cua = S.cua.slice(lot.length);
     desaBustia();
     $('estat-xarxa').hidden = true;
-    S.estat = r.dades;
+    S.estat = ambVariant(r.dades);
     S.cua.forEach(aplicaLocal);
     refresca();
     if (S.cua.length) buidaCua();
@@ -918,7 +924,7 @@ function consulta() {
   if (!S.estat || S.enviant || S.cua.length) return;
   if (['p-mapa', 'p-missio', 'p-fet'].indexOf(S.pantalla) < 0) return;
   crida('estat', {}).then(r => {
-    if (r && r.ok) { S.estat = r.dades; refresca(); }
+    if (r && r.ok) { S.estat = ambVariant(r.dades); refresca(); }
     else if (r && r.motiu === 'identitat') perdIdentitat();
   }).catch(() => { /* ja ho tornarem a provar */ });
 }
@@ -1002,6 +1008,14 @@ function avisIlla(zona, estat) {
 }
 
 /* ---------- Missió ---------- */
+/* Posa la variant de l'alumne dins de les consignes ({teva:…}) un sol cop, quan arriba l'estat */
+function ambVariant(e) {
+  if (!e || !e.avui || !e.avui.missio) return e;
+  const v = e.avui.textVariant || '';
+  const fes = x => typeof x === 'string' ? personalitza(x, v) : Array.isArray(x) ? x.map(fes) : (x && typeof x === 'object') ? Object.fromEntries(Object.entries(x).map(([k, y]) => [k, fes(y)])) : x;
+  e.avui.missio = fes(e.avui.missio);
+  return e;
+}
 function triaHTML(o) {
   const d = dibuix(o.imatge);
   return `<button class="tria${d ? '' : ' nomes-text'}" data-v="${esc(o.clau)}">${d ? `<span class="dibuix">${d}</span>` : ''}<span class="etiqueta">${esc(o.text)}</span></button>`;
@@ -1050,7 +1064,7 @@ function pintaMissio() {
   $('m-frase').textContent = m.frase;
   let xapes = '';
   if (a.equip) xapes += `<span class="xapa">${esc(a.equip)}</span>`;
-  if (a.variant) xapes += `<span class="xapa">La teva: ${esc(a.textVariant || a.variant)}</span>`;
+  if (a.variant) xapes += `<span class="xapa">La teva missió: ${esc(a.textVariant || a.variant)}</span>`;
   $('m-xapes').innerHTML = xapes;
 
   $('m-nivells').innerHTML = [1, 2, 3].map(n =>
@@ -1195,7 +1209,7 @@ function triaPin(k) {
     if (r && r.ok) {
       S.testimoni = r.dades.testimoni;
       try { sessionStorage.setItem('taller3r_testimoni', S.testimoni); } catch (e) { /* res */ }
-      S.estat = r.dades.estat;
+      S.estat = ambVariant(r.dades.estat);
       return decideix();
     }
     S.pin = []; pintaPin();
@@ -1251,7 +1265,7 @@ function obreProva() {
   g.innerHTML = (INICIAL.proves || []).map(a => `<button class="tria" data-id="${esc(a.id)}"><span class="etiqueta">${esc(a.nom)}</span></button>`).join('');
   g.querySelectorAll('.tria').forEach(b => b.addEventListener('click', () => {
     S.simula = b.dataset.id;
-    crida('estat', {}).then(r => { if (r && r.ok) { S.estat = r.dades; decideix(); } else mostraError(r && (r.detall || r.motiu)); }).catch(e => mostraError(String(e && e.message || e)));
+    crida('estat', {}).then(r => { if (r && r.ok) { S.estat = ambVariant(r.dades); decideix(); } else mostraError(r && (r.detall || r.motiu)); }).catch(e => mostraError(String(e && e.message || e)));
   }));
 }
 
@@ -1280,10 +1294,10 @@ $('prova-plab').onclick = () => { S.simula = null; mostra('p-codi'); preparaCodi
 (function inici() {
   try { S.testimoni = sessionStorage.getItem('taller3r_testimoni'); } catch (e) { S.testimoni = null; }
   if (INICIAL.error) return mostraError(INICIAL.detall);
-  if (INICIAL.pla === 'A' && INICIAL.estat) { S.estat = INICIAL.estat; decideix(); }
+  if (INICIAL.pla === 'A' && INICIAL.estat) { S.estat = ambVariant(INICIAL.estat); decideix(); }
   else if (INICIAL.pla === 'prova') obreProva();
   else if (S.testimoni) {
-    crida('estat', {}).then(r => { if (r && r.ok) { S.estat = r.dades; decideix(); } else { S.testimoni = null; mostra('p-codi'); preparaCodi(); } })
+    crida('estat', {}).then(r => { if (r && r.ok) { S.estat = ambVariant(r.dades); decideix(); } else { S.testimoni = null; mostra('p-codi'); preparaCodi(); } })
       .catch(() => { mostra('p-codi'); preparaCodi(); });
   } else { mostra('p-codi'); preparaCodi(); }
   setTimeout(bucle, 5000);

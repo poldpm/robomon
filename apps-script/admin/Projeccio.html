@@ -185,6 +185,12 @@ function avatarHTML(codi) {
   return img('avatar-' + (m ? Math.min(7, +m[1]) : 0), 'avatar-img');
 }
 
+/* ---------- Consignes personals ----------
+   Un text de missió pot dur «{teva:text general}». Al Chromebook es canvia per la variant de l'alumne
+   («Pinta el codi {teva:de la teva missió}» → «Pinta el codi TORNADO»); a la projecció i al paper, pel text general. */
+function personalitza(text, variant) {
+  return String(text == null ? '' : text).replace(/\{teva:([^}]*)\}/g, (_, general) => variant || general);
+}
 /* ---------- Carnet d'eines ---------- */
 const SEGELLS = {
   scottie: ['Scottie Go!', img('eina-scottie')], ozobot: ['Ozobot', img('eina-ozobot')], dash: ['Dash', img('eina-dash')],
@@ -592,10 +598,10 @@ function pinta(p) {
   $('sub').textContent = p.eina;
   const i = Number(String(p.sessio).slice(1)) - 1;
   $('illa').innerHTML = illaHTML(i, 'n1');
-  $('frase').textContent = p.frase;
-  $('n1').textContent = p.nivells.n1 || '';
-  $('n2').textContent = p.nivells.n2 || '';
-  $('n3').textContent = p.nivells.n3 || '';
+  $('frase').textContent = personalitza(p.frase, '');
+  $('n1').textContent = personalitza(p.nivells.n1 || '', '');
+  $('n2').textContent = personalitza(p.nivells.n2 || '', '');
+  $('n3').textContent = personalitza(p.nivells.n3 || '', '');
   const xu = XULETES[p.xuleta] ? p.xuleta : '';   /* S9: «variant» = cada alumne la seva; no es projecta */
   $('cos-treball').classList.toggle('amb-xuleta', !!xu);
   $('panell-xuleta').hidden = !xu;

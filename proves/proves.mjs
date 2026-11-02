@@ -37,7 +37,7 @@ p.getRange(fila0, 1, NOMS.length, 8).setValues(NOMS.map((n, i) => ['', correu(i)
 mon.crida('admin', 'generaIds', [], MESTRE);
 const ids = p.getDataRange().getValues().slice(1).map(f => f[0]);
 ok(ids.filter(x => /^A0\d\d$/.test(x)).length === 18 && ids.includes('A001') && ids.includes('A018'), 'IDs A001–A018 generats i 6 alumnes de prova A901–A906');
-ok(mon.full.getSheetByName('MISSIONS').getLastRow() === 1 + 8 * 18 + 20, 'MISSIONS sembrada una sola vegada (S1–S9)');
+ok(mon.full.getSheetByName('MISSIONS').getLastRow() === 1 + 8 * 18 - 1 + 20, 'MISSIONS sembrada una sola vegada (S1–S9)');
 ok(mon.full.getSheetByName('CALENDARI').getLastRow() === 1 + 45, 'CALENDARI: 5 grups × 9 sessions');
 
 console.log('\n2 · Seguretat');
@@ -147,7 +147,7 @@ await anna.clic('#boto-missio');
 await espera(anna, '#p-missio');
 await anna.waitForSelector('#b-si');
 await revisa(anna, '06-missio-calibra', REVISA_MON);
-ok(/Calibra/.test(await anna.textContent('#m-pregunta')), 'La missió comença calibrant l\'Ozobot (control 0)');
+ok(/cercle negre/.test(await anna.textContent('#m-pregunta')), 'La missió comença calibrant l\'Ozobot (control 0)');
 await anna.clic('#b-si');
 await anna.waitForSelector('text=casella 1, l');
 await revisa(anna, '07-missio-n1', REVISA_MON);
@@ -158,6 +158,7 @@ ok(/casella 2/.test(await anna.textContent('#m-pregunta')), 'El pla es demana ju
 await anna.clic('#m-cos .tria >> nth=0');
 await anna.waitForSelector('#b-demo');
 await revisa(anna, '08-missio-n2', REVISA_MON);
+ok(/Pinta el codi (TORNADO|ZIGA-ZAGA|TURBO) a la casella 2/.test(await anna.textContent('#m-pregunta')) && !(await anna.evaluate(() => document.body.innerText.includes('{teva'))), 'La consigna del nivell 2 diu quin codi ha de pintar l\'Anna (la seva variant), no «el de la teva missió»');
 await anna.click('#boto-codis');
 await espera(anna, '#modal-xuleta');
 await revisa(anna, '08b-xuleta-codis', REVISA_MON);
@@ -319,6 +320,7 @@ admin('canviaEstat', { grup: 'G2', sessio: 'S1', estat: 'oberta' });
 await proj.reload();
 await proj.waitForSelector('#treball', { state: 'visible' });
 await revisa(proj, '31-projeccio-treball', { lletraMin: 18 });
+ok((await proj.textContent('#n2')).includes('el codi de la teva missió'), 'A la projecció, la consigna surt en general («el codi de la teva missió»)');
 ok(await proj.isVisible('#panell-xuleta .xuleta'), 'La projecció mostra la xuleta de codis de la sessió');
 const textProj = await proj.evaluate(() => document.body.innerText);
 ok(!NOMS.some(nm => textProj.includes(nm.split(' ')[0])), 'La projecció no mostra cap nom d\'alumne');

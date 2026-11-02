@@ -68,7 +68,7 @@ div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
 <section class="full">
 <h1>S7 · Circula · Guió del mestre</h1>
   <p><b>Eina:</b> Scratch al Chromebook, en català. <b>Avui es creen els comptes, amb tu.</b> Cadascú fa el seu projecte. Cadascú té el seu color d'obstacle.</p>
-  <p><b>La missió (surt al Chromebook):</b> «Fes un vehicle que es mogui amb les fletxes i torni a la sortida si toca el teu color.»</p>
+  <p><b>La missió (surt al Chromebook):</b> «Fes un vehicle que es mogui amb les fletxes i torni a la sortida si toca un obstacle.»</p>
   <h2>Migdia (30 min)</h2>
   <ul class="check"><li>Decideix com seran els usuaris de Scratch (sense nom ni cognoms complets) i apunta'ls. Si l'escola té compte de professor, crea'ls des d'allà</li><li>Targetes del compte (pàgina 7), una per alumne, per guardar a classe</li><li>Projecta la pàgina «Com entrar a Scratch» (pàgina 6) o deixa-la impresa a cada taula</li><li>Xuletes de blocs (pàgina 5) en color</li><li>Tauler: <b>Grup → S7 → Obre la sessió</b></li></ul>
   <h2>Minut a minut</h2>
@@ -98,14 +98,14 @@ div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
     <tr><td><b>N1 no és cert</b></td><td>Havia marcat que el vehicle es movia amb les fletxes i no és així.</td><td>torna a 0</td></tr>
   </table>
   <div class="caixa"><h2 style="margin-top:0">Nivell 3</h2><p>Hi ha una meta i diu «Has arribat!». <b>N3 · Fet i ho explica</b> (10) si diu quin bloc ho detecta. <b>N3 · Fet</b> (9) si només funciona.</p></div>
-  <h2>Les variants (cadascú la seva, la diu l'app)</h2><ul><li><b>A</b> · Obstacle vermell</li><li><b>B</b> · Obstacle blau</li><li><b>C</b> · Obstacle lila</li></ul>
+  <h2>Les variants (cadascú la seva, la diu l'app)</h2><ul><li><b>A</b> · VERMELL</li><li><b>B</b> · BLAU</li><li><b>C</b> · LILA</li></ul>
   <h2>Regles que cal dir en veu alta (una vegada)</h2>
   <ul><li><b>Cadascú la seva missió.</b> La del company no et serveix.</li><li><b>Qui ajuda parla, no toca.</b> Mans al darrere.</li><li><b>Dir «no me n'he sortit» està bé:</b> et dona una pista i, si cal, vinc jo.</li></ul>
 <div class="peu">S7 · Circula · RECURS · 2</div>
 </section>
 <section class="full">
 <h1>Solucionari</h1>
-  <h2>Pla (abans del nivell 2)</h2><p>«Abans de programar: quin bloc farà tornar el vehicle quan toqui el teu color?» · Opcions: si … llavors · quan la tecla es premi · suma 10 a x. <b>No puntua l'encert:</b> compta haver-ho pensat abans.</p>
+  <h2>Pla (abans del nivell 2)</h2><p>«Quin bloc farà tornar el vehicle quan toqui l'obstacle?» · Opcions: si … llavors · quan la tecla es premi · suma 10 a x. <b>No puntua l'encert:</b> compta haver-ho pensat abans.</p>
   <h2>Solucions</h2>
   <table><tr><td style="width:50mm"><b>Pla</b></td><td>«si … llavors» (amb «tocant el color …?» a dins). No puntua l'encert.</td></tr><tr><td style="width:50mm"><b>Moure's</b></td><td>«quan la tecla fletxa dreta es premi» → «suma 10 a x» (i igual amb les altres fletxes)</td></tr><tr><td style="width:50mm"><b>Tornar</b></td><td>«quan la bandera es cliqui» → «per sempre» → «si tocant el color [el seu]? llavors» → «ves a x: (sortida) y: (sortida)»</td></tr><tr><td style="width:50mm"><b>N3</b></td><td>Dins del mateix «per sempre»: «si tocant el color [meta]? llavors» → «digues Has arribat! durant 2 segons»</td></tr></table>
   <h2>Targeta de sortida (es corregeix sola)</h2>
@@ -219,6 +219,12 @@ function avatarHTML(codi) {
   return img('avatar-' + (m ? Math.min(7, +m[1]) : 0), 'avatar-img');
 }
 
+/* ---------- Consignes personals ----------
+   Un text de missió pot dur «{teva:text general}». Al Chromebook es canvia per la variant de l'alumne
+   («Pinta el codi {teva:de la teva missió}» → «Pinta el codi TORNADO»); a la projecció i al paper, pel text general. */
+function personalitza(text, variant) {
+  return String(text == null ? '' : text).replace(/\{teva:([^}]*)\}/g, (_, general) => variant || general);
+}
 /* ---------- Carnet d'eines ---------- */
 const SEGELLS = {
   scottie: ['Scottie Go!', img('eina-scottie')], ozobot: ['Ozobot', img('eina-ozobot')], dash: ['Dash', img('eina-dash')],

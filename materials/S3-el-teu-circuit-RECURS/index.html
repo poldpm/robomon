@@ -68,7 +68,7 @@ div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
 <section class="full">
 <h1>S3 · El teu circuit · Guió del mestre</h1>
   <p><b>Eina:</b> Ozobot Evo i retoladors. <b>Equips:</b> 6 robots, equips de 3. Cadascú dibuixa el seu circuit en un full blanc (pàgina 6) i té la seva meta: esquerra, recte o dreta.</p>
-  <p><b>La missió (surt al Chromebook):</b> «Dibuixa un circuit amb una cruïlla. Fes que l'Ozobot triï el camí que tu vols.»</p>
+  <p><b>La missió (surt al Chromebook):</b> «Dibuixa un camí amb una T. Fes que l'Ozobot triï cap on va.»</p>
   <h2>Migdia (30 min)</h2>
   <ul class="check"><li>6 Ozobot carregats i provats al cercle de calibratge</li><li>Retoladors de l'Ozobot per taula: negre, vermell, verd i blau (punta ampla)</li><li>Fulls de circuit (pàgina 6), un per alumne + 4 de reserva. Es poden fotocopiar en B/N</li><li>Xuletes de cruïlles (pàgina 5) <b>en color</b>, una per taula</li><li>Cartes de repte (pàgina 7) retallades, en un sobre</li><li><b>Prova una cruïlla:</b> dibuixa una T de 5 mm, pinta Bl·Vm·Vd a 3 cm abans i comprova que gira a la dreta 3 vegades</li><li>Tauler: <b>Grup → S3 → Obre la sessió</b>. Projecció ↗: hi surt la xuleta de cruïlles</li></ul>
   <h2>Minut a minut</h2>
@@ -98,14 +98,14 @@ div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
     <tr><td><b>N1 no és cert</b></td><td>Havia marcat que l'Ozobot arribava a la cruïlla i no és així.</td><td>torna a 0</td></tr>
   </table>
   <div class="caixa"><h2 style="margin-top:0">Nivell 3</h2><p>Ha fet una carta de repte (dues cruïlles). <b>N3 · Fet i ho explica</b> (10) si diu quin codi va a cada cruïlla i per què. <b>N3 · Fet</b> (9) si només funciona.</p></div>
-  <h2>Les variants (cadascú la seva, la diu l'app)</h2><ul><li><b>A</b> · Meta a l'esquerra</li><li><b>B</b> · Meta recte</li><li><b>C</b> · Meta a la dreta</li></ul>
+  <h2>Les variants (cadascú la seva, la diu l'app)</h2><ul><li><b>A</b> · a l'ESQUERRA</li><li><b>B</b> · RECTE</li><li><b>C</b> · a la DRETA</li></ul>
   <h2>Regles que cal dir en veu alta (una vegada)</h2>
   <ul><li><b>Cadascú la seva missió.</b> La del company no et serveix.</li><li><b>Qui ajuda parla, no toca.</b> Mans al darrere.</li><li><b>Dir «no me n'he sortit» està bé:</b> et dona una pista i, si cal, vinc jo.</li></ul>
 <div class="peu">S3 · El teu circuit · RECURS · 2</div>
 </section>
 <section class="full">
 <h1>Solucionari</h1>
-  <h2>Pla (abans del nivell 2)</h2><p>«Abans de pintar: quin codi farà anar l'Ozobot cap a la teva meta? Mira la xuleta («Codis»).» · Opcions: Verd · Negre · Vermell · Blau · Negre · Vermell · Blau · Vermell · Verd. <b>No puntua l'encert:</b> compta haver-ho pensat abans.</p>
+  <h2>Pla (abans del nivell 2)</h2><p>«A la T, l'Ozobot ha d'anar cap a la teva meta. Quin codi ho fa? Mira la xuleta («Codis»).» · Opcions: Verd · Negre · Vermell · Blau · Negre · Vermell · Blau · Vermell · Verd. <b>No puntua l'encert:</b> compta haver-ho pensat abans.</p>
   <h2>Solucions</h2>
   <table><tr><td style="width:50mm"><b>A · Meta a l'esquerra</b></td><td>Vd · Ng · Vm (Gira a l'esquerra)</td></tr><tr><td style="width:50mm"><b>B · Meta recte</b></td><td>Bl · Ng · Vm (Recte)</td></tr><tr><td style="width:50mm"><b>C · Meta a la dreta</b></td><td>Bl · Vm · Vd (Gira a la dreta)</td></tr></table>
   <h2>Targeta de sortida (es corregeix sola)</h2>
@@ -210,6 +210,12 @@ function avatarHTML(codi) {
   return img('avatar-' + (m ? Math.min(7, +m[1]) : 0), 'avatar-img');
 }
 
+/* ---------- Consignes personals ----------
+   Un text de missió pot dur «{teva:text general}». Al Chromebook es canvia per la variant de l'alumne
+   («Pinta el codi {teva:de la teva missió}» → «Pinta el codi TORNADO»); a la projecció i al paper, pel text general. */
+function personalitza(text, variant) {
+  return String(text == null ? '' : text).replace(/\{teva:([^}]*)\}/g, (_, general) => variant || general);
+}
 /* ---------- Carnet d'eines ---------- */
 const SEGELLS = {
   scottie: ['Scottie Go!', img('eina-scottie')], ozobot: ['Ozobot', img('eina-ozobot')], dash: ['Dash', img('eina-dash')],

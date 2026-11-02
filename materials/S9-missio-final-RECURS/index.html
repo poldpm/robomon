@@ -98,7 +98,7 @@ div.carta .nota { font-size: 11pt; color: #333; margin-top: auto; }
     <tr><td><b>N1 no és cert</b></td><td>Havia marcat el primer pas i no és així.</td><td>torna a 0</td></tr>
   </table>
   <div class="caixa"><h2 style="margin-top:0">Nivell 3</h2><p>Ha fet la carta de repte de la seva eina. <b>N3 · Fet i ho explica</b> (10). <b>N3 · Fet</b> (9) si només funciona.</p></div>
-  <h2>Les variants (cadascú la seva, la diu l'app)</h2><ul><li><b>scottie</b> · Scottie Go! · Un repte amb 3 estrelles fent servir un número</li><li><b>ozobot</b> · Ozobot · A la cruïlla, l'Ozobot gira a la dreta</li><li><b>dash</b> · Dash · El Dash s'atura just a 60 cm</li><li><b>spike</b> · SPIKE · La parada serveix només amb el groc</li><li><b>scratch</b> · Scratch · El vehicle torna a la sortida si toca el vermell</li><li><b>repte</b> · Repte final · Fes que dues eines treballin juntes (per exemple, el Dash porta l'Ozobot)</li></ul>
+  <h2>Les variants (cadascú la seva, la diu l'app)</h2><ul><li><b>scottie</b> · fer un repte de l'app amb 3 estrelles, fent servir un número</li><li><b>ozobot</b> · fer que l'Ozobot giri a la DRETA a la T</li><li><b>dash</b> · fer que el Dash s'aturi just a 60 cm</li><li><b>spike</b> · fer que la parada serveixi només amb el GROC</li><li><b>scratch</b> · fer que el vehicle torni a la sortida si toca el VERMELL</li><li><b>repte</b> · fer que dues eines treballin juntes (per exemple, el Dash porta l'Ozobot)</li></ul>
   <h2>Regles que cal dir en veu alta (una vegada)</h2>
   <ul><li><b>Cadascú la seva missió.</b> La del company no et serveix.</li><li><b>Qui ajuda parla, no toca.</b> Mans al darrere.</li><li><b>Dir «no me n'he sortit» està bé:</b> et dona una pista i, si cal, vinc jo.</li></ul>
 <div class="peu">S9 · Missió final · RECURS · 2</div>
@@ -210,6 +210,12 @@ function avatarHTML(codi) {
   return img('avatar-' + (m ? Math.min(7, +m[1]) : 0), 'avatar-img');
 }
 
+/* ---------- Consignes personals ----------
+   Un text de missió pot dur «{teva:text general}». Al Chromebook es canvia per la variant de l'alumne
+   («Pinta el codi {teva:de la teva missió}» → «Pinta el codi TORNADO»); a la projecció i al paper, pel text general. */
+function personalitza(text, variant) {
+  return String(text == null ? '' : text).replace(/\{teva:([^}]*)\}/g, (_, general) => variant || general);
+}
 /* ---------- Carnet d'eines ---------- */
 const SEGELLS = {
   scottie: ['Scottie Go!', img('eina-scottie')], ozobot: ['Ozobot', img('eina-ozobot')], dash: ['Dash', img('eina-dash')],

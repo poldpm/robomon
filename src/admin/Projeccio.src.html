@@ -147,10 +147,10 @@ function pinta(p) {
   $('sub').textContent = p.eina;
   const i = Number(String(p.sessio).slice(1)) - 1;
   $('illa').innerHTML = illaHTML(i, 'n1');
-  $('frase').textContent = p.frase;
-  $('n1').textContent = p.nivells.n1 || '';
-  $('n2').textContent = p.nivells.n2 || '';
-  $('n3').textContent = p.nivells.n3 || '';
+  $('frase').textContent = personalitza(p.frase, '');
+  $('n1').textContent = personalitza(p.nivells.n1 || '', '');
+  $('n2').textContent = personalitza(p.nivells.n2 || '', '');
+  $('n3').textContent = personalitza(p.nivells.n3 || '', '');
   const xu = XULETES[p.xuleta] ? p.xuleta : '';   /* S9: «variant» = cada alumne la seva; no es projecta */
   $('cos-treball').classList.toggle('amb-xuleta', !!xu);
   $('panell-xuleta').hidden = !xu;

@@ -38,6 +38,10 @@ Una missió és un conjunt de files de la pestanya `MISSIONS` (columnes: `sessio
 
 ## Lliçons de la S1 (en Pol, 1/11/2026) — aplica-les sempre
 
+- **Cap consigna que el mestre no entengui llegint-la sola** (en Pol, 3/11/2026: «Fes el programa del repte… quin repte?»). Res de «el repte», «la teva missió», «on toca» sense dir QUIN: número de repte, color, distància, codi.
+- **La variant va dins de la consigna** amb `{teva:text general}`: al Chromebook es canvia per la variant de l'alumne («Pinta el codi {teva:de la teva missió}» → «Pinta el codi TORNADO»); a la projecció i al paper surt el text general. Escriu la variant perquè encaixi a la frase (TORNADO, «a la DRETA», «40 cm», «VERMELL i GROC»).
+- Cada nivell: **què agafes, què fas amb les mans i què ha de passar**. Al N2, acaba amb «Quan funcioni, prem «Ja ho puc ensenyar»».
+
 - La consigna diu **què fan les mans i què han de veure**; s'ha d'entendre sense el material al davant.
 - La missió fa servir **el que fa especial l'eina** (codis, cartes i repetició, distància i girs (Dash sense pinça), sensor i motor, esdeveniments i variables).
 - Cada sessió té **xuleta** (`missio · xuleta`): projectada, botó «Codis» al Chromebook i paper a la taula. Contingut de **fonts oficials** o dels materials d'en Pol, mai de memòria.

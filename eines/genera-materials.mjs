@@ -19,7 +19,8 @@ const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 /* Les files de la llavor, en un objecte còmode */
 function missio(s) {
   const m = { nivells: {}, controls: {}, encallat: [], sortida: [], variants: [], abans: null };
-  LLAVOR[s].forEach(([, tipus, clau, , text, imatge, opcions, correcta]) => {
+  LLAVOR[s].forEach(([, tipus, clau, , text0, imatge, opcions, correcta]) => {
+    const text = String(text0).replace(/\{teva:([^}]*)\}/g, '$1');   /* al paper, el text general */
     const ops = () => String(opcions).split(';').filter(Boolean).map(o => { const p = o.split('|'); return { clau: p[0], text: p[1], imatge: p.slice(2).join('|') }; });
     if (tipus === 'missio') m[clau] = text;
     if (tipus === 'nivell') m.nivells[clau] = text;
