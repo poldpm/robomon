@@ -1223,7 +1223,7 @@ function obrePin(mode) {
   S.pinMode = mode; S.pin = [];
   mostra('p-pin');
   $('pin-titol').textContent = mode === 'crea' ? 'Tria 3 dibuixos. Seran la teva clau secreta.'
-    : 'Hola, ' + (S.alumneB ? S.alumneB.nom : '') + '! Posa els teus 3 dibuixos.';
+    : 'Hola, ' + (S.alumneB ? S.alumneB.nom : '') + '! Toca els teus 3 dibuixos. Si el mestre te\'ls ha esborrat, tria\'n 3 de nous.';
   $('pin-missatge').textContent = '';
   $('pin-enrere').hidden = mode === 'crea';
   const g = $('pin-graella');
@@ -1247,6 +1247,7 @@ function triaPin(k) {
       S.testimoni = r.dades.testimoni;
       try { sessionStorage.setItem('taller3r_testimoni', S.testimoni); } catch (e) { /* res */ }
       S.estat = ambVariant(r.dades.estat);
+      if (r.dades.nou) return obreRecorda(pin, true);   /* codi nou (primer dia o reiniciat pel mestre) */
       return decideix();
     }
     S.pin = []; pintaPin();
@@ -1255,10 +1256,11 @@ function triaPin(k) {
     if (motiu === 'codi') setTimeout(() => { mostra('p-codi'); preparaCodi(); }, 1500);
   }).catch(() => { S.pin = []; pintaPin(); $('pin-missatge').textContent = 'No hi ha connexió. Torna-ho a provar.'; });
 }
-function obreRecorda(pin) {
+function obreRecorda(pin, jaDesat) {
   mostra('p-recorda');
   $('recorda-dibuixos').innerHTML = pin.split('-').map(k => `<div class="forat" style="border-style:solid; width:140px; height:140px;">${PIN[k][1]}</div>`).join('');
-  $('recorda-ok').onclick = () => { envia('pin', pin); decideix(); };
+  $('recorda-ok').onclick = () => { if (!jaDesat) envia('pin', pin); decideix(); };
+  $('recorda-canvia').hidden = !!jaDesat;   /* pel Pla B ja és desat: si cal canviar-lo, el mestre el reinicia */
   $('recorda-canvia').onclick = () => obrePin('crea');
 }
 

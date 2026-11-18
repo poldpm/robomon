@@ -208,18 +208,21 @@ function entraPin_(args) {
     var cache = CacheService.getScriptCache();
     var clauIntents = 'pin_intents_' + id;
     var intents = Number(cache.get(clauIntents) || 0);           // llegit i comptat DINS del pany
-    if (intents >= 5) return { ok: false, motiu: 'massa-intents' };
     var falla = function () { cache.put(clauIntents, String(intents + 1), 3600); return { ok: false, motiu: 'pin' }; };
 
     var d = llegeix_('ALUMNES');
     var i = -1;
     d.files.some(function (f, k) { if (String(f[d.idx.id_alumne]) === id) { i = k; return true; } return false; });
+    /* Si el mestre li ha reiniciat el codi, els intents fallits d'abans ja no compten */
+    var reiniciat = i >= 0 && String(d.files[i][d.idx.pin] || '') === 'reiniciat';
+    if (intents >= 5 && !reiniciat) return { ok: false, motiu: 'massa-intents' };
     if (i < 0) return falla();
     var fila = d.files[i];
     if (String(fila[d.idx.grup]) !== String(s.grup) || String(fila[d.idx.actiu]) === 'no') return falla();
     var desat = String(fila[d.idx.pin] || '');
     var hash = hashPin_(id, pin);
-    if (!/^h/.test(desat)) {
+    var nou = !/^h/.test(desat);
+    if (nou) {
       if (String(s.sessio) !== 'S1' && desat !== 'reiniciat') return falla();
       d.pestanya.getRange(i + 2, d.idx.pin + 1).setValue(hash);   // primer PIN
       desaPinMestre_(id, pin);                                      // còpia llegible només per al mestre
@@ -230,7 +233,7 @@ function entraPin_(args) {
     var testimoni = Utilities.getUuid();
     cache.put('t_' + testimoni, id + '|' + hash.slice(0, 12), 6 * 3600);
     afegeixFiles_('REGISTRE', [[new Date(), id, String(s.sessio), 'entrada-pin', '', 'alumne']]);
-    return { ok: true, dades: { testimoni: testimoni, estat: estatAlumne_(id) } };
+    return { ok: true, dades: { testimoni: testimoni, estat: estatAlumne_(id), nou: nou } };
   });
 }
 

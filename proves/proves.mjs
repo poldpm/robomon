@@ -349,6 +349,7 @@ await espera(pb, '#p-nom');
 await revisa(pb, '41-plab-nom', REVISA_MON);
 await pb.click('#noms .tria >> text=Anna R.');
 await espera(pb, '#p-pin');
+await revisa(pb, '41b-plab-pin', REVISA_MON);
 for (const k of ['sol', 'lluna', 'casa']) await pb.click(`#pin-graella .tria[data-k="${k}"]`);
 await pb.waitForSelector('text=No són aquests');
 ok(true, 'PIN incorrecte → «No són aquests»');
@@ -407,6 +408,10 @@ ok(mon.crida('mon', 'api', ['estat', {}, tok.dades.testimoni], '').motiu === 'id
 ok(pinB('A001', 'flor-poma-arbre').ok, 'Després de reiniciar-lo, l\'Anna en tria un de nou');
 for (let k = 0; k < 5; k++) pinB('A005', 'nuvol-flor-poma');
 ok(pinB('A005', 'sol-lluna-estrella').motiu === 'massa-intents', 'Després de 5 PIN equivocats, ni el bo entra (1 hora)');
+admin('reiniciaPin', { id: 'A005' });
+const nouA005 = pinB('A005', 'casa-flor-sol');
+ok(nouA005.ok && nouA005.dades.nou === true, 'Si el mestre el reinicia, el nen bloquejat pot triar un codi nou al moment (i l\'app li ensenya)');
+ok(pinB('A005', 'casa-flor-sol').ok && pinB('A005', 'casa-flor-sol').dades.nou === false, '…i després entra amb el codi nou com sempre');
 ok(pinB('A999', 'sol-lluna-estrella').motiu === 'pin' && pinB('A005x', 'sol-lluna-estrella').motiu === 'pin', 'Alumne inexistent i PIN equivocat donen la mateixa resposta');
 ok(mon.crida('mon', 'api', ['llistaNoms', { codi: codiAra }, null], '').dades.noms.every(x => !('tePin' in x)), 'La llista de noms no diu qui té PIN');
 console.log('\n15b · El mestre veu el codi dels dibuixos (i l\'alumne no)');
