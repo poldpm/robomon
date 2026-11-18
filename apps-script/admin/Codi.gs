@@ -84,6 +84,7 @@ function api(accio, args) {
       case 'restauraMissio': r = restauraMissio_(args.sessio); break;
       case 'configura':     r = configura_(args.clau, args.valor); break;
       case 'reiniciaPin':   r = reiniciaPin_(args.id); break;
+      case 'claus':         r = claus_(args.grup); break;
       case 'projeccio':     r = projeccio_(); break;
       case 'informe':       r = preparaInforme(args.grup); break;
       case 'actualitza':    r = actualitza_(); break;
@@ -679,7 +680,7 @@ function tauler_(grup, sessio) {
       present: e.present, nivell: e.nivell, n1Vist: e.n1Vist, viaN2: e.viaN2, n3Explica: e.n3Explica,
       espera: e.espera, esperaDesDe: e.esperaDesDe, encallatOn: e.encallatOn, prediccio: e.prediccio,
       fallat: e.fallat, sortidaFeta: sortidaFeta, encerts: e.encerts, nota: nota, ajust: Number(p.ajust) || 0,
-      observacio: String(p.observacio || '')
+      observacio: String(p.observacio || ''), pin: String(a.pin_mestre || '')
     });
   });
 
@@ -928,11 +929,25 @@ function configura_(clau, valor) {
   return inici_();
 }
 
+/** El codi dels dibuixos de cada alumne del grup (només el mestre). estat: te · xifrat (de abans, no es pot llegir) · reiniciat · cap */
+function claus_(grup) {
+  asseguraColumna_('ALUMNES', 'pin_mestre');
+  return alumnesDelGrup_(String(grup)).map(function (a) {
+    var pin = String(a.pin || ''), visible = String(a.pin_mestre || '');
+    var estat = visible ? 'te' : /^h/.test(pin) ? 'xifrat' : pin === 'reiniciat' ? 'reiniciat' : 'cap';
+    return { id: String(a.id_alumne), nom: String(a.nom_curt), pin: visible, estat: estat };
+  }).sort(function (x, y) { return x.nom.localeCompare(y.nom, 'ca'); });
+}
+
 function reiniciaPin_(id) {
   ambBloqueig_(function () {
     var d = llegeix_('ALUMNES');
     d.files.some(function (f, i) {
-      if (String(f[0]) === String(id)) { d.pestanya.getRange(i + 2, d.idx.pin + 1).setValue('reiniciat'); return true; }
+      if (String(f[0]) === String(id)) {
+        d.pestanya.getRange(i + 2, d.idx.pin + 1).setValue('reiniciat');
+        if (d.idx.pin_mestre !== undefined) d.pestanya.getRange(i + 2, d.idx.pin_mestre + 1).setValue('');
+        return true;
+      }
       return false;
     });
   });

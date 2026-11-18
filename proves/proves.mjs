@@ -409,6 +409,27 @@ for (let k = 0; k < 5; k++) pinB('A005', 'nuvol-flor-poma');
 ok(pinB('A005', 'sol-lluna-estrella').motiu === 'massa-intents', 'Després de 5 PIN equivocats, ni el bo entra (1 hora)');
 ok(pinB('A999', 'sol-lluna-estrella').motiu === 'pin' && pinB('A005x', 'sol-lluna-estrella').motiu === 'pin', 'Alumne inexistent i PIN equivocat donen la mateixa resposta');
 ok(mon.crida('mon', 'api', ['llistaNoms', { codi: codiAra }, null], '').dades.noms.every(x => !('tePin' in x)), 'La llista de noms no diu qui té PIN');
+console.log('\n15b · El mestre veu el codi dels dibuixos (i l\'alumne no)');
+const fA = () => { const d = mon.full.getSheetByName('ALUMNES').getDataRange().getValues(); return { cap: d[0], files: d.slice(1) }; };
+const colPin = () => fA().cap.indexOf('pin_mestre');
+ok(colPin() >= 0, 'El full d\'alumnes té la columna pin_mestre (s\'afegeix sola)');
+const filaAnnaPin = () => fA().files.find(f => f[0] === 'A001');
+ok(filaAnnaPin()[colPin()] === 'flor-poma-arbre', 'El PIN triat pel Pla B queda llegible per al mestre (' + filaAnnaPin()[colPin()] + ')');
+{ const pA = mon.full.getSheetByName('ALUMNES'); const k = pA.dades.findIndex(f => f[0] === 'A010'); pA.dades[k][5] = 'h0123456789abcdef'; pA.dades[k][colPin()] = ''; }   /* un codi d'abans d'aquesta versió */
+const claus = admin('claus', { grup: 'G2' }).dades;
+ok(claus.find(c => c.id === 'A001').pin === 'flor-poma-arbre' && claus.find(c => c.id === 'A001').estat === 'te', 'Sessions: el mestre veu el codi de l\'Anna');
+ok(claus.find(c => c.id === 'A010').estat === 'xifrat', 'Els codis desats abans (xifrats) es marquen perquè el mestre els reiniciï');
+alumne(17, 'registra', { esdeveniments: [] });
+const tokPin = pinB('A001', 'flor-poma-arbre');
+ok(!JSON.stringify(tokPin).includes('flor-poma') && !JSON.stringify(alumne(0, 'estat')).includes('pin_mestre'), 'El codi llegible no arriba mai al navegador de l\'alumne');
+admin('reiniciaPin', { id: 'A001' });
+ok(admin('claus', { grup: 'G2' }).dades.find(c => c.id === 'A001').estat === 'reiniciat' && filaAnnaPin()[colPin()] === '', 'Reiniciar el codi també esborra la còpia llegible');
+await mestre.reload();
+await mestre.waitForSelector('.targeta');
+await mestre.click('.pestanya[data-p="sessions"]');
+await mestre.waitForSelector('#claus .clau');
+await revisa(mestre, '26-admin-codis-dibuixos', { senseScroll: false, lletraMin: 14.6 });
+await (await mestre.$('#claus')).screenshot({ path: join(CAPTURES, '26b-codis-llista.png') });
 
 console.log('\n16 · Les missions noves (S2–S9): de la calibració al nivell 2, xuleta i projecció');
 const NOVES = {

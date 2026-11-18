@@ -222,6 +222,7 @@ function entraPin_(args) {
     if (!/^h/.test(desat)) {
       if (String(s.sessio) !== 'S1' && desat !== 'reiniciat') return falla();
       d.pestanya.getRange(i + 2, d.idx.pin + 1).setValue(hash);   // primer PIN
+      desaPinMestre_(id, pin);                                      // còpia llegible només per al mestre
     } else if (desat !== hash) {
       return falla();
     }
@@ -338,6 +339,7 @@ function registra_(id, esdeveniments) {
       }
       if (ev.t === 'pin' && pinValid_(ev.v) && !tePin_(alumne)) {
         actualitzaAlumne_(id, 'pin', hashPin_(id, String(ev.v)));
+        desaPinMestre_(id, String(ev.v));
         registre.push([new Date(), id, oberta ? String(oberta.sessio) : '', 'pin-creat', '', 'alumne']);
       }
     });
@@ -421,6 +423,14 @@ function registra_(id, esdeveniments) {
     if (registre.length) afegeixFiles_('REGISTRE', registre);
     return estatAlumne_(id);
   });
+}
+
+/** El codi dels 3 dibuixos, llegible, a la columna pin_mestre del full (que només obre el mestre).
+ *  Mai s'envia al navegador d'un alumne: només el llegeix l'administrador. */
+function desaPinMestre_(id, pin) {
+  if (!pinValid_(pin)) return;
+  asseguraColumna_('ALUMNES', 'pin_mestre');
+  actualitzaAlumne_(id, 'pin_mestre', pin);
 }
 
 function actualitzaAlumne_(id, columna, valor) {

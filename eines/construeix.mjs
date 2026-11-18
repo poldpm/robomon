@@ -29,6 +29,8 @@ const FONTS_MAT = FONTS + '\n' + [400, 700].map(w => `@font-face { font-family: 
 const SIMBOL = llegeix('src/marca/robomon-simbol.svg').trim().replace(/ width="\d+" height="\d+"/, '').replace(/#1f6f78/gi, '#000').replace(/#d9a441/gi, '#000');
 const ESCOLA = `const LOGO_ESCOLA = "data:image/png;base64,${b64('src/marca/escola-logo.png')}";\nconst SIMBOL_ROBOMON = ${JSON.stringify(SIMBOL)};\n` + llegeix('src/materials/escola.js');
 const ESCOLA_CSS = llegeix('src/materials/escola.css');
+/* Al tauler només calen els 9 dibuixos del codi (per veure el codi de cada alumne) */
+const PIN_ADMIN = `const PIN_IMG = ${imgObj(k => k.startsWith('pin-'))};\nconst PIN_NOMS = { sol: 'Sol', lluna: 'Lluna', estrella: 'Estrella', peix: 'Peix', arbre: 'Arbre', casa: 'Casa', poma: 'Poma', nuvol: 'Núvol', flor: 'Flor' };`;
 const IL_MAT = `const IMG = ${imgObj(() => false)};\n` + IL_SRC;   /* materials: només esquemes vectorials */
 const IL_PROJ = `const IMG = ${imgObj(k => k === 'mapa' || ESCENES.includes(k))};\n` + IL_SRC;
 
@@ -45,7 +47,7 @@ function munta(src, subs) {
 const sortides = {
   'apps-script/mon/Mon.html': munta('src/mon/Mon.src.html', { FONTS, IL, MARCA, INICIAL: '<?!= inicial ?>', TRANSPORT: 'gas' }),
   'pla-b/index.html': munta('src/mon/Mon.src.html', { FONTS, IL, MARCA, INICIAL: '{"pla":"B"}', TRANSPORT: 'fetch' }),
-  'apps-script/admin/Admin.html': munta('src/admin/Admin.src.html', { FONTS, IL: '', MARCA, URL_ADMIN: '<?!= urlAdmin ?>', AVIS: '<?!= avis ?>' }),
+  'apps-script/admin/Admin.html': munta('src/admin/Admin.src.html', { FONTS, IL: PIN_ADMIN, MARCA, URL_ADMIN: '<?!= urlAdmin ?>', AVIS: '<?!= avis ?>' }),
   'apps-script/admin/Projeccio.html': munta('src/admin/Projeccio.src.html', { FONTS, IL: IL_PROJ, MARCA })
 };
 
@@ -61,7 +63,7 @@ for (const [nom, t] of Object.entries(sortides)) {
   // Google (HtmlService) esborra el que hi ha després de «//» a cada línia dels <script> (ho tracta com un comentari,
   // fins i tot dins d'un text). Per això el codi del navegador no pot tenir cap «//» (fora de les línies de dades base64).
   (t.match(/<script>[\s\S]*?<\/script>/g) || []).forEach(scr => scr.split('\n').forEach((l, k) => {
-    if (l.includes('//') && !/^\s*"[\w-]+":"data:/.test(l) && !/^const IMG = \{"/.test(l)) errors.push(`${nom}: «//» dins d'un <script> (Google ho esborraria): ${l.trim().slice(0, 80)}`);
+    if (l.includes('//') && !/^\s*"[\w-]+":"data:/.test(l) && !/^const [A-Z_]+ = \{"[\w-]+":"data:/.test(l)) errors.push(`${nom}: «//» dins d'un <script> (Google ho esborraria): ${l.trim().slice(0, 80)}`);
   }));
   if (nom.includes('Mon') || nom.startsWith('pla-b')) {
     if (/window\.(top|parent)/.test(t)) errors.push(`${nom}: window.top / window.parent a l'app dels alumnes.`);

@@ -43,6 +43,14 @@ a.boto { display: inline-flex; align-items: center; text-decoration: none; font:
 .boto.gran { min-height: 64px; font-size: 20px; padding: 10px 18px; }
 .boto:focus-visible, .pestanya:focus-visible, .targeta:focus-visible { outline: 4px solid #f2b632; outline-offset: 2px; }
 .fila { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.claus { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 10px; max-width: 1240px; }
+.clau { display: flex; align-items: center; gap: 10px; background: var(--blanc); border: 1px solid var(--vora); border-radius: 12px; padding: 8px 10px; }
+.clau .nom { flex: 1 0 auto; font-weight: 600; white-space: nowrap; }
+.clau .dibuixos { display: flex; gap: 4px; flex: 0 0 auto; }
+.clau .dibuixos img, .codi-dialeg img { width: 44px; height: 44px; border-radius: 8px; background: #f5efe4; }
+.clau .sense { color: var(--suau); font-size: 15px; flex: 0 1 230px; }
+.clau .boto { min-height: 44px; padding: 4px 12px; flex: 0 0 auto; }
+.codi-dialeg { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-weight: 600; }
 
 /* ---------- Aula ---------- */
 .aula { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
@@ -220,8 +228,9 @@ td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
       <label style="flex:1 1 400px;">Exemple de correu dels alumnes (surt a «Com entrar»): <input id="c-correu" style="width:100%; min-height:48px;" placeholder="p. ex. nom.cognom@…"></label>
       <button class="boto" id="b-desa-correu">Desa</button>
     </div>
-    <h2 style="font-size:22px; margin:20px 0 8px;">Reiniciar el PIN d'un alumne</h2>
-    <div class="fila"><select id="sel-pin" style="min-height:48px;"></select><button class="boto clar" id="b-pin">Reinicia el PIN</button></div>
+    <h2 style="font-size:22px; margin:20px 0 4px;">Codi dels dibuixos de cada alumne</h2>
+    <p class="info" style="margin:0 0 10px;">Si un nen no el recorda, mira'l aquí. «Reinicia» l'esborra i el nen en tria un de nou en entrar.</p>
+    <div class="claus" id="claus"></div>
   </section>
 </div>
 
@@ -237,6 +246,7 @@ const URL_ADMIN = /*@@URL_ADMIN@@*/;
 const AVIS = /*@@AVIS@@*/;
 const A = { inici: null, grup: 'G1', sessio: 'S1', vista: 'aula', tauler: null, notes: null, missio: null, ocupat: false };
 const $ = id => document.getElementById(id);
+const dibuixosPin = pin => String(pin || '').split('-').filter(k => PIN_IMG['pin-' + k]).map(k => `<img src="${PIN_IMG['pin-' + k]}" alt="${PIN_NOMS[k] || k}" title="${PIN_NOMS[k] || k}">`).join('');
 const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function crida(accio, args) {
@@ -349,6 +359,7 @@ function obreAlumne(id) {
     'Nota ara: ' + (x.nota === '' ? '—' : x.nota)
   ].filter(Boolean).join(' · ');
   $('dialeg-cos').innerHTML = `<h2>${esc(x.nom)} · Nivell ${x.nivell}</h2><p class="info">${esc(info)}</p>
+    ${x.pin ? `<div class="codi-dialeg">Codi dels dibuixos: ${dibuixosPin(x.pin)}</div>` : ''}
     <div class="grup-botons">${botons}</div><button class="boto clar" data-q="tanca">Tanca</button>`;
   $('dialeg').hidden = false;
   $('dialeg-cos').querySelectorAll('button[data-q]').forEach(bt => bt.onclick = () => {
@@ -491,9 +502,7 @@ function pintaSessions() {
     $('versio-text').textContent = v.installada && v.installada === v.github ? `Tens la darrera versió (${curt(v.installada)}).`
       : `Versió instal·lada: ${curt(v.installada) || 'desconeguda'} · A GitHub: ${curt(v.github)}. ` + (v.installada ? 'Hi ha una versió nova.' : '');
   }).catch(() => { $('versio-text').textContent = 'No s\'ha pogut comprovar la versió.'; });
-  crida('notes', { grup: A.grup }).then(n => {
-    $('sel-pin').innerHTML = n.files.map(f => `<option value="${esc(f.id)}">${esc(f.nom)}</option>`).join('');
-  });
+  pintaClaus();
 }
 const desaConfig = (clau, valor) => crida('configura', { clau: clau, valor: valor }).then(i => { A.inici = i; avis('Desat'); });
 $('c-generics').onchange = e => desaConfig('noms_generics', e.target.checked ? 'sí' : 'no');
@@ -512,7 +521,16 @@ $('b-actualitza').onclick = () => {
     $('dialeg').hidden = false;
   }).catch(() => { b.disabled = false; b.textContent = 'Actualitza des de GitHub'; });
 };
-$('b-pin').onclick = () => { const id = $('sel-pin').value; if (id) crida('reiniciaPin', { id: id }).then(() => avis('PIN reiniciat. El triarà de nou en entrar pel Pla B.')); };
+function pintaClaus() {
+  crida('claus', { grup: A.grup }).then(ll => {
+    const textos = { xifrat: 'Desat abans d\'aquesta versió: no es pot veure. Reinicia\'l.', reiniciat: 'Reiniciat: el triarà en entrar.', cap: 'Encara no en té.' };
+    $('claus').innerHTML = ll.map(a => `<div class="clau"><span class="nom">${esc(a.nom)}</span>` +
+      (a.estat === 'te' ? `<span class="dibuixos">${dibuixosPin(a.pin)}</span>` : `<span class="sense">${textos[a.estat]}</span>`) +
+      (a.estat === 'te' || a.estat === 'xifrat' ? `<button class="boto clar" data-reinicia="${esc(a.id)}" data-nom="${esc(a.nom)}">Reinicia</button>` : '') + `</div>`).join('');
+    $('claus').querySelectorAll('[data-reinicia]').forEach(b => b.onclick = () =>
+      crida('reiniciaPin', { id: b.dataset.reinicia }).then(() => { avis('Codi de ' + b.dataset.nom + ' reiniciat: en triarà un de nou en entrar.'); pintaClaus(); }));
+  });
+}
 
 /* ---------- Inici i consulta cada 10 s ---------- */
 if (AVIS === 'sense-correu') $('avis-identitat').hidden = false;

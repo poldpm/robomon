@@ -10,7 +10,7 @@ var ZONA_HORARIA = 'Europe/Madrid';
 
 /** Columnes de cada pestanya. L'ordre és el del full. */
 var FULLS = {
-  ALUMNES:   ['id_alumne', 'correu', 'grup', 'nom_curt', 'nom_complet', 'pin', 'avatar', 'actiu'],
+  ALUMNES:   ['id_alumne', 'correu', 'grup', 'nom_curt', 'nom_complet', 'pin', 'avatar', 'actiu', 'pin_mestre'],
   CALENDARI: ['grup', 'sessio', 'data', 'estat', 'fusionada_amb', 'codi_classe', 'obert_des_de'],
   MISSIONS:  ['sessio', 'tipus', 'clau', 'ordre', 'text', 'imatge', 'opcions', 'correcta', 'estat'],
   EQUIPS:    ['clau', 'id_alumne', 'grup', 'sessio', 'equip', 'variant'],
@@ -103,6 +103,13 @@ function llegeix_(nom) {
   var idx = {};
   cap.forEach(function (c, i) { idx[c] = i; });
   return { pestanya: p, cap: cap, idx: idx, files: valors.slice(1) };
+}
+
+/** Si a la capçalera d'una pestanya hi falta una columna (full instal·lat abans que existís), l'afegeix al final. */
+function asseguraColumna_(nom, columna) {
+  var p = pestanya_(nom);
+  var cap = p.getRange(1, 1, 1, Math.max(p.getLastColumn(), 1)).getValues()[0].map(String);
+  if (cap.indexOf(columna) < 0) p.getRange(1, cap.length + 1).setValue(columna).setFontWeight('bold');
 }
 
 /** Converteix una fila en objecte. _fila = número de fila al full (1 = capçalera). */
