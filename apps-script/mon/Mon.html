@@ -212,6 +212,7 @@ h2 { font-size: 26px; margin: 0; line-height: 1.2; letter-spacing: -0.01em; }
     <span class="espai"></span>
     <button class="boto clar petit" id="boto-codis" hidden>Codis</button>
     <button class="boto clar petit" id="boto-mapa" hidden>Mapa</button>
+    <button class="boto clar petit" id="boto-nosoc" hidden>No sóc jo</button>
   </header>
 
   <main class="contingut">
@@ -949,9 +950,14 @@ function aplicaLocal(ev) {
   }
 }
 
+/* El Chromebook recorda l'alumne (Pla B): el testimoni es guarda al navegador fins que surt o el mestre li reinicia el codi */
+const CLAU_TESTIMONI = 'robomon_testimoni';
+function desaTestimoni(t) { try { localStorage.setItem(CLAU_TESTIMONI, t); } catch (e) { try { sessionStorage.setItem(CLAU_TESTIMONI, t); } catch (e2) { /* res */ } } }
+function llegeixTestimoni() { try { return localStorage.getItem(CLAU_TESTIMONI) || sessionStorage.getItem(CLAU_TESTIMONI) || sessionStorage.getItem('taller3r_testimoni'); } catch (e) { return null; } }
+function oblidaTestimoni() { try { localStorage.removeItem(CLAU_TESTIMONI); sessionStorage.removeItem(CLAU_TESTIMONI); sessionStorage.removeItem('taller3r_testimoni'); } catch (e) { /* res */ } }
 function perdIdentitat() {
   S.testimoni = null;
-  try { sessionStorage.removeItem('taller3r_testimoni'); } catch (e) { /* res */ }
+  oblidaTestimoni();
   mostra('p-codi'); preparaCodi();
 }
 
@@ -980,6 +986,7 @@ function mostra(id) {
   $('capcal').hidden = !ambCapcal;
   $('capcal').classList.toggle('sobre-mapa', id === 'p-mapa');
   $('boto-mapa').hidden = ['p-missio', 'p-encallat', 'p-pista'].indexOf(id) < 0;
+  $('boto-nosoc').hidden = !(S.testimoni && id === 'p-mapa');   /* Pla B: el Chromebook el recorda; si no és ell, surt */
   $('boto-codis').hidden = !xuletaAvui() || ['p-missio', 'p-encallat', 'p-pista'].indexOf(id) < 0;
   if (ambCapcal && S.estat) {
     $('capcal-avatar').innerHTML = avatarHTML(S.estat.alumne.avatar);
@@ -1245,7 +1252,7 @@ function triaPin(k) {
   crida('entraPin', { codi: S.codi, id: S.alumneB.id, pin: pin }).then(r => {
     if (r && r.ok) {
       S.testimoni = r.dades.testimoni;
-      try { sessionStorage.setItem('taller3r_testimoni', S.testimoni); } catch (e) { /* res */ }
+      desaTestimoni(S.testimoni);
       S.estat = ambVariant(r.dades.estat);
       if (r.dades.nou) return obreRecorda(pin, true);   /* codi nou (primer dia o reiniciat pel mestre) */
       return decideix();
@@ -1327,16 +1334,17 @@ $('pista-ajuda').onclick = () => { envia('ajuda', ''); mostra('p-missio'); pinta
 $('pin-esborra').onclick = () => { S.pin = []; pintaPin(); $('pin-missatge').textContent = ''; };
 $('pin-enrere').onclick = () => obreNoms();
 $('nom-enrere').onclick = () => { mostra('p-codi'); preparaCodi(); };
+$('boto-nosoc').onclick = () => { S.estat = null; perdIdentitat(); };
 $('prova-plab').onclick = () => { S.simula = null; mostra('p-codi'); preparaCodi(); };
 
 /* ---------- Inici ---------- */
 (function inici() {
-  try { S.testimoni = sessionStorage.getItem('taller3r_testimoni'); } catch (e) { S.testimoni = null; }
+  S.testimoni = llegeixTestimoni();
   if (INICIAL.error) return mostraError(INICIAL.detall);
   if (INICIAL.pla === 'A' && INICIAL.estat) { S.estat = ambVariant(INICIAL.estat); decideix(); }
   else if (INICIAL.pla === 'prova') obreProva();
   else if (S.testimoni) {
-    crida('estat', {}).then(r => { if (r && r.ok) { S.estat = ambVariant(r.dades); decideix(); } else { S.testimoni = null; mostra('p-codi'); preparaCodi(); } })
+    crida('estat', {}).then(r => { if (r && r.ok) { S.estat = ambVariant(r.dades); decideix(); } else { S.testimoni = null; oblidaTestimoni(); mostra('p-codi'); preparaCodi(); } })
       .catch(() => { mostra('p-codi'); preparaCodi(); });
   } else { mostra('p-codi'); preparaCodi(); }
   setTimeout(bucle, 5000);

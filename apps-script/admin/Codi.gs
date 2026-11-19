@@ -85,6 +85,7 @@ function api(accio, args) {
       case 'configura':     r = configura_(args.clau, args.valor); break;
       case 'reiniciaPin':   r = reiniciaPin_(args.id); break;
       case 'claus':         r = claus_(args.grup); break;
+      case 'diagnosiPlaA':  r = diagnosiPlaA_(); break;
       case 'projeccio':     r = projeccio_(); break;
       case 'informe':       r = preparaInforme(args.grup); break;
       case 'actualitza':    r = actualitza_(); break;
@@ -937,6 +938,20 @@ function claus_(grup) {
     var estat = visible ? 'te' : /^h/.test(pin) ? 'xifrat' : pin === 'reiniciat' ? 'reiniciat' : 'cap';
     return { id: String(a.id_alumne), nom: String(a.nom_curt), pin: visible, estat: estat };
   }).sort(function (x, y) { return x.nom.localeCompare(y.nom, 'ca'); });
+}
+
+/** Per què el món demana el codi? Obertures dels darrers 7 dies: amb el compte (Pla A), sense correu o amb un correu que no és a ALUMNES. */
+function diagnosiPlaA_() {
+  var des = Date.now() - 7 * 864e5, r = { plaA: 0, senseCorreu: 0, desconeguts: [] };
+  llegeix_('REGISTRE').files.forEach(function (f) {
+    var quan = new Date(f[0]).getTime();
+    if (String(f[3]) !== 'obertura' || !(quan >= des)) return;
+    var m = String(f[4]);
+    if (m === 'pla-a') r.plaA++;
+    else if (m === 'sense-correu') r.senseCorreu++;
+    else if (m === 'correu-desconegut' && r.desconeguts.indexOf(String(f[5])) < 0 && r.desconeguts.length < 20) r.desconeguts.push(String(f[5]));
+  });
+  return r;
 }
 
 function reiniciaPin_(id) {

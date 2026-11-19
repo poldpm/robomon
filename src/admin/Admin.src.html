@@ -50,6 +50,9 @@ a.boto { display: inline-flex; align-items: center; text-decoration: none; font:
 .clau .dibuixos img, .codi-dialeg img { width: 44px; height: 44px; border-radius: 8px; background: #f5efe4; }
 .clau .sense { color: var(--suau); font-size: 15px; flex: 0 1 230px; }
 .clau .boto { min-height: 44px; padding: 4px 12px; flex: 0 0 auto; }
+.diagnosi { max-width: 1240px; background: var(--blanc); border: 1px solid var(--vora); border-radius: 12px; padding: 12px 16px; line-height: 1.45; }
+.diagnosi p { margin: 0 0 8px; }
+.diagnosi ul { margin: 0 0 8px; padding-left: 22px; }
 .codi-dialeg { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-weight: 600; }
 
 /* ---------- Aula ---------- */
@@ -228,6 +231,8 @@ td.cel:hover { outline: 3px solid #f2b632; outline-offset: -3px; }
       <label style="flex:1 1 400px;">Exemple de correu dels alumnes (surt a «Com entrar»): <input id="c-correu" style="width:100%; min-height:48px;" placeholder="p. ex. nom.cognom@…"></label>
       <button class="boto" id="b-desa-correu">Desa</button>
     </div>
+    <h2 style="font-size:22px; margin:20px 0 4px;">Per què als alumnes els demana el codi?</h2>
+    <div class="diagnosi" id="diagnosi">Comprovant…</div>
     <h2 style="font-size:22px; margin:20px 0 4px;">Codi dels dibuixos de cada alumne</h2>
     <p class="info" style="margin:0 0 10px;">Si un nen no el recorda, mira'l aquí. «Reinicia» l'esborra i el nen en tria un de nou en entrar.</p>
     <div class="claus" id="claus"></div>
@@ -503,6 +508,7 @@ function pintaSessions() {
       : `Versió instal·lada: ${curt(v.installada) || 'desconeguda'} · A GitHub: ${curt(v.github)}. ` + (v.installada ? 'Hi ha una versió nova.' : '');
   }).catch(() => { $('versio-text').textContent = 'No s\'ha pogut comprovar la versió.'; });
   pintaClaus();
+  pintaDiagnosi();
 }
 const desaConfig = (clau, valor) => crida('configura', { clau: clau, valor: valor }).then(i => { A.inici = i; avis('Desat'); });
 $('c-generics').onchange = e => desaConfig('noms_generics', e.target.checked ? 'sí' : 'no');
@@ -521,6 +527,15 @@ $('b-actualitza').onclick = () => {
     $('dialeg').hidden = false;
   }).catch(() => { b.disabled = false; b.textContent = 'Actualitza des de GitHub'; });
 };
+function pintaDiagnosi() {
+  crida('diagnosiPlaA').then(d => {
+    const linies = [`<p>Darrers 7 dies: <b>${d.plaA}</b> vegades han entrat amb el seu compte (sense codi) · <b>${d.senseCorreu}</b> vegades Google no ha donat el correu · <b>${d.desconeguts.length}</b> correus no trobats a ALUMNES.</p>`];
+    if (d.senseCorreu) linies.push(`<p><b>Google no dona el correu dels nens a l'app.</b> Perquè el doni, cal: 1) que el projecte «RoboMón · El món» sigui del <b>teu compte de l'escola</b> (no d'un compte personal de Gmail); 2) que el desplegament digui «Executa com: Jo» i «Qui hi té accés: <b>Qualsevol persona de</b> [el domini de l'escola]»; 3) que els nens hagin entrat al Chromebook amb el seu compte de l'escola. Mentrestant, el Chromebook els recorda: el codi només el posen el primer dia.</p>`);
+    if (d.desconeguts.length) linies.push(`<p><b>Aquests correus han obert el món però no són a la pestanya ALUMNES</b> (copia'ls a la columna «correu» del nen que toqui):</p><ul>${d.desconeguts.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`);
+    if (!d.senseCorreu && !d.desconeguts.length) linies.push(d.plaA ? `<p>Tot bé: els nens entren amb el seu compte.</p>` : `<p>Encara no hi ha dades: obre el món amb un Chromebook d'alumne i torna-ho a mirar.</p>`);
+    $('diagnosi').innerHTML = linies.join('');
+  }).catch(() => { $('diagnosi').textContent = 'No s\'ha pogut comprovar.'; });
+}
 function pintaClaus() {
   crida('claus', { grup: A.grup }).then(ll => {
     const textos = { xifrat: 'Desat abans d\'aquesta versió: no es pot veure. Reinicia\'l.', reiniciat: 'Reiniciat: el triarà en entrar.', cap: 'Encara no en té.' };

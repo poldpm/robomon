@@ -103,7 +103,7 @@ export function creaMon() {
       },
       LockService: { getScriptLock: () => ({ waitLock: () => {}, releaseLock: () => {} }) },
       CacheService: { getScriptCache: () => cache },
-      PropertiesService: { getScriptProperties: () => ({ getProperty: k => propietats[k] || null }) },
+      PropertiesService: { getScriptProperties: () => ({ getProperty: k => propietats[k] || null, setProperty(k, v) { propietats[k] = String(v); return this; }, deleteProperty(k) { delete propietats[k]; return this; } }) },
       Session: {
         getActiveUser: () => ({ getEmail: () => usuariActiu }),
         getEffectiveUser: () => ({ getEmail: () => MESTRE })

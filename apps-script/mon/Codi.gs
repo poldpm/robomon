@@ -78,9 +78,29 @@ function correuActiu_() {
   try { return String(Session.getActiveUser().getEmail() || '').toLowerCase().trim(); } catch (e) { return ''; }
 }
 
+var DIES_DISPOSITIU = 300;   // el Chromebook recorda l'alumne tot el curs (fins que el mestre li reinicia el codi)
+
+/** El Chromebook recorda l'alumne: un sol testimoni llarg per alumne (el darrer dispositiu on ha entrat). */
+function desaDispositiu_(id, testimoni, hash12) {
+  var props = PropertiesService.getScriptProperties();
+  var anterior = props.getProperty('dd_' + id);
+  if (anterior) props.deleteProperty('d_' + anterior);
+  props.setProperty('d_' + testimoni, id + '|' + hash12 + '|' + Date.now());
+  props.setProperty('dd_' + id, testimoni);
+}
+
 function identitat_(testimoni, simula) {
   if (testimoni) {
-    var valor = CacheService.getScriptCache().get('t_' + String(testimoni).slice(0, 60));
+    var t = String(testimoni).slice(0, 60);
+    var valor = CacheService.getScriptCache().get('t_' + t);
+    if (!valor) {
+      var desat = PropertiesService.getScriptProperties().getProperty('d_' + t);
+      var p3 = desat ? String(desat).split('|') : [];
+      if (p3.length === 3 && Date.now() - Number(p3[2]) < DIES_DISPOSITIU * 864e5) {
+        valor = p3[0] + '|' + p3[1];
+        CacheService.getScriptCache().put('t_' + t, valor, 6 * 3600);
+      }
+    }
     if (valor) {
       // El testimoni porta un tros del PIN: si el mestre el reinicia o dona de baixa l'alumne, deixa de valer.
       var parts = String(valor).split('|');
@@ -116,9 +136,14 @@ function alumnePerId_(id) {
 }
 
 /** El que el navegador rep en obrir la pàgina (Pla A). */
+/** Per al diagnòstic del tauler: per què el món ha anat al Pla A o al Pla B. */
+function apuntaObertura_(motiu, correu) {
+  try { afegeixFiles_('REGISTRE', [[new Date(), '', '', 'obertura', motiu, correu || '']]); } catch (e) { /* no cal aturar res */ }
+}
+
 function estatInicial_() {
   var correu = correuActiu_();
-  if (!correu) return { pla: 'B' };                       // no tenim correu → Pla B1
+  if (!correu) { apuntaObertura_('sense-correu'); return { pla: 'B' }; }   // no tenim correu → Pla B1
   var cfg = config_();
   if (correu === String(cfg.correu_mestre || '').toLowerCase().trim()) {
     var proves = objectes_('ALUMNES').filter(function (a) { return /^A9\d\d$/.test(String(a.id_alumne)); })
@@ -126,7 +151,8 @@ function estatInicial_() {
     return { pla: 'prova', proves: proves };
   }
   var a = alumnePerCorreu_(correu);
-  if (!a) return { pla: 'B', avis: 'correu-desconegut' };
+  if (!a) { apuntaObertura_('correu-desconegut', correu); return { pla: 'B', avis: 'correu-desconegut' }; }
+  apuntaObertura_('pla-a');
   return { pla: 'A', estat: estatAlumne_(String(a.id_alumne)) };
 }
 
@@ -232,6 +258,7 @@ function entraPin_(args) {
     cache.remove(clauIntents);
     var testimoni = Utilities.getUuid();
     cache.put('t_' + testimoni, id + '|' + hash.slice(0, 12), 6 * 3600);
+    desaDispositiu_(id, testimoni, hash.slice(0, 12));
     afegeixFiles_('REGISTRE', [[new Date(), id, String(s.sessio), 'entrada-pin', '', 'alumne']]);
     return { ok: true, dades: { testimoni: testimoni, estat: estatAlumne_(id), nou: nou } };
   });

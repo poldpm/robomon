@@ -357,6 +357,13 @@ for (const k of ['sol', 'peix', 'casa']) await pb.click(`#pin-graella .tria[data
 await espera(pb, '#p-mapa');
 await revisa(pb, '42-plab-dins', REVISA_MON);
 ok(true, 'L\'Anna entra pel Pla B2 amb el seu PIN i veu el seu món');
+await pb.goto(`${BASE}/pla-b/?api=/exec-b2`);
+await espera(pb, '#p-mapa');
+ok(true, 'El Chromebook recorda l\'Anna: torna a obrir la pàgina i entra sense codi ni dibuixos');
+ok(await pb.isVisible('#boto-nosoc'), 'Al mapa hi ha «No sóc jo» (per si el Chromebook és d\'un altre)');
+await pb.click('#boto-nosoc');
+await espera(pb, '#p-codi');
+ok(true, '«No sóc jo» fa sortir i torna a demanar el codi');
 
 console.log('\n12b · Actualitzar des de GitHub (un clic)');
 ok(admin('actualitza').motiu === 'error', 'Sense l\'ID del projecte del món, l\'actualització s\'atura amb un missatge');
@@ -403,6 +410,12 @@ const pinB = (id, pin) => mon.crida('mon', 'api', ['entraPin', { codi: codiAra, 
 const tok = pinB('A001', 'sol-peix-casa');
 ok(tok.ok, 'L\'Anna entra amb el seu PIN');
 ok(mon.crida('mon', 'api', ['estat', {}, tok.dades.testimoni], '').ok, 'El testimoni funciona');
+mon.projectes.mon.CacheService.getScriptCache().remove('t_' + tok.dades.testimoni);   /* passen hores: la memòria cau s'ha buidat */
+ok(mon.crida('mon', 'api', ['estat', {}, tok.dades.testimoni], '').ok, 'El Chromebook recorda l\'alumne encara que passin hores o dies');
+const fetchObre = u => fetch(`${BASE}/mon${u ? '?usuari=' + encodeURIComponent(u) : ''}`).then(r => r.text());
+await fetchObre(''); await fetchObre('algu.que.no.hi.es@escola.cat'); await fetchObre(correu(3));
+const dg = admin('diagnosiPlaA').dades;
+ok(dg.plaA >= 1 && dg.senseCorreu >= 1 && dg.desconeguts.includes('algu.que.no.hi.es@escola.cat'), 'Diagnòstic: compta les entrades amb compte, sense correu i amb correus que no són a ALUMNES');
 admin('reiniciaPin', { id: 'A001' });
 ok(mon.crida('mon', 'api', ['estat', {}, tok.dades.testimoni], '').motiu === 'identitat', 'Reiniciar el PIN invalida el testimoni');
 ok(pinB('A001', 'flor-poma-arbre').ok, 'Després de reiniciar-lo, l\'Anna en tria un de nou');
@@ -435,6 +448,8 @@ await mestre.click('.pestanya[data-p="sessions"]');
 await mestre.waitForSelector('#claus .clau');
 await revisa(mestre, '26-admin-codis-dibuixos', { senseScroll: false, lletraMin: 14.6 });
 await (await mestre.$('#claus')).screenshot({ path: join(CAPTURES, '26b-codis-llista.png') });
+await mestre.waitForFunction(() => !/Comprovant/.test(document.getElementById('diagnosi').textContent));
+await (await mestre.$('#diagnosi')).screenshot({ path: join(CAPTURES, '26c-diagnosi.png') });
 
 console.log('\n16 · Les missions noves (S2–S9): de la calibració al nivell 2, xuleta i projecció');
 const NOVES = {
